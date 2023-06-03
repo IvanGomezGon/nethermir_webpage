@@ -1,15 +1,13 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
-console.log(process.env)
 const express = require('express');
-
 const nodeMailer = require('nodemailer');
 const cors=require('cors');
 const crypto = require('crypto');
 const bcrypt = require("bcrypt")
 var mysql = require('mysql2');
 const proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASS, process.env.PROXMOX_DOM)
-
+const PROXMOX_SERVERS=process.env.PROXMOX_SERVERS.split(' ');
 const corsOptions ={
    origin:'*', 
    credentials:true,            //access-control-allow-credentials:true
@@ -69,7 +67,7 @@ const stopMachineMain = (req, res) =>{
     proxmox.qemu.stop("pve", vmID, (err, data)=>{feedback_fetch("Y", res)})    
 }
 const getNodesMain = (res) => {
-    proxmox.getQemu("pve",(err, data) =>{
+    proxmox.getQemu(PROXMOX_SERVERS[0],(err, data) =>{
         if (err) {console.log("mal")}
         else{
             data_json = JSON.parse(data).data

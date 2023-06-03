@@ -25,7 +25,7 @@ const options = {
         activate(hours){            
             this.feedback="Processing..."
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/activateMachine?user=${this.user}&pass=${this.password}&hours=${hours}`).then(resolve)
+            fetch(`http://192.168.30.2:8080/activateMachine?user=${this.user}&pass=${this.password}&hours=${hours}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 this.feedback = y; 
@@ -37,7 +37,7 @@ const options = {
         stop(){
             this.feedback="Processing..."
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/stopMachine?user=${this.user}&pass=${this.password}`).then(resolve)
+            fetch(`http://192.168.30.2:8080/stopMachine?user=${this.user}&pass=${this.password}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 this.feedback = y; 
@@ -127,7 +127,7 @@ app.component('Login',{
         login(){
             this.feedback="Processing login..."
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/login?user=${this.usuari}&pass=${this.password}`).then(resolve)
+            fetch(`http://192.168.30.2:80/login?user=${this.usuari}&pass=${this.password}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 if (y == "Login succesfull!"){
@@ -190,7 +190,7 @@ app.component('Register',{
             emailsString = this.emails.join('xv3dz1g')
             console.log(emailsString)
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
+            fetch(`http://192.168.30.2:80/register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 if (y == "Y"){
@@ -271,7 +271,7 @@ app.component('GetNodes', {
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/getNodes?user=${this.user}&pass=${this.password}`).then(resolve)
+            fetch(`http://192.168.30.2:80/getNodes?user=${this.user}&pass=${this.password}`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -280,10 +280,10 @@ app.component('GetNodes', {
             })})    
         },
         activateVM(id){
-            fetch(`http://localhost:8081/activateMachine?user=${this.user+id}&pass=${this.password}&hours=4`).then()
+            fetch(`http://192.168.30.2:80/activateMachine?user=${this.user+id}&pass=${this.password}&hours=4`).then()
         },
         stopVM(id){
-            fetch(`http://localhost:8081/stopMachine?user=${this.user+id}&pass=${this.password}`).then()
+            fetch(`http://192.168.30.2:80/stopMachine?user=${this.user+id}&pass=${this.password}`).then()
         }
     },
     template:`
@@ -325,7 +325,7 @@ app.component('GetGroups', {
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/getGroups?user=${this.user}&pass=${this.password}`).then(resolve)
+            fetch(`http://192.168.30.2:80/getGroups?user=${this.user}&pass=${this.password}`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -334,7 +334,7 @@ app.component('GetGroups', {
             })})    
         },
         eliminateGroup(id){
-            fetch(`http://localhost:8081/eliminateGroup?user=${this.user+id}&pass=${this.password}`).then()
+            fetch(`http://192.168.30.2:80/eliminateGroup?user=${this.user+id}&pass=${this.password}`).then()
         },
 
     },
@@ -371,7 +371,7 @@ app.component('GetEmails', {
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/getEmails?user=${this.user}&pass=${this.password}`).then(resolve)
+            fetch(`http://192.168.30.2:80/getEmails?user=${this.user}&pass=${this.password}`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -380,7 +380,7 @@ app.component('GetEmails', {
             })})    
         },
         eliminateEmail(id){
-            fetch(`http://localhost:8081/eliminateEmail?user=${this.user+id}&pass=${this.password}`).then()
+            fetch(`http://192.168.30.2:80/eliminateEmail?user=${this.user+id}&pass=${this.password}`).then()
         },
 
     },
@@ -420,7 +420,7 @@ app.component('GetInfoVM', {
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/getNode?user=${this.user}&pass=${this.password}`).then(resolve)
+            fetch(`http://192.168.30.2:80/getNode?user=${this.user}&pass=${this.password}`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -430,10 +430,10 @@ app.component('GetInfoVM', {
         },
         activateVM(){
             if (hours>0 && hours<7){
-            fetch(`http://localhost:8081/activateMachine?user=${this.user}&pass=${this.password}&hours=${this.hours}`).then()}
+            fetch(`http://192.168.30.2:80/activateMachine?user=${this.user}&pass=${this.password}&hours=${this.hours}`).then()}
         },
         stopVM(){
-            fetch(`http://localhost:8081/stopMachine?user=${this.user}&pass=${this.password}`).then()
+            fetch(`http://192.168.30.2:80/stopMachine?user=${this.user}&pass=${this.password}`).then()
         }
     },
     template:`
