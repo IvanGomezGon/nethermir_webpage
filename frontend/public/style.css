@@ -1,7 +1,7 @@
 body {
     font-family: 'Source Sans Pro', 'Lucida Grande', sans-serif;
     margin: 0px;
-    background-image:url(columnes.svg);
+    background-image:url(/assets/columnes.svg);
     background-size:cover;
 }
 table{
@@ -66,12 +66,24 @@ a.header_element:hover{
     
   }
   button{
+    transition-duration: 0.3s;
     background-color: rgb(32, 102, 0);
     width: 22vw;
     height: 50px;
     border: 3px solid rgb(32, 102, 0); 
     border-radius: 15px ;
     font-size: 15px;
+    color: white;
+  }
+  button:hover{
+    background-color: rgb(255, 255, 255);
+    color: rgb(32, 102, 0);
+  }
+  button:disabled{
+    background-color: rgb(181, 181, 181);
+  }
+  button:disabled:hover{
+    background-color: rgb(181, 181, 181);
     color: white;
   }
   input, select{

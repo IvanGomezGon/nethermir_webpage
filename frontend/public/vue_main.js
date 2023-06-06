@@ -11,6 +11,7 @@ const options = {
             proxmoxInfo: false,
             emailInfo: false,
             groupsInfo: false,
+            areYouSure: false,
         }
     },
     methods: {
@@ -25,7 +26,7 @@ const options = {
         activate(hours){            
             this.feedback="Processing..."
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://192.168.30.2:8080/activateMachine?user=${this.user}&pass=${this.password}&hours=${hours}`).then(resolve)
+            fetch(`http://192.168.30.2:80/activateMachine?user=${this.user}&pass=${this.password}&hours=${hours}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 this.feedback = y; 
@@ -37,7 +38,7 @@ const options = {
         stop(){
             this.feedback="Processing..."
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://192.168.30.2:8080/stopMachine?user=${this.user}&pass=${this.password}`).then(resolve)
+            fetch(`http://192.168.30.2:80/stopMachine?user=${this.user}&pass=${this.password}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 this.feedback = y; 
@@ -47,6 +48,17 @@ const options = {
             })}) 
 
         },
+        restartDatabase(){
+            let p = new Promise((resolve, reject)=>{
+                fetch(`http://192.168.30.2:80/restartDatabase?user=${this.user}&pass=${this.password}`).then(resolve)
+                })
+                p.then(x=>{x.text().then(y=> {
+                    this.feedback = y; 
+                    if (y == "Y"){
+                        this.feedback = "Machine stopped!"; 
+                    }
+                })}) 
+        }
 
     },
     template: `
@@ -70,7 +82,7 @@ const options = {
     
     <div class="flex-container" v-if="controlPanel">
         <div class="header">
-            <img src="logo_uab.png" class="logo">
+            <img src="/assets/logo_uab.png" class="logo">
             <h3 class="header_element">TECTONIC CONTROL PANNEL</h3>
         </div>
     
@@ -80,13 +92,20 @@ const options = {
     </div>
 
     <div class="flex-container" v-if="controlPanelRoot" style="align-items:baseline">
-
+        <div v-if="areYouSure" style="background-color:red; color:white; z-index: 1000; width:100%; height: 100%">
+            <h1>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</h1>
+            <h1>ARE YOU SURE? THIS WILL RESTART THE WHOLE DATABASE, EVERYTHING WILL BE LOST</h1>
+            <h1>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</h1>
+            <button type="button" @click="restartDatabase()" style="background-opacity:30%"><h2>YES, RESTART</h2></button>
+            <button type="button" @click="areYouSure=false"><h2>NO, DON'T RESTART</h2></button>
+        </div>
         <div class="header">
-            <img src="logo_uab.png" class="logo">
+            <img src="/assets/logo_uab.png" class="logo">
             <h3 class="header_element">TECTONIC CONTROL PANNEL - ROOT USER</h3>
             <a href="#" class="push header_element" @click="proxmoxInfo=!proxmoxInfo; groupsInfo=false; emailInfo=false;">PROXMOX INFO</a>
             <a href="#" class="header_element" @click="groupsInfo=!groupsInfo; proxmoxInfo=false; emailInfo=false;">USERS INFO</a>
             <a href="#" class="header_element" @click="emailInfo=!emailInfo; proxmoxInfo=false; groupsInfo=false;">EMAILS INFO</a>
+            <a href="#" class="header_element" @click="areYouSure=true">RESTART DATABASE</a>
         </div>
 
 
@@ -143,7 +162,7 @@ app.component('Login',{
     },
     template: `
         <br>
-        <img src="logo_uab.png" class="logo">
+        <img src="/assets/logo_uab.png" class="logo">
         <h3>TECTONIC Sign in</h3>
         <h3>{{feedback}}</h3>
         <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
@@ -172,6 +191,7 @@ app.component('Register',{
             errors:[],
             feedback:"",
             registered:false,
+            numIntegrants:0,
         }
     },
     methods:{
@@ -180,6 +200,7 @@ app.component('Register',{
             if (!this.assignatura){this.errors.push('Assignatura required.');}
             if (!this.curs){this.errors.push('Curs required.');}
             if (!this.emails.length){this.errors.push('At least 1 email required');}
+            if (this.emails.length != this.numIntegrants){this.errors.push(`You need to enter ${this.numIntegrants} emails` )}
             this.emails.forEach((value, index)=>{
                 if (!/.+@uab\.cat/.test(value)){this.errors.push(`Email ${index+1} should be in format:"example@uab.cat"`);}
             })
@@ -207,7 +228,7 @@ app.component('Register',{
     },
     template: `
         <br>
-        <img src="logo_uab.png" class="logo">
+        <img src="/assets/logo_uab.png" class="logo">
         <h3>TECTONIC Register</h3>
         {{feedback}}
         <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
@@ -216,13 +237,6 @@ app.component('Register',{
         </p>
     <div v-if="!registered">
         <div class="register_options">
-            <fieldset id="assignatura">
-            <legend> Assignatura: </legend>
-                <select v-model="assignatura">
-                    <option value="XX">XX</option>
-                    <option value="XT">XT</option>
-                </select> <br>
-            </fieldset>
             
             <fieldset id="curs">
             <legend> Curs: </legend>
@@ -230,25 +244,34 @@ app.component('Register',{
                     <option value="2022-1">2022-1</option>
                     <option value="2022-2">2022-2</option>
                 </select> <br>
-            </fieldset>        
+            </fieldset>    
+        
+            <fieldset id="assignatura">
+            <legend> Assignatura: </legend>
+                <select v-model="assignatura">
+                    <option value="XX">XX</option>
+                    <option value="XT">XT</option>
+                </select> <br>
+            </fieldset> 
+
+            <fieldset id="num">
+            <legend> Num integrants: </legend>
+                <select v-model="numIntegrants" @change="this.errors=[];">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select> <br>
+            </fieldset> 
         </div>
         <br>
-        <fieldset>
-        <legend> Email 1: </legend>
-            <input type="email" v-model="emails[0]" placeholder="user@uab.cat" pattern=".+@uab\.cat"><br>
-        </fieldset>
-        <fieldset>
-        <legend> Email 2: </legend>
-            <input type="email" v-model="emails[1]" placeholder="user@uab.cat" pattern=".+@uab\.cat"><br>
-        </fieldset>
-        <fieldset>
-        <legend> Email 3: </legend>
-            <input type="email" v-model="emails[2]" placeholder="user@uab.cat" pattern=".+@uab\.cat"><br>
-        </fieldset>
-        <fieldset>
-        <legend> Email 4: </legend>
-            <input type="email" v-model="emails[3]" placeholder="user@uab.cat" pattern=".+@uab\.cat"><br>
-        </fieldset><br><br>
+        <div v-for="index in parseInt(numIntegrants)" :key="index">
+            <fieldset>
+            <legend> Email {{index}}: </legend>
+                <input type="email" v-model="emails[index-1]" placeholder="user@uab.cat" pattern=".+@uab\.cat"><br>
+            </fieldset>
+        </div>
+        <br><br>
 
 
         <button type="button" @click="checkRegister()"> Create group</button>
@@ -284,6 +307,12 @@ app.component('GetNodes', {
         },
         stopVM(id){
             fetch(`http://192.168.30.2:80/stopMachine?user=${this.user+id}&pass=${this.password}`).then()
+        },
+        resumeVM(id){
+            fetch(`http://192.168.30.2:80/resumeMachine?user=${this.user+id}&pass=${this.password}`).then()
+        },
+        suspendVM(id){
+            fetch(`http://192.168.30.2:80/suspendMachine?user=${this.user+id}&pass=${this.password}`).then()
         }
     },
     template:`
@@ -297,6 +326,8 @@ app.component('GetNodes', {
             <th>Uptime</th>
             <th>Start VM</th>
             <th>Stop VM</th>
+            <th>Resume</th>
+            <th>Suspend</th>
         </tr> 
      
         <tr v-for="vm in data">
@@ -304,8 +335,10 @@ app.component('GetNodes', {
             <td>{{vm.name}}</td>
             <td>{{vm.status}}</td>
             <td>{{vm.uptime}}</td>
-            <td><button type="button" @click="activateVM(vm.vmid)"> Start</button></td>
-            <td><button type="button" @click="stopVM(vm.vmid)"> Stop</button></td>
+            <td><button type="button" style="width:10vw" @click="activateVM(vm.vmid)" :disabled="vm.status=='running'"> Start</button></td>
+            <td><button type="button" style="width:10vw" @click="stopVM(vm.vmid)" :disabled="vm.status=='stopped'"> Stop</button></td>
+            <td><button type="button" style="width:10vw" @click="resumeVM(vm.vmid)" :disabled="vm.status=='stopped'"> Resume</button></td>
+            <td><button type="button" style="width:10vw" @click="suspendVM(vm.vmid)" :disabled="vm.status=='stopped'"> Suspend</button></td>
         </tr>
      
     </table>   
