@@ -92,11 +92,11 @@ const options = {
     </div>
 
     <div class="flex-container" v-if="controlPanelRoot" style="align-items:baseline">
-        <div v-if="areYouSure" style="background-color:red; color:white; z-index: 1000; width:100%; height: 100%">
+        <div v-if="areYouSure" style="background-color:red; color:white; z-index: 1000; width:100vw; height: 100vh; position:absolute">
             <h1>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</h1>
             <h1>ARE YOU SURE? THIS WILL RESTART THE WHOLE DATABASE, EVERYTHING WILL BE LOST</h1>
             <h1>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</h1>
-            <button type="button" @click="restartDatabase()" style="background-opacity:30%"><h2>YES, RESTART</h2></button>
+            <button type="button" @click="restartDatabase(); areYouSure=false" style="background-opacity:30%"><h2>YES, RESTART</h2></button>
             <button type="button" @click="areYouSure=false"><h2>NO, DON'T RESTART</h2></button>
         </div>
         <div class="header">
