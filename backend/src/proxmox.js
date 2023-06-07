@@ -28,7 +28,6 @@ const getNodes = (res) => {
         else{
             data_json = JSON.parse(data).data
             data_json.sort((a,b) => a['vmid'] - b['vmid'])
-            console.log(data_json)
             feedback_fetch(JSON.stringify(data_json), res)
         }
     })
@@ -39,7 +38,6 @@ const getNode = (req, res) => {
         if (err) {console.log("mal")}
         else{
             data_json = JSON.parse(data).data
-            console.log(data_json)
             feedback_fetch(JSON.stringify(data_json), res)
         }
     })
