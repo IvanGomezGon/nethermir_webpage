@@ -48,8 +48,8 @@ const cloneMachine = (group) =>{
         console.log(`Cloning machine`)
         newID = {newid:vmID, name:group}
         proxmox.qemu.clone(PROXMOX_SERVERS[0], process.env.PROXMOX_TEMPLATE,newID, (err, data)=>{
-            if (err){resolve("Failed")}
-            if (data){resolve("Success")}
+            if (err){console.log(err); resolve("Failed")}
+            if (data){console.log(data);resolve("Success")}
         }) 
     })
 }
