@@ -13,14 +13,14 @@ const activateMachine = (req, res) =>{
     if (req.query['hours']<1) {feedback_fetch("N", res); return 0;}
     vmID = req.query['user'].slice(-3);
     console.log(`Activating machine ${vmID}`)
-    proxmox.qemu.start("pve", vmID, (err, data)=>{feedback_fetch("Y", res)})
+    proxmox.qemu.start(PROXMOX_SERVERS[0], vmID, (err, data)=>{feedback_fetch("Y", res)})
     setTimeout(function(){sendWarningMail(req.query['user'])}, req.query['hours']*3600000-1800000)
     setTimeout(function(){sendWarningMail(req.query['user'])}, 1800000)
 }
 const stopMachine = (req, res) =>{
     vmID = req.query['user'].slice(-3);
     console.log(`Activating machine ${req.query['node']}`)
-    proxmox.qemu.stop("pve", vmID, (err, data)=>{feedback_fetch("Y", res)})    
+    proxmox.qemu.stop(PROXMOX_SERVERS[0], vmID, (err, data)=>{feedback_fetch("Y", res)})    
 }
 const getNodes = (res) => {
     proxmox.getQemu(PROXMOX_SERVERS[0],(err, data) =>{
@@ -35,7 +35,7 @@ const getNodes = (res) => {
 }
 const getNode = (req, res) => {
     vmID = req.query['user'].slice(-3);
-    proxmox.qemu.getStatusCurrent("pve",vmID,(err, data) =>{
+    proxmox.qemu.getStatusCurrent(PROXMOX_SERVERS[0],vmID,(err, data) =>{
         if (err) {console.log("mal")}
         else{
             data_json = JSON.parse(data).data
@@ -49,7 +49,7 @@ const cloneMachine = (group) =>{
         vmID = group.slice(-3);
         console.log(`Cloning machine`)
         newID = {newid:vmID, name:group}
-        proxmox.qemu.clone("pve", process.env.PROXMOX_TEMPLATE,newID, (err, data)=>{
+        proxmox.qemu.clone(PROXMOX_SERVERS[0], process.env.PROXMOX_TEMPLATE,newID, (err, data)=>{
             if (err){resolve("Failed")}
             if (data){resolve("Success")}
         }) 
@@ -59,13 +59,13 @@ const cloneMachine = (group) =>{
 const resumeMachine = (req, res) => {
     vmID = req.query['user'].slice(-3);
     console.log(`Resuming machine ${req.query['node']}`)
-    proxmox.qemu.resume("pve", vmID, (err, data)=>{feedback_fetch("Y", res)})  
+    proxmox.qemu.resume(PROXMOX_SERVERS[0], vmID, (err, data)=>{feedback_fetch("Y", res)})  
 }
 
 const suspendMachine = (req, res) => {
     vmID = req.query['user'].slice(-3);
     console.log(`Resuming machine ${req.query['node']}`)
-    proxmox.qemu.suspend("pve", vmID, (err, data)=>{console.log(err, data)})  
+    proxmox.qemu.suspend(PROXMOX_SERVERS[0], vmID, (err, data)=>{console.log(err, data)})  
 }
 module.exports = {
     activateMachine,

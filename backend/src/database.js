@@ -146,7 +146,7 @@ function generateGroup(user) {
     return new Promise((resolve, reject) => {
         idgroup = 0
         sql = `SELECT idgroup FROM docente.groups ORDER BY idgroup DESC LIMIT 1`                
-        idgroup =queryToDB(sql).then(x => {idgroup = 101+x[0].idgroup; resolve(user+'-'+idgroup)})
+        idgroup =queryToDB(sql).then(x => {if (x.length>0){idgroup = 101+x[0].idgroup;}else{idgroup = 101} resolve(user+'-'+idgroup)})
     })
 }
 
