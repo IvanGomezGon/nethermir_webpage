@@ -14,7 +14,7 @@ const feedback_fetch = (text, res) => {
     res.end();
 } 
 const {activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine} = require(path.resolve(__dirname, 'proxmox.js'))
-const {getGroups, getEmails, eliminateGroup, eliminateEmail, authenticate, registerGroup, restartDatabase} = require (path.resolve(__dirname, 'database.js'))
+const {getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject} = require (path.resolve(__dirname, 'database.js'))
 
 const app = express()
 const port = process.env.LISTENING_PORT
@@ -54,6 +54,22 @@ app.get('/getEmails', function(req, res){
 })
 app.get('/eliminateEmail', function(req, res){
     authenticate(req).then(()=> {eliminateEmail(req, res)})
+   
+})
+app.get('/getSubjects', function(req, res){
+    getSubjects(res)
+   
+})
+app.get('/addSubject', function(req, res){
+    authenticate(req).then(()=> {addSubject(req, res)})
+   
+})
+app.get('/eliminateSubject', function(req, res){
+    authenticate(req).then(()=> {eliminateSubject(req, res)})
+   
+})
+app.get('/activateSubject', function(req, res){
+    authenticate(req).then(()=> {activateSubject(req, res)})
    
 })
 app.get('/restartDatabase', function(req, res){

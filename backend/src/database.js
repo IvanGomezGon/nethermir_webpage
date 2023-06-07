@@ -35,16 +35,16 @@ const getGroups = (res) => {
     queryToDB(sql).then(x =>{feedback_fetch(JSON.stringify(x), res)})
 }
 
-const getEmails = (res) => {    
-    sql = `SELECT * FROM docente.emails`
-    queryToDB(sql).then(x =>{feedback_fetch(JSON.stringify(x), res)})
-}
-
 const eliminateGroup = (req, res) => {
     id = req.query['user'].split('root')[1];
     console.log(id)
     sql = `DELETE FROM docente.groups WHERE idgroup=(?)`
     queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+}
+
+const getEmails = (res) => {    
+    sql = `SELECT * FROM docente.emails`
+    queryToDB(sql).then(x =>{feedback_fetch(JSON.stringify(x), res)})
 }
 
 const eliminateEmail = (req, res) => {
@@ -54,6 +54,33 @@ const eliminateEmail = (req, res) => {
     queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
 }
 
+const getSubjects = (res) => {  
+    console.log("getSubjects")  
+    sql = `SELECT * FROM docente.subjects`
+    queryToDB(sql).then(x =>{feedback_fetch(JSON.stringify(x), res)})
+}
+
+const addSubject = (req,res) => {
+    console.log("addSuybject", req.query)
+    id = req.query['id'];
+    console.log(id)
+    sql = `INSERT INTO docente.subjects (idsubjects, subject_name) VALUES (?, ?)` 
+    queryToDB(sql, [id.slice(-3),id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+}
+const eliminateSubject = (req, res) => {
+    console.log("eliminateSubject")
+    id = req.query['user'].split('root')[1];
+    console.log(id)
+    sql = `DELETE FROM docente.subjects WHERE idsubjects=(?)`
+    queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+}
+const activateSubject = (req,res) => {
+    console.log("activateSubject", req.query)
+    id = req.query['id'];
+    console.log(id)
+    sql = `UPDATE docente.subjects SET active=(active+1)%2 WHERE idsubjects=(?)` 
+    queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+}
 const authenticate = async(req, res) => {
     return new Promise ((resolve, reject) => {
         user = req.query['user']
@@ -177,8 +204,12 @@ const restartDatabase = async() =>{
               ON DELETE CASCADE
               ON UPDATE CASCADE);`
         await queryToDB(sql)      
-        sql = `INSERT INTO docente.groups (idgroup, name, p_hash) VALUES (?, ?, ?)`
-        await queryToDB(sql, [process.env.PROXMOX_TEMPLATE, "template-host", "nonenonenonenonenonenone"]) 
+        sql = `CREATE TABLE docente.subjects (
+            idsubjects INT NOT NULL,
+            subject_name VARCHAR(45) NULL,
+            active TINYINT NULL,
+            PRIMARY KEY (idsubjects));`
+        await queryToDB(sql) 
         
     })
 }
@@ -190,7 +221,11 @@ module.exports = {
     eliminateEmail,
     authenticate,
     registerGroup,
-    restartDatabase,
+    restartDatabase, 
+    getSubjects, 
+    eliminateSubject,
+    addSubject,
+    activateSubject,
  }
 
 
