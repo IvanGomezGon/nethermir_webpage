@@ -212,8 +212,8 @@ app.component('Register',{
             retSubjects = []
             if (this.data){
                 for (subject in this.data){
-                    if (this.data[subject]['active']==1){
-                    if (this.curs==""){retSubjects.push(this.data[subject]['subject_name'].slice(7,-4))}
+                    if (this.data[subject]['active']==1 && !retSubjects.includes(this.data[subject]['subject_name'].slice(7,-4))){
+                    if (this.curs=="" ){retSubjects.push(this.data[subject]['subject_name'].slice(7,-4))}
                     else if (this.data[subject]['subject_name'].slice(0,6) != this.curs){retSubjects.push(this.data[subject]['subject_name'].slice(7,-4))}}
                 }
             }  
@@ -223,7 +223,7 @@ app.component('Register',{
             retYears = []
             if (this.data){
                 for (subject in this.data){
-                    if (this.data[subject]['active']==1){
+                    if (this.data[subject]['active']==1 && !retYears.includes(this.data[subject]['subject_name'].slice(0, 6))){
                     if (this.assignatura==""){retYears.push(this.data[subject]['subject_name'].slice(0, 6))}
                     else if (this.data[subject]['subject_name'].slice(7,-4) != this.assignatura){retYears.push(this.data[subject]['subject_name'].slice(0,6))}}
                 }
@@ -275,6 +275,7 @@ app.component('Register',{
     },
     template: `
         <br>
+        
         <img src="/assets/logo_uab.png" class="logo">
         <h3>TECTONIC Register</h3>
         {{feedback}}

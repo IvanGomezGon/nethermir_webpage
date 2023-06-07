@@ -207,7 +207,7 @@ const restartDatabase = async() =>{
         sql = `CREATE TABLE docente.subjects (
             idsubjects INT NOT NULL,
             subject_name VARCHAR(45) NULL,
-            active TINYINT NULL,
+            active TINYINT NULL DEFAULT 0,
             PRIMARY KEY (idsubjects));`
         await queryToDB(sql) 
         
