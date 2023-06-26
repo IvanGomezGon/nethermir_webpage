@@ -1,10 +1,18 @@
-body {
+<template>
+  <router-view/>
+</template>
+
+<style>
+.logo {
+    height: 100px;
+  }
+    body {
     font-family: 'Source Sans Pro', 'Lucida Grande', sans-serif;
     margin: 0px;
-    background-image:url(/assets/columnes.svg);
+    background-image:url(assets/columnes.svg);
     background-size:cover;
-}
-table{
+    }   
+    table{
   border-spacing:0px;
   border: 5px solid rgb(32, 102, 0);
   margin: auto;
@@ -105,9 +113,7 @@ a.header_element:hover{
   fieldset:focus-within{
     border-color: green;
   }
-  .logo {
-    height: 100px;
-  }
+  
 
   #assignatura,  #curs {
     width: 175px;
@@ -120,8 +126,4 @@ a.header_element:hover{
     margin-top:150px;
     padding:30px;
   }
-
-
-
-
-  
+</style>

@@ -1,0 +1,40 @@
+
+<template>
+    <div class="header">
+        <img src="../assets/logo_uab.png" class="logo" @click="this.$router.push('/')">
+        <h3 class="header_element">TECTONIC CONTROL PANNEL - ROOT USER</h3>
+        <a href="#" class="push header_element" @click="switchTab('ProxmoxInfo')">PROXMOX INFO</a>
+        <a href="#" class="header_element" @click="switchTab('groupsInfo')">GROUPS INFO</a>
+        <a href="#" class="header_element" @click="switchTab('emailsInfo')">EMAILS INFO</a>
+        <a href="#" class="header_element" @click="switchTab('subjectsInfo')">SUBJECTS INFO</a>
+        <a href="#" class="header_element" @click="this.$router.push('/restartDatabase')">RESTART DATABASE</a>
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    name: 'HeaderRoot',
+    props:['modelValue'],
+    methods:{
+        switchTab(tab){
+            var activeTabs = [this.modelValue[0], this.modelValue[1]]
+            if (this.modelValue[0] == tab){activeTabs[0] =''}
+            else if (this.modelValue[1] == tab){activeTabs[1] = ''}
+            else {activeTabs[0] = activeTabs[1]; activeTabs[1] = tab}
+            console.log(activeTabs)
+            this.$emit('update:modelValue', activeTabs)
+        }
+    },
+  
+  }
+  </script>
+
+  <style scoped>
+  </style>
+
+
+
+
+
+
+

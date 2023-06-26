@@ -4,6 +4,7 @@ var mysql = require('mysql2');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const {cloneMachine} = require(path.resolve(__dirname, 'proxmox.js'))
 const  {sendPasswordEmail} = require(path.resolve(__dirname, 'emails.js'))
+const {setCookie} = require(path.resolve(__dirname, 'cookies.js'))
 const feedback_fetch = (text, res) => {
     res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'}); 
     res.write(text); 
@@ -19,7 +20,6 @@ const queryToDB = (sql, params) => {
     return new Promise((resolve, reject) =>{
         con.connect(function(err) {
             if (err) throw err;
-            console.log("Connected!");
             
             con.query(sql, params, function (err, result) {
             if (err) {console.log(err); reject()};
@@ -36,10 +36,9 @@ const getGroups = (res) => {
 }
 
 const eliminateGroup = (req, res) => {
-    id = req.query['user'].split('root')[1];
-    console.log(id)
+    id = req.query['id'];
     sql = `DELETE FROM docente.groups WHERE idgroup=(?)`
-    queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+    queryToDB(sql, [id]).then(x =>{feedback_fetch("Y", res)})
 }
 
 const getEmails = (res) => {    
@@ -48,37 +47,36 @@ const getEmails = (res) => {
 }
 
 const eliminateEmail = (req, res) => {
-    id = req.query['user'].split('root')[1];
-    console.log(id)
+    id = req.query['id'];
     sql = `DELETE FROM docente.emails WHERE email_id=(?)`
-    queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+    queryToDB(sql, [id]).then(x =>{feedback_fetch("Y", res)})
 }
 
 const getSubjects = (res) => {  
-    console.log("getSubjects")  
+    console.log("getSubjects")
     sql = `SELECT * FROM docente.subjects`
     queryToDB(sql).then(x =>{feedback_fetch(JSON.stringify(x), res)})
 }
 
-const addSubject = (req,res) => {
-    console.log("addSuybject", req.query)
+const addSubject = async (req,res) => {
+    console.log("addSubject", req.query)
     id = req.query['id'];
-    console.log(id)
-    sql = `INSERT INTO docente.subjects (idsubjects, subject_name) VALUES (?, ?)` 
-    queryToDB(sql, [id.slice(-3),id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+    sql = `INSERT INTO docente.subjects (idsubject, subject_name) VALUES (?, ?)` 
+    // id.slice(0,-(id.split('-').pop().length + 1)) This monstrocity gets everything before last dash == subject_name 
+    // Ex: 2022-1-FX-1 -> 2022-1-FX        2023-2-STDW-10 -> 2023-2-STDW 
+    await queryToDB(sql, [id.split('-').pop(), id.slice(0,-(id.split('-').pop().length + 1))]).catch(x=>console.log(x))
+    feedback_fetch("Y", res)
 }
 const eliminateSubject = (req, res) => {
     console.log("eliminateSubject")
-    id = req.query['user'].split('root')[1];
-    console.log(id)
-    sql = `DELETE FROM docente.subjects WHERE idsubjects=(?)`
-    queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+    id = req.query['id'];
+    sql = `DELETE FROM docente.subjects WHERE idsubject=(?)`
+    queryToDB(sql, [parseInt(id)]).then(x =>{console.log(x);feedback_fetch("Y", res)})
 }
 const activateSubject = (req,res) => {
     console.log("activateSubject", req.query)
     id = req.query['id'];
-    console.log(id)
-    sql = `UPDATE docente.subjects SET active=(active+1)%2 WHERE idsubjects=(?)` 
+    sql = `UPDATE docente.subjects SET active=(active+1)%2 WHERE idsubject=(?)` 
     queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
 }
 const authenticate = async(req, res) => {
@@ -87,17 +85,16 @@ const authenticate = async(req, res) => {
         pass = req.query['pass']
         pass_hash =""
         if (user.startsWith(process.env.ROOT_USER) && pass == process.env.ROOT_PASS){
-            resolve()
+            resolve("root")
         }else{
         sql = `SELECT p_hash FROM docente.groups WHERE name=?  `            
         queryToDB(sql, [user]).then(async x =>{
-            console.log(x)
             if (x.length > 0){
                 pass_hash = x[0].p_hash
                 console.log("Password_hash: ", pass_hash, "Password: ", pass)
                 auth = await bcrypt.compare(pass, pass_hash);
                 console.log("auth: ", auth)
-                if (auth){resolve()}   
+                if (auth){resolve(user)}   
             }
             reject()
         })}
@@ -107,10 +104,9 @@ const authenticate = async(req, res) => {
 const registerGroup = async (req, res) => {
     user = req.query['user']
     emails = (req.query['email']).split('xv3dz1g')
-    console.log(emails)
-
     password = generatePassword()
-    group = await generateGroup(user)
+    idgroup = await generateGroup(user)
+    nameGroup = user + '-' + idgroup
     p_hash = await bcrypt.hash(password, 10);
     feedback_check = await checkEmails(emails, res)
     if (feedback_check != "Correct"){
@@ -118,35 +114,40 @@ const registerGroup = async (req, res) => {
         return 0
     }
     let promises = [];
-    sql = `INSERT INTO docente.groups (name, p_hash) VALUES (?, ?)`                       
-    promises.push(queryToDB(sql, [group, p_hash])
+    sql = `INSERT INTO docente.groups (idgroup, name, p_hash) VALUES (?, ?, ?)`                       
+    promises.push(queryToDB(sql, [idgroup, nameGroup, p_hash])
             .then(console.log("Group Registrat"))
             .catch(x=>feedback_fetch("Error mySQL docente.groups: " + x, res)))
     sql = `INSERT INTO docente.emails (email, group_name) VALUES (?, ?) `
     
-    emails.forEach(email => promises.push(queryToDB(sql, [email, group])
+    emails.forEach(email => promises.push(queryToDB(sql, [email, nameGroup])
         .then(console.log("Email Registrat"))
         .catch(x=>feedback_fetch("Error mySQL docente.groups: " + x, res)))) 
-    
-    Promise.all(promises).then(() =>{
-        cloneMachine(group).then(clone_res=>{
-            if (clone_res == "Success") {
-                sendPasswordEmail(emails, group, password)
-                feedback_fetch("Y", res)
-            }else{
-                feedback_fetch("Error cloning the machine", res)
-            }
-        }) 
-        
-        
+
+    Promise.all(promises).then(async () =>{
+        cloneRes = await cloneMachine(idgroup)
+        console.log("cloneRes: ", cloneRes)
+        if (cloneRes == "Success") {
+            sendPasswordEmail(emails, nameGroup, idgroup, password)
+            feedback_fetch("Y", res)
+        }else{
+            feedback_fetch("Error cloning the machine", res)
+        }
+                
     })
 }
 
-function generateGroup(user) {
-    return new Promise((resolve, reject) => {
-        idgroup = 0
-        sql = `SELECT idgroup FROM docente.groups ORDER BY idgroup DESC LIMIT 1`                
-        idgroup =queryToDB(sql).then(x => {if (x.length>0){idgroup = 101+x[0].idgroup;}else{idgroup = 101} resolve(user+'-'+idgroup)})
+function  generateGroup (user) {
+    return new Promise(async (resolve, reject) => {
+        sql = `SELECT idsubject FROM docente.subjects WHERE subject_name = (?)` 
+        idsubject = await queryToDB(sql, [user])
+        idsubject = idsubject[0]['idsubject']
+        sql = `SELECT MAX(idgroup) as idgroup_max FROM docente.groups WHERE (idgroup - (idgroup MOD 100)) /100 = (?) `                
+        idgroups = await queryToDB(sql, [idsubject])
+        idgroups = idgroups[0]['idgroup_max']
+        if (idgroups != null){idgroup = idgroups+1;}
+        else {idgroup = idsubject*100;}
+        resolve(idgroup)
     })
 }
 
@@ -205,10 +206,10 @@ const restartDatabase = async() =>{
               ON UPDATE CASCADE);`
         await queryToDB(sql)      
         sql = `CREATE TABLE docente.subjects (
-            idsubjects INT NOT NULL,
+            idsubject INT NOT NULL,
             subject_name VARCHAR(45) NULL,
             active TINYINT NULL DEFAULT 0,
-            PRIMARY KEY (idsubjects));`
+            PRIMARY KEY (idsubject));`
         await queryToDB(sql) 
         
     })

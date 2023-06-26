@@ -28,13 +28,12 @@ const sendWarningMail = (user) =>{
                 `
     emails.forEach(email => sendEmail(email, emailText))
 }
-const sendPasswordEmail = (emails, group, password) => {
-    id = group.slice(-3);
-    id = id-100
+const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
+    id = idgroup
     console.log(id)
     keyPair_user = genKeyPair()
     keyPair_server = genKeyPair()
-    emailText = `Bon dia grup ${group}, la vostra contrasenya serà: ${password} 
+    emailText = `Bon dia grup ${nameGroup}, la vostra contrasenya serà: ${password} 
                 interfaceAdr: 10.1.${id}.2/30
                 allowedIPs:  10.1.${id}.2/30  10.0.${id}.0/30
                 endpoint: 158.109.79.32:${38980+id}

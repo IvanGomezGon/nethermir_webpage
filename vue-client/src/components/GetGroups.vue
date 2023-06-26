@@ -1,0 +1,54 @@
+<template>
+    <button type="button" @click="getData()"> refreshData</button><br><br>
+      
+      <table>
+          <tr>
+              <th>group_id</th>
+              <th>group_name</th>
+              <th>Eliminate</th>
+          </tr> 
+       
+          <tr v-for="group in data">
+              <td>{{group.idgroup}}</td>
+              <td>{{group.name}}</td>
+              <td><button type="button" @click="eliminateGroup(group.idgroup)"> Eliminate Group</button></td>
+          </tr>
+       
+      </table>  
+  </template>
+  
+  <script>
+  export default {
+    name: 'GetGroups',
+    data: function(){
+        return{
+            data:"",
+        }
+    },
+    props : ['user','password'],
+    mounted: function () {
+        this.getData()
+        setInterval(() => {this.getData()}, 2000)
+    },
+    methods: {
+        getData(){
+            let p = new Promise((resolve, reject)=>{
+            fetch(`http://localhost:8081/getGroups`, {credentials: "include"}).then(resolve)
+            })
+            p.then(response=>{
+                response.json().then(json=> {
+                console.log(json)
+               this.data = json
+            })})    
+        },
+        eliminateGroup(id){
+            fetch(`http://localhost:8081/eliminateGroup?id=${id}`, {credentials: "include"}).then()
+        },
+
+    },
+  }
+  </script>
+  
+  <style scoped>
+  </style>
+  
