@@ -25,6 +25,12 @@ const port = process.env.LISTENING_PORT
 app.use(cors(corsOptions)) 
 app.use(cookieParser())
 
+app.get('/checkCookie', function(req, res){
+    console.log("checkCookie")
+    checkCookie(req,res)
+        .then((user) => feedback_fetch(user, res))
+        .catch(() => console.log("checkCookie failed"))
+})
 app.get('/activateMachine', function(req, res){
     console.log("activateMachine")
     checkCookie(req,res)
@@ -58,7 +64,6 @@ app.get('/getNode', function(req, res){
     .catch(() => {console.log("Failed to getNode")})
 })
 app.get('/getGroups', function(req, res){
-    console.log("getGroups")
     checkCookie(req,res)
         .then(()=> {getGroups(res)})
         .catch(() => {console.log("Failed to getGroups")})
@@ -82,7 +87,6 @@ app.get('/eliminateEmail', function(req, res){
         .catch(() => {console.log("Failed to eliminateEmail")})
 })
 app.get('/getSubjects', function(req, res){
-    console.log("getSubjects")
     getSubjects(res)
         
 })

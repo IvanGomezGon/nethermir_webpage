@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-container">
+  <div class="flex-container" v-if="render">
     <div class="header">
         <HeaderUser/>
     </div>
@@ -19,12 +19,23 @@
     name: 'controlPannelUser',
     data: ()=>{
     return {
+      render: false,
     }
     },
     components: {
         GetInfoVM,
         HeaderUser,
-    }
+    },
+    // TODO: Change this for Router Navigation guards 
+    // https://stackoverflow.com/questions/69148784/stop-vue-page-from-loading-till-data-fetch-is-loaded
+    beforeCreate: function () {
+            fetch(`http://localhost:8081/checkCookie`, {credentials: "include"}).then(response=>{
+                response.text().then(text=> {
+                    console.log("TEXT: ", text)
+                    if (text == 'root' || text == 'failed-login'){this.$router.push('/')}
+                    else {this.render = true}
+            })})
+    },
   }
   
   </script>

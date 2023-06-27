@@ -5,12 +5,14 @@
           <tr>
               <th>group_id</th>
               <th>group_name</th>
+              <th>active</th>
               <th>Eliminate</th>
           </tr> 
        
           <tr v-for="group in data">
               <td>{{group.idgroup}}</td>
               <td>{{group.name}}</td>
+              <td>{{group.active}}</td>
               <td><button type="button" @click="eliminateGroup(group.idgroup)"> Eliminate Group</button></td>
           </tr>
        

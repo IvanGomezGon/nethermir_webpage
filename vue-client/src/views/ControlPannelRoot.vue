@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="render">
         <div class="flex-container">
             <div class="header">
                 <HeaderRoot  v-model="active"/>
@@ -42,7 +42,17 @@
         emailsInfo: false,
         subjectsInfo: false,
         areYouSure: false,
+        render: false,
     }
+    },
+    // TODO: Change this for Router Navigation guards 
+    // https://stackoverflow.com/questions/69148784/stop-vue-page-from-loading-till-data-fetch-is-loaded
+    beforeCreate: function () {
+            fetch(`http://localhost:8081/checkCookie`, {credentials: "include"}).then(response=>{
+                response.text().then(text=> {
+                    if (text != 'root'){this.$router.push('/')}
+                    else {this.render = true}
+            })})
     },
     watch: {
         active: {

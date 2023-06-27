@@ -45,13 +45,11 @@ const getNodes = (res) => {
 const getNode = (user, req, res) => {
     try{
         if (user == null){vmID = req.query['id']}
-        else {vmID = user.slice(-3)} 
-        console.log(vmID)    
+        else {vmID = user.slice(-3)}   
         proxmox.qemu.getStatusCurrent(PROXMOX_SERVERS[0],vmID,(err, data) =>{
             if (err) {console.log("mal")}
             else{
                 data_json = JSON.parse(data).data
-                console.log()
                 feedback_fetch(JSON.stringify(data_json), res)
             }
         }) 

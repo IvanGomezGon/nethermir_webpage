@@ -22,7 +22,7 @@ const queryToDB = (sql, params) => {
             if (err) throw err;
             
             con.query(sql, params, function (err, result) {
-            if (err) {console.log(err); reject()};
+            if (err) {console.log("Err:", err); reject()};
             resolve(result);
             });
         });
@@ -53,7 +53,6 @@ const eliminateEmail = (req, res) => {
 }
 
 const getSubjects = (res) => {  
-    console.log("getSubjects")
     sql = `SELECT * FROM docente.subjects`
     queryToDB(sql).then(x =>{feedback_fetch(JSON.stringify(x), res)})
 }
@@ -79,6 +78,13 @@ const activateSubject = (req,res) => {
     sql = `UPDATE docente.subjects SET active=(active+1)%2 WHERE idsubject=(?)` 
     queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
 }
+
+const activateGroup = (id) => {
+    console.log("activateGroup")
+    sql = `UPDATE docente.groups SET active=(active+1)%2 WHERE idgroup=(?)` 
+    queryToDB(sql, [id]).then(x =>{console.log(x)})
+}
+
 const authenticate = async(req, res) => {
     return new Promise ((resolve, reject) => {
         user = req.query['user']
@@ -87,14 +93,24 @@ const authenticate = async(req, res) => {
         if (user.startsWith(process.env.ROOT_USER) && pass == process.env.ROOT_PASS){
             resolve("root")
         }else{
-        sql = `SELECT p_hash FROM docente.groups WHERE name=?  `            
+        sql = `SELECT idgroup, active, p_hash FROM docente.groups WHERE name=?`            
         queryToDB(sql, [user]).then(async x =>{
             if (x.length > 0){
                 pass_hash = x[0].p_hash
-                console.log("Password_hash: ", pass_hash, "Password: ", pass)
                 auth = await bcrypt.compare(pass, pass_hash);
-                console.log("auth: ", auth)
-                if (auth){resolve(user)}   
+                if (auth){
+                    if (x[0].active != 1){
+                        cloneRes = await cloneMachine(x[0].idgroup)
+                        if (cloneRes == "Success") {activateGroup(x[0].idgroup); resolve(user)}
+                        else {
+                            feedback_fetch("Clonning failed - Contact Professor", res)
+                            reject()
+                        }
+                            
+                    }else{
+                        resolve(user)
+                    }
+                }   
             }
             reject()
         })}
@@ -125,15 +141,8 @@ const registerGroup = async (req, res) => {
         .catch(x=>feedback_fetch("Error mySQL docente.groups: " + x, res)))) 
 
     Promise.all(promises).then(async () =>{
-        cloneRes = await cloneMachine(idgroup)
-        console.log("cloneRes: ", cloneRes)
-        if (cloneRes == "Success") {
-            sendPasswordEmail(emails, nameGroup, idgroup, password)
-            feedback_fetch("Y", res)
-        }else{
-            feedback_fetch("Error cloning the machine", res)
-        }
-                
+        sendPasswordEmail(emails, nameGroup, idgroup, password)
+        feedback_fetch("Y", res)           
     })
 }
 
@@ -187,11 +196,11 @@ const restartDatabase = async() =>{
             idgroup INT NOT NULL AUTO_INCREMENT,
             name VARCHAR(45) NOT NULL,
             p_hash VARCHAR(60) NULL,
+            active TINYINT NULL DEFAULT 0,
             PRIMARY KEY (idgroup),
             UNIQUE INDEX idgroup_UNIQUE (idgroup ASC) VISIBLE,
             UNIQUE INDEX name_UNIQUE (name ASC) VISIBLE,
-            UNIQUE INDEX p_hash_UNIQUE (p_hash ASC) VISIBLE);       
-          ` 
+            UNIQUE INDEX p_hash_UNIQUE (p_hash ASC) VISIBLE);` 
         await queryToDB(sql)  
         sql = `CREATE TABLE docente.emails (
             email_id INT NOT NULL AUTO_INCREMENT,

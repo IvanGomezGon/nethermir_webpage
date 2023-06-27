@@ -64,7 +64,7 @@
     },    
     mounted: function () {
         this.getData()
-        setInterval(() => {this.getData()}, 2000)
+        setInterval(() => {this.getData()}, 10000)
     },
     computed:{
 
@@ -74,7 +74,6 @@
             let retSubjects = []
             if (this.data){
                 for (var index in this.data){
-                    console.log("theres subject")
                     if (this.data[index]['active']==1 && !retSubjects.includes(this.data[index]['subject_name'].slice(0,-7))){
                     if (this.curs==""){retSubjects.push(this.data[index]['subject_name'].slice(0,-7))}
                     else if (this.data[index]['subject_name'].slice(-6) == this.curs){retSubjects.push(this.data[index]['subject_name'].slice(0,-7))}}
@@ -117,8 +116,6 @@
         register(){
             this.feedback="Processing register..."
             let emailsString = this.emails.join('xv3dz1g')
-            console.log("REGISTER")
-            console.log(emailsString)
             let p = new Promise((resolve, reject)=>{
             fetch(`http://localhost:8081/register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
             })
