@@ -13,8 +13,7 @@ const activateMachine = (user, req, res) =>{
     try{
         if (req.query['hours']<1) {feedback_fetch("N", res); return 0;}
         if (user == null){vmID = req.query['id']}
-        else {vmID = user.slice(-3)}     
-        console.log(`Activating machine ${vmID}`)
+        else {vmID = user.split("-").pop()}     
         proxmox.qemu.start(PROXMOX_SERVERS[0], vmID, (err, data)=>{feedback_fetch("Y", res)})
         setTimeout(function(){sendWarningMail(req.query['user'])}, req.query['hours']*3600000-1800000)
         setTimeout(function(){sendWarningMail(req.query['user'])}, 1800000)
@@ -24,7 +23,7 @@ const activateMachine = (user, req, res) =>{
 const stopMachine = (user, req, res) =>{
     try{
         if (user == null){vmID = req.query['id']}
-        else {vmID = user.slice(-3)}     
+        else {vmID = user.split("-").pop()}     
         console.log(`Activating machine ${req.query['node']}`)
         proxmox.qemu.stop(PROXMOX_SERVERS[0], vmID, (err, data)=>{feedback_fetch("Y", res)})   
     }catch{}
@@ -45,7 +44,7 @@ const getNodes = (res) => {
 const getNode = (user, req, res) => {
     try{
         if (user == null){vmID = req.query['id']}
-        else {vmID = user.slice(-3)}   
+        else {vmID = user.split("-").pop()}   
         proxmox.qemu.getStatusCurrent(PROXMOX_SERVERS[0],vmID,(err, data) =>{
             if (err) {console.log("mal")}
             else{
@@ -74,14 +73,14 @@ const cloneMachine = (group) =>{
 
 const resumeMachine = (user, req, res) => {
     if (user == null){vmID = req.query['id']}
-    else {vmID = user.slice(-3)}   
+    else {vmID = user.split("-").pop()}   
     console.log(`Resuming machine ${vmID}`)
     proxmox.qemu.resume(PROXMOX_SERVERS[0], vmID, (err, data)=>{feedback_fetch("Y", res)})  
 }
 
 const suspendMachine = (user, req, res) => {
     if (user == null){vmID = req.query['id']}
-    else {vmID = user.slice(-3)}   
+    else {vmID = user.split("-").pop()}   
     console.log(`Suspending machine ${vmID}`)
     proxmox.qemu.suspend(PROXMOX_SERVERS[0], vmID, (err, data)=>{console.log(err, data)})  
 }
