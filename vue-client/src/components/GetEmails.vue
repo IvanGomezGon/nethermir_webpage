@@ -34,7 +34,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/getEmails`, {credentials: "include"}).then(resolve)
+            fetch(`http://192.168.30.2:80/backend/getEmails`, {credentials: "include"}).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -43,7 +43,7 @@
             })})    
         },
         eliminateEmail(id){
-            fetch(`http://localhost:8081/eliminateEmail?id=${id}`, {credentials: "include"}).then()
+            fetch(`http://192.168.30.2:80/backend/eliminateEmail?id=${id}`, {credentials: "include"}).then()
         },
 
     },

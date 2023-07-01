@@ -95,7 +95,7 @@
 
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/getSubjects`).then(resolve)
+            fetch(`http://192.168.30.2:80/backend/getSubjects`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -117,7 +117,7 @@
             this.feedback="Processing register..."
             let emailsString = this.emails.join('xv3dz1g')
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
+            fetch(`http://192.168.30.2:80/backend/register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 if (y == "Y"){

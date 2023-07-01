@@ -48,7 +48,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://localhost:8081/getNode`, {credentials: "include"}).then(resolve)
+            fetch(`http://192.168.30.2:80/backend/getNode`, {credentials: "include"}).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -56,14 +56,14 @@
             })})    
         },
         activateVM(id){
-            fetch(`http://localhost:8081/activateMachine`, {credentials: "include"}).then()
+            fetch(`http://192.168.30.2:80/backend/activateMachine`, {credentials: "include"}).then()
         },
         resumeVM(){
             if (this.hours>0 && this.hours<7){
-            fetch(`http://localhost:8081/resumeMachine?hours=${this.hours}`, {credentials: "include"}).then()}
+            fetch(`http://192.168.30.2:80/backend/resumeMachine?hours=${this.hours}`, {credentials: "include"}).then()}
         },
         suspendVM(){
-            fetch(`http://localhost:8081/suspendMachine?`, {credentials: "include"}).then()
+            fetch(`http://192.168.30.2:80/backend/suspendMachine?`, {credentials: "include"}).then()
         },
         getColor(status, cpu){
             return status == "stopped" ? "red" : cpu<0.005 ? "orange" : "green"
