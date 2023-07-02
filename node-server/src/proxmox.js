@@ -35,6 +35,7 @@ const getNodes = (req, res) => {
         proxmox.getQemu(PROXMOX_SERVERS[req.query['server']],(err, data) =>{
             if (err) {console.log("mal")}
             else{
+                console.log("datajson: ", data_json)
                 data_json = JSON.parse(data).data
                 data_json.sort((a,b) => a['vmid'] - b['vmid'])
                 feedback_fetch(JSON.stringify(data_json), res)
