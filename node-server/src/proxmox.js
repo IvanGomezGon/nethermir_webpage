@@ -1,6 +1,6 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
-proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASS, process.env.PROXMOX_DOM)
+const proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASS, process.env.PROXMOX_DOM)
 const PROXMOX_SERVERS=process.env.PROXMOX_SERVERS.split(' ');
 const  {sendWarningMail} = require(path.resolve(__dirname, 'emails.js'))
 const feedback_fetch = (text, res) => {
@@ -35,7 +35,6 @@ const getNodes = (req, res) => {
         proxmox.getQemu(PROXMOX_SERVERS[req.query['server']],(err, data) =>{
             if (err) {console.log("mal")}
             else{
-                console.log("datajson: ", data_json)
                 data_json = JSON.parse(data).data
                 data_json.sort((a,b) => a['vmid'] - b['vmid'])
                 feedback_fetch(JSON.stringify(data_json), res)
