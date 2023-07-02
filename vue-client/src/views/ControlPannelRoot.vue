@@ -6,18 +6,18 @@
             </div>
         
         <div class="inner-element rootControl" v-if="proxmoxInfo">
-            <GetProxmoxVMs :user="user" :password="password"/>         
+            <GetProxmoxVMs />         
         </div>
 
         <div class="inner-element rootControl" v-if="groupsInfo" style="height:auto;">
-            <GetGroups :user="user" :password="password"/>
+            <GetGroups />
         </div>
         
         <div class="inner-element rootControl" v-if="emailsInfo" style="height:auto;">
-            <GetEmails :user="user" :password="password"/>
+            <GetEmails />
         </div>
         <div class="inner-element rootControl" v-if="subjectsInfo" style="height:auto;">
-            <GetSubjects :user="user" :password="password"/>
+            <GetSubjects />
         </div>
     </div>
     </div>

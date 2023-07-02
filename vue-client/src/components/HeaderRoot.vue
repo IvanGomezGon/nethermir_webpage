@@ -8,6 +8,7 @@
         <a href="#" class="header_element" @click="switchTab('emailsInfo')">EMAILS INFO</a>
         <a href="#" class="header_element" @click="switchTab('subjectsInfo')">SUBJECTS INFO</a>
         <a href="#" class="header_element" @click="this.$router.push('/restartDatabase')">RESTART DATABASE</a>
+        <button class="logout" @click="eliminateCookie()">LOG OUT</button>
     </div>
   </template>
   
@@ -23,6 +24,10 @@
             else {activeTabs[0] = activeTabs[1]; activeTabs[1] = tab}
             console.log(activeTabs)
             this.$emit('update:modelValue', activeTabs)
+        },
+        eliminateCookie(){
+            fetch(`http://192.168.30.2:80/backend/eliminateCookie`, {credentials: "include"}).then()
+            this.$router.push('/')
         }
     },
   

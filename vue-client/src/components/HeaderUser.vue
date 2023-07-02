@@ -3,6 +3,7 @@
     <div class="header">
         <img src="../assets/logo_uab.png" class="logo" @click="this.$router.push('/')">
         <h3 class="header_element">TECTONIC CONTROL PANNEL - USER</h3>
+        <button class="push logout" @click="eliminateCookie()">LOG OUT</button>
 
     </div>
   </template>
@@ -12,7 +13,10 @@
     name: 'HeaderRoot',
     props:['modelValue'],
     methods:{
-
+      eliminateCookie(){
+            fetch(`http://192.168.30.2:80/backend/eliminateCookie`, {credentials: "include"}).then()
+            this.$router.push('/')
+        }
     },
   
   }
