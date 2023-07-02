@@ -1,6 +1,6 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
-const proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASS, process.env.PROXMOX_DOM)
+proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASS, process.env.PROXMOX_DOM)
 const PROXMOX_SERVERS=process.env.PROXMOX_SERVERS.split(' ');
 const  {sendWarningMail} = require(path.resolve(__dirname, 'emails.js'))
 const feedback_fetch = (text, res) => {
@@ -29,8 +29,10 @@ const stopMachine = (user, req, res) =>{
     }catch{}
      
 }
-const getNodes = (res) => {
+const getNodes = (req, res) => {
     try{
+        proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASS, process.env.PROXMOX_DOM.split(" ")[req.query['server']])
+
         proxmox.getQemu(PROXMOX_SERVERS[0],(err, data) =>{
             if (err) {console.log("mal")}
             else{

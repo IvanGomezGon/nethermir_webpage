@@ -18,7 +18,7 @@ const feedback_fetch = (text, res) => {
 } 
 const {activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine} = require(path.resolve(__dirname, 'proxmox.js'))
 const {getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject} = require (path.resolve(__dirname, 'database.js'))
-const {setCookie, checkCookie} = require(path.resolve(__dirname, 'cookies.js'))
+const {setCookie, checkCookie, eliminateCookie} = require(path.resolve(__dirname, 'cookies.js'))
 
 const app = express()
 const port = process.env.LISTENING_PORT
@@ -55,7 +55,7 @@ app.get('/backend/register', function(req, res){
 })
 app.get('/backend/getNodes', function(req, res){
     checkCookie(req,res)
-        .then(()=> {getNodes(res)})
+        .then(()=> {getNodes(req, res)})
         .catch(() => {console.log("Failed to getNodes")})
 })
 app.get('/backend/getNode', function(req, res){
@@ -127,6 +127,9 @@ app.get('/backend/suspendMachine', function(req, res){
         .then((user)=> {if (req.query['id'] != null){suspendMachine(null, req,res)}else{suspendMachine(user, req, res)}})
         .catch(() =>{console.log("Failed to resumeMachine")})
 })
-
+app.get('/backend/eliminateCookie', function(req, res){
+    console.log("EliminateCookie")
+    eliminateCookie(req,res)
+})
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 

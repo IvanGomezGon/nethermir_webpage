@@ -31,14 +31,16 @@ const checkCookie = (req, res) => {
             feedback_fetch('failed-login', res)
             reject()
         }
-    })
-
-    
-    
+    })  
+}
+const eliminateCookie = (req, res) => {
+    res.clearCookie("token")
+    feedback_fetch('y', res)
 }
 
 module.exports = {
     setCookie,
     checkCookie,
+    eliminateCookie
  }
 

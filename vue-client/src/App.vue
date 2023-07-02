@@ -126,4 +126,17 @@ a.header_element:hover{
     margin-top:150px;
     padding:30px;
   }
+  .logout{
+    background-color: red; 
+    color: white; 
+    width:90px; 
+    font-weight: bold;
+    margin-right: 10px;
+    border-color: rgba(255, 0, 0, 0.822);
+    border-width: 3px; 
+}
+.logout:hover{
+    background-color: white;
+    color: red;
+}
 </style>
