@@ -16,7 +16,7 @@ const feedback_fetch = (text, res) => {
     res.write(text); 
     res.end();
 } 
-const {activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine} = require(path.resolve(__dirname, 'proxmox.js'))
+const {activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine, eliminateMachine} = require(path.resolve(__dirname, 'proxmox.js'))
 const {getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject} = require (path.resolve(__dirname, 'database.js'))
 const {setCookie, checkCookie, eliminateCookie} = require(path.resolve(__dirname, 'cookies.js'))
 
@@ -24,6 +24,8 @@ const app = express()
 const port = process.env.LISTENING_PORT
 app.use(cors(corsOptions)) 
 app.use(cookieParser())
+
+// ALL BACKEND CALLS FROM FRONTEND
 
 app.get('/backend/checkCookie', function(req, res){
     console.log("checkCookie")
@@ -71,6 +73,7 @@ app.get('/backend/getGroups', function(req, res){
 app.get('/backend/eliminateGroup', function(req, res){
     console.log("eliminateGroup")
     checkCookie(req,res)
+//      .then((user) => {eliminateMachine(user, req, res)})
         .then(()=> {eliminateGroup(req, res)})
         .catch(() => {console.log("Failed to eliminateGroup")})
 })
@@ -131,5 +134,11 @@ app.get('/backend/eliminateCookie', function(req, res){
     console.log("EliminateCookie")
     eliminateCookie(req,res)
 })
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.get('/backend/eliminateMachine', function(req,res){
+    console.log("EliminateMachine")
+    checkCookie(req,res)
+    .then((user)=> {if (req.query['id'] != null){eliminateMachine(null, req,res)}else{eliminateMachine(user, req, res)}})
+    .catch(() =>{console.log("Failed to EliminateMachine")})
+})
+app.listen(port, () => console.log(`App listening on port ${port}!`))
 
