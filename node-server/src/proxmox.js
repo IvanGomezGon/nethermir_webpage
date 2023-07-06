@@ -34,7 +34,6 @@ const stopMachine = (user, req, res) =>{
 }
 const getNodes = (req, res) => {
     try{
-        console.log("getNodes", PROXMOX_SERVERS[req.query['server']])
         proxmox.getQemu(PROXMOX_SERVERS[req.query['server']],(err, data) =>{
             if (err) {console.log("mal")}
             else{
