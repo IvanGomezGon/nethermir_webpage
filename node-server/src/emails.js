@@ -30,9 +30,9 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
     keyPair_user = genKeyPair()
     keyPair_server = genKeyPair()
     emailText = `Bon dia grup ${nameGroup}, la vostra contrasenya serà: ${password} 
-                interfaceAdr: 10.1.${id}.2/30
-                allowedIPs:  10.1.${id}.2/30  10.0.${id}.0/30
-                endpoint: 158.109.79.32:${38980+id}
+                interfaceAdr: 10.1.1.2/30
+                allowedIPs:  10.1.1.0/30  10.0.2.0/30
+                endpoint: 158.109.79.32:${65434+id}
                 pubkey: ${keyPair_server.pub}
                 privkey:${keyPair_user.prv}`
     //TODO: save db key_pair privs 
