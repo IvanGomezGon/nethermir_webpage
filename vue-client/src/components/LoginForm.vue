@@ -48,7 +48,7 @@
         login(){
             this.feedback="Processing login..."
             
-            fetch(`http://192.168.30.2:80/backend/login?user=${this.usuari}&pass=${this.password}`, {credentials: "include"}).then(x=>{x.text().then(y=> {
+            fetch(`http://nethermir.uab.cat:80/backend/login?user=${this.usuari}&pass=${this.password}`, {credentials: "include"}).then(x=>{x.text().then(y=> {
                 if (y == "root"){
                     this.$router.push('/controlPannelRoot')
                 }else if (y == 'user'){

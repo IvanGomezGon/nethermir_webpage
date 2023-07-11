@@ -26,7 +26,7 @@
             this.$emit('update:modelValue', activeTabs)
         },
         eliminateCookie(){
-            fetch(`http://192.168.30.2:80/backend/eliminateCookie`, {credentials: "include"}).then()
+            fetch(`http://nethermir.uab.cat:80/backend/eliminateCookie`, {credentials: "include"}).then()
             this.$router.push('/')
         }
     },
