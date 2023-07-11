@@ -197,6 +197,7 @@ const restartDatabase = async() =>{
             name VARCHAR(45) NOT NULL,
             p_hash VARCHAR(60) NULL,
             active TINYINT NULL DEFAULT 0,
+            vlan_id INT NOT NULL AUTO_INCREMENT=${process.env.WIREGUARD_PORT_START},
             PRIMARY KEY (idgroup),
             UNIQUE INDEX idgroup_UNIQUE (idgroup ASC) VISIBLE,
             UNIQUE INDEX name_UNIQUE (name ASC) VISIBLE,
