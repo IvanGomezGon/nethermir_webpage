@@ -193,12 +193,12 @@ const restartDatabase = async() =>{
         sql = `CREATE SCHEMA nethermir; `  
         await queryToDB(sql)
         sql = `CREATE TABLE nethermir.groups (
-            idgroup INT NOT NULL AUTO_INCREMENT,
+            idgroup INT NOT NULL,
             name VARCHAR(45) NOT NULL,
             p_hash VARCHAR(60) NULL,
             active TINYINT NULL DEFAULT 0,
-            vlan_id INT NOT NULL AUTO_INCREMENT=${process.env.WIREGUARD_PORT_START},
-            PRIMARY KEY (idgroup),
+            vlan_id INT NOT NULL AUTO_INCREMENT,
+            PRIMARY KEY (vlan_id),
             UNIQUE INDEX idgroup_UNIQUE (idgroup ASC) VISIBLE,
             UNIQUE INDEX name_UNIQUE (name ASC) VISIBLE,
             UNIQUE INDEX p_hash_UNIQUE (p_hash ASC) VISIBLE);` 
