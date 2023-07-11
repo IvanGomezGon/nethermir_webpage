@@ -18,7 +18,7 @@
                 <legend> Password: </legend>
                 <input type="password" v-model="password" placeholder="**********">
             </fieldset><br><br>   
-            <button type="button" @click="checkLogin()">Login</button><br>
+            <button type="button" @click="checkLogin()">Login</button><br><br>
             <router-link to="/register">Don't have an account yet? Register! </router-link><br><br>
         </div>
     </div>
