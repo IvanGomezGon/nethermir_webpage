@@ -6,14 +6,10 @@ const sendEmail = async (sendTo, txt) => {
     const transporter = nodeMailer.createTransport({
         host: process.env.SMTP_SERVER,
         port: process.env.SMTP_PORT,
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }  
+        secure: false
     });
     const info = await transporter.sendMail({
-        from: 'UAB <ivangg02@gmail.com>',
+        from: process.env.EMAIL_USER,
         to: sendTo,
         subject: 'Config wireguard ',
         html: txt,           
