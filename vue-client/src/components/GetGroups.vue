@@ -37,7 +37,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://nethermir.uab.cat:80/backend/getGroups`, {credentials: "include"}).then(resolve)
+            fetch(`https://nethermir.uab.cat/backend/getGroups`, {credentials: "include"}).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -46,7 +46,7 @@
             })})    
         },
         eliminateGroup(id){
-            fetch(`http://nethermir.uab.cat:80/backend/eliminateGroup?id=${id}`, {credentials: "include"}).then()
+            fetch(`https://nethermir.uab.cat/backend/eliminateGroup?id=${id}`, {credentials: "include"}).then()
         },
 
     },

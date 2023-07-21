@@ -34,7 +34,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://nethermir.uab.cat:80/backend/getEmails`, {credentials: "include"}).then(resolve)
+            fetch(`https://nethermir.uab.cat/backend/getEmails`, {credentials: "include"}).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -43,7 +43,7 @@
             })})    
         },
         eliminateEmail(id){
-            fetch(`http://nethermir.uab.cat:80/backend/eliminateEmail?id=${id}`, {credentials: "include"}).then()
+            fetch(`https://nethermir.uab.cat/backend/eliminateEmail?id=${id}`, {credentials: "include"}).then()
         },
 
     },
