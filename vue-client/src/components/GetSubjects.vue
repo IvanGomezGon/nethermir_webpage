@@ -58,7 +58,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://nethermir.uab.cat:80/backend/getSubjects`).then(resolve)
+            fetch(`https://nethermir.uab.cat/backend/getSubjects`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -67,13 +67,13 @@
             })})    
         },
         eliminateSubject(id){
-            fetch(`http://nethermir.uab.cat:80/backend/eliminateSubject?id=${id}`, {credentials: "include"}).then()
+            fetch(`https://nethermir.uab.cat/backend/eliminateSubject?id=${id}`, {credentials: "include"}).then()
         },
         addSubject(){
-            fetch(`http://nethermir.uab.cat:80/backend/addSubject?id=${this.assignatura+"-"+this.curs+"-"+this.vmTemplateID}`, {credentials: "include"}).then()
+            fetch(`https://nethermir.uab.cat/backend/addSubject?id=${this.assignatura+"-"+this.curs+"-"+this.vmTemplateID}`, {credentials: "include"}).then()
         },
         activateSubject(id){
-            fetch(`http://nethermir.uab.cat:80/backend/activateSubject?id=${id}`, {credentials: "include"}).then()
+            fetch(`https://nethermir.uab.cat/backend/activateSubject?id=${id}`, {credentials: "include"}).then()
         }
 
     },

@@ -5,7 +5,7 @@ const cors=require('cors');
 const cookieParser = require('cookie-parser')
 
 const corsOptions ={
-   origin:'http://nethermir.uab.cat', 
+   origin:'https://nethermir.uab.cat', 
    credentials:true,            //access-control-allow-credentials:true
    optionSuccessStatus:200,
    allowCredentials: true,
