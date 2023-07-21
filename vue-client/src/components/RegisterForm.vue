@@ -96,7 +96,7 @@
 
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://nethermir.uab.cat:80/backend/getSubjects`).then(resolve)
+            fetch(`https://nethermir.uab.cat/backend/getSubjects`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -118,7 +118,7 @@
             this.feedback="Processing register..."
             let emailsString = this.emails.join('xv3dz1g')
             let p = new Promise((resolve, reject)=>{
-            fetch(`http://nethermir.uab.cat:80/backend/register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
+            fetch(`https://nethermir.uab.cat/backend/register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 if (y == "Y"){

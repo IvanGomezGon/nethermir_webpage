@@ -14,7 +14,7 @@
     props:['modelValue'],
     methods:{
       eliminateCookie(){
-            fetch(`http://nethermir.uab.cat:80/backend/eliminateCookie`, {credentials: "include"}).then()
+            fetch(`https://nethermir.uab.cat/backend/eliminateCookie`, {credentials: "include"}).then()
             this.$router.push('/')
         }
     },

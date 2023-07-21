@@ -13,7 +13,7 @@
     name: 'Restart Database',
     methods:{
         restartDatabase(){
-            fetch(`http://nethermir.uab.cat:80/backend/restartDatabase`, {credentials: "include"}).then()
+            fetch(`https://nethermir.uab.cat/backend/restartDatabase`, {credentials: "include"}).then()
             this.$router.push('/ControlPannelRoot')
         }
     },
