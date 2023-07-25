@@ -5,6 +5,16 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const {cloneMachine} = require(path.resolve(__dirname, 'proxmox.js'))
 const  {sendPasswordEmail} = require(path.resolve(__dirname, 'emails.js'))
 const {setCookie} = require(path.resolve(__dirname, 'cookies.js'))
+const winston = require('winston')
+const logger = winston.createLogger({
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({filename: 'error.log', level: 'error'}),
+        new winston.transports.File({ filename: 'combined.log'}),
+        new winston.transports.Console({format: winston.format.simple()})
+    ],
+})
+
 const feedback_fetch = (text, res) => {
     res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'}); 
     res.write(text); 
@@ -22,7 +32,7 @@ const queryToDB = (sql, params) => {
             if (err) throw err;
             
             con.query(sql, params, function (err, result) {
-            if (err) {console.log("Err:", err); reject()};
+            if (err) {logger.info("Err:", err); reject()};
             resolve(result);
             });
         });
@@ -58,31 +68,31 @@ const getSubjects = (res) => {
 }
 
 const addSubject = async (req,res) => {
-    console.log("addSubject", req.query)
+    logger.info("addSubject", req.query)
     id = req.query['id'];
     sql = `INSERT INTO nethermir.subjects (idsubject, subject_name) VALUES (?, ?)` 
     // id.slice(0,-(id.split('-').pop().length + 1)) This monstrocity gets everything before last dash == subject_name 
     // Ex: 2022-1-FX-1 -> 2022-1-FX        2023-2-STDW-10 -> 2023-2-STDW 
-    await queryToDB(sql, [id.split('-').pop(), id.slice(0,-(id.split('-').pop().length + 1))]).catch(x=>console.log(x))
+    await queryToDB(sql, [id.split('-').pop(), id.slice(0,-(id.split('-').pop().length + 1))]).catch(x=>logger.info(x))
     feedback_fetch("Y", res)
 }
 const eliminateSubject = (req, res) => {
-    console.log("eliminateSubject")
+    logger.info("eliminateSubject")
     id = req.query['id'];
     sql = `DELETE FROM nethermir.subjects WHERE idsubject=(?)`
-    queryToDB(sql, [parseInt(id)]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+    queryToDB(sql, [parseInt(id)]).then(x =>{logger.info(x);feedback_fetch("Y", res)})
 }
 const activateSubject = (req,res) => {
-    console.log("activateSubject", req.query)
+    logger.info("activateSubject", req.query)
     id = req.query['id'];
     sql = `UPDATE nethermir.subjects SET active=(active+1)%2 WHERE idsubject=(?)` 
-    queryToDB(sql, [id]).then(x =>{console.log(x);feedback_fetch("Y", res)})
+    queryToDB(sql, [id]).then(x =>{logger.info(x);feedback_fetch("Y", res)})
 }
 
 const activateGroup = (id) => {
-    console.log("activateGroup")
+    logger.info("activateGroup")
     sql = `UPDATE nethermir.groups SET active=(active+1)%2 WHERE idgroup=(?)` 
-    queryToDB(sql, [id]).then(x =>{console.log(x)})
+    queryToDB(sql, [id]).then(x =>{logger.info(x)})
 }
 
 const authenticate = async(req, res) => {
@@ -132,12 +142,12 @@ const registerGroup = async (req, res) => {
     let promises = [];
     sql = `INSERT INTO nethermir.groups (idgroup, name, p_hash) VALUES (?, ?, ?)`                       
     promises.push(queryToDB(sql, [idgroup, nameGroup, p_hash])
-            .then(console.log("Group Registrat"))
+            .then(logger.info("Group Registrat"))
             .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))
     sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `
     
     emails.forEach(email => promises.push(queryToDB(sql, [email, nameGroup])
-        .then(console.log("Email Registrat"))
+        .then(logger.info("Email Registrat"))
         .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))) 
 
     Promise.all(promises).then(async () =>{

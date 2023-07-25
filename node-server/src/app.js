@@ -1,6 +1,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const express = require('express');
+const winston = require('winston')
 const cors=require('cors');
 const cookieParser = require('cookie-parser')
 
@@ -25,120 +26,130 @@ const port = process.env.LISTENING_PORT
 app.use(cors(corsOptions)) 
 app.use(cookieParser())
 
+const logger = winston.createLogger({
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({filename: 'error.log', level: 'error'}),
+        new winston.transports.File({ filename: 'combined.log'}),
+        new winston.transports.Console({format: winston.format.simple()})
+    ],
+})
+
+
 // ALL BACKEND CALLS FROM FRONTEND
 
 app.get('/backend/checkCookie', function(req, res){
-    console.log("checkCookie")
+    logger.info("checkCookie")
     checkCookie(req,res)
         .then((user) => feedback_fetch(user, res))
-        .catch(() => console.log("checkCookie failed"))
+        .catch(() => logger.info("checkCookie failed"))
 })
 app.get('/backend/activateMachine', function(req, res){
-    console.log("activateMachine")
+    logger.info("activateMachine")
     checkCookie(req,res)
         .then((user)=>{if (req.query['id']!=null){activateMachine(null, req,res)}else{activateMachine(user, req, res)}})
-        .catch(()=>{console.log("Failed to authenticate")})
+        .catch(()=>{logger.info("Failed to authenticate")})
 })
 app.get('/backend/stopMachine', function(req, res){
-    console.log("stopMachine")
+    logger.info("stopMachine")
     checkCookie(req,res)
         .then((user)=>{if (req.query['id'] != null){stopMachine(null, req,res)}else{stopMachine(user, req, res)}})
-        .catch(()=>{console.log("Failed to stop machine")})
+        .catch(()=>{logger.info("Failed to stop machine")})
 })
 app.get('/backend/login', function(req, res){
-    console.log("login")
+    logger.info("login")
     authenticate(req,res)
         .then((x)=> {setCookie(x, res);})
-        .catch(() => {console.log("Failed to login")})  
+        .catch(() => {logger.info("Failed to login")})  
 })
 app.get('/backend/register', function(req, res){
-    console.log("register")
+    logger.info("register")
     registerGroup(req, res)
 })
 app.get('/backend/getNodes', function(req, res){
     checkCookie(req,res)
         .then(()=> {getNodes(req, res)})
-        .catch(() => {console.log("Failed to getNodes")})
+        .catch(() => {logger.info("Failed to getNodes")})
 })
 app.get('/backend/getNode', function(req, res){
     checkCookie(req,res)
     .then((user)=> {if (req.query['id']!=null){getNode(null, req, res)}else{getNode(user, req, res)}})
-    .catch(() => {console.log("Failed to getNode")})
+    .catch(() => {logger.info("Failed to getNode")})
 })
 app.get('/backend/getGroups', function(req, res){
     checkCookie(req,res)
         .then(()=> {getGroups(res)})
-        .catch(() => {console.log("Failed to getGroups")})
+        .catch(() => {logger.info("Failed to getGroups")})
 })
 app.get('/backend/eliminateGroup', function(req, res){
-    console.log("eliminateGroup")
+    logger.info("eliminateGroup")
     checkCookie(req,res)
 //      .then((user) => {eliminateMachine(user, req, res)})
         .then(()=> {eliminateGroup(req, res)})
-        .catch(() => {console.log("Failed to eliminateGroup")})
+        .catch(() => {logger.info("Failed to eliminateGroup")})
 })
 app.get('/backend/getEmails', function(req, res){
-    console.log("getEmails")
+    logger.info("getEmails")
     checkCookie(req,res)
         .then(()=> {getEmails(res)})
-        .catch(() => {console.log("Failed to getEmails")})
+        .catch(() => {logger.info("Failed to getEmails")})
 })
 app.get('/backend/eliminateEmail', function(req, res){
-    console.log("eliminateEmail")
+    logger.info("eliminateEmail")
     checkCookie(req,res)
         .then(()=> {eliminateEmail(req, res)})
-        .catch(() => {console.log("Failed to eliminateEmail")})
+        .catch(() => {logger.info("Failed to eliminateEmail")})
 })
 app.get('/backend/getSubjects', function(req, res){
     getSubjects(res)
         
 })
 app.get('/backend/addSubject', function(req, res){
-    console.log("addSubject")
+    logger.info("addSubject")
     checkCookie(req,res)
         .then(()=> {addSubject(req, res)})
-        .catch(() =>{console.log("Failed to addSubject")})
+        .catch(() =>{logger.info("Failed to addSubject")})
 })
 app.get('/backend/eliminateSubject', function(req, res){
-    console.log("eliminateSubject")
+    logger.info("eliminateSubject")
     checkCookie(req,res)
         .then(()=> {eliminateSubject(req, res)})
-        .catch(() =>{console.log("Failed to eliminateSubject")})
+        .catch(() =>{logger.info("Failed to eliminateSubject")})
 })
 app.get('/backend/activateSubject', function(req, res){
-    console.log("activateSubject")
+    logger.info("activateSubject")
     checkCookie(req,res)
         .then(()=> {activateSubject(req, res)})
-        .catch(() =>{console.log("Failed to activateSubject")})
+        .catch(() =>{logger.info("Failed to activateSubject")})
 })
 app.get('/backend/restartDatabase', function(req, res){
-    console.log("restartDatabase")
+    logger.info("restartDatabase")
     checkCookie(req,res)
         .then((user)=> {if (user == 'root'){restartDatabase().then(feedback_fetch("Y", res))}})
-        .catch(() =>{console.log("Failed to restartDatabase")})
+        .catch(() =>{logger.info("Failed to restartDatabase")})
 })
 app.get('/backend/resumeMachine', function(req, res){
-    console.log("resumeMachine")
+    logger.info("resumeMachine")
     checkCookie(req,res)
         .then((user)=> {if (req.query['id'] != null){resumeMachine(null, req,res)}else{resumeMachine(user, req, res)}})
-        .catch(() =>{console.log("Failed to resumeMachine")})
+        .catch(() =>{logger.info("Failed to resumeMachine")})
 })
 
 app.get('/backend/suspendMachine', function(req, res){
-    console.log("suspendMachine")
+    logger.info("suspendMachine")
     checkCookie(req,res)
         .then((user)=> {if (req.query['id'] != null){suspendMachine(null, req,res)}else{suspendMachine(user, req, res)}})
-        .catch(() =>{console.log("Failed to resumeMachine")})
+        .catch(() =>{logger.info("Failed to resumeMachine")})
 })
 app.get('/backend/eliminateCookie', function(req, res){
-    console.log("EliminateCookie")
+    logger.info("EliminateCookie")
     eliminateCookie(req,res)
 })
 app.get('/backend/eliminateMachine', function(req,res){
-    console.log("EliminateMachine")
+    logger.info("EliminateMachine")
     checkCookie(req,res)
     .then((user)=> {if (req.query['id'] != null){eliminateMachine(null, req,res)}else{eliminateMachine(user, req, res)}})
-    .catch(() =>{console.log("Failed to EliminateMachine")})
+    .catch(() =>{logger.info("Failed to EliminateMachine")})
 })
-app.listen(port, () => console.log(`App listening on port ${port}!`))
+app.listen(port, () => logger.info(`App listening on port ${port}!`))
 
