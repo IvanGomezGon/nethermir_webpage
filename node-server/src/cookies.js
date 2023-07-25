@@ -1,4 +1,14 @@
 const jwt = require('jsonwebtoken')
+const winston = require('winston')
+const logger = winston.createLogger({
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({filename: 'error.log', level: 'error'}),
+        new winston.transports.File({ filename: 'combined.log'}),
+        new winston.transports.Console({format: winston.format.simple()})
+    ],
+})
+
 const feedback_fetch = (text, res) => {
     res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'}); 
     res.write(text); 
@@ -6,13 +16,13 @@ const feedback_fetch = (text, res) => {
 } 
 
 const setCookie = (type, res) => {
-    console.log("res: ", res)
+    logger.info("res: ", res)
     const token = jwt.sign({user: type}, process.env.COOKIE_PASSWORD, {expiresIn: "1h"})
     res.cookie("token", token, {
         httpOnly: true,
         Path:"/",
     })
-    console.log("Setting cookie", token)
+    logger.info("Setting cookie", token)
     if (type != 'root') {feedback_fetch('user', res)}
     else {feedback_fetch(type, res)}
 }
@@ -22,11 +32,11 @@ const checkCookie = (req, res) => {
         const token = req.cookies.token
         try{
             jwt.verify(token, process.env.COOKIE_PASSWORD, function (err, payload){
-                if (err){console.log("Error verifiying token"); reject()}
+                if (err){logger.info("Error verifiying token"); reject()}
                 resolve(payload.user)
             })
         }catch (err){
-            console.log("no cookie")
+            logger.info("no cookie")
             res.clearCookie("token")
             feedback_fetch('failed-login', res)
             reject()

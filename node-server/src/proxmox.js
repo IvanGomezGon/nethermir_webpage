@@ -3,6 +3,16 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASS, process.env.PROXMOX_DOM)
 const PROXMOX_SERVERS=process.env.PROXMOX_SERVERS.split(' ');
 const  {sendWarningMail} = require(path.resolve(__dirname, 'emails.js'))
+const winston = require('winston')
+const logger = winston.createLogger({
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({filename: 'error.log', level: 'error'}),
+        new winston.transports.File({ filename: 'combined.log'}),
+        new winston.transports.Console({format: winston.format.simple()})
+    ],
+})
+
 const feedback_fetch = (text, res) => {
     res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'}); 
     res.write(text); 
@@ -15,7 +25,7 @@ const activateMachine = (user, req, res) =>{
         if (user == null){vmID = req.query['id']}
         else {vmID = user.split("-").pop()}   
         serverID = PROXMOX_SERVERS[vmID % 3]
-        console.log(`Activating machine ${req.query['node']} on server ${serverID}`)
+        logger.info(`Activating machine ${req.query['node']} on server ${serverID}`)
         proxmox.qemu.start(serverID, vmID, (err, data)=>{feedback_fetch("Y", res)})
         setTimeout(function(){sendWarningMail(req.query['user'])}, req.query['hours']*3600000-1800000)
         setTimeout(function(){sendWarningMail(req.query['user'])}, 1800000)
@@ -27,7 +37,7 @@ const stopMachine = (user, req, res) =>{
         if (user == null){vmID = req.query['id']}
         else {vmID = user.split("-").pop()}     
         serverID = PROXMOX_SERVERS[vmID % 3]
-        console.log(`Stopping machine ${req.query['node']} on server ${serverID}`)
+        logger.info(`Stopping machine ${req.query['node']} on server ${serverID}`)
         proxmox.qemu.stop(serverID, vmID, (err, data)=>{feedback_fetch("Y", res)})   
     }catch{}
      
@@ -35,7 +45,7 @@ const stopMachine = (user, req, res) =>{
 const getNodes = (req, res) => {
     try{
         proxmox.getQemu(PROXMOX_SERVERS[req.query['server']],(err, data) =>{
-            if (err) {console.log("mal")}
+            if (err) {logger.info("mal")}
             else{
                 data_json = JSON.parse(data).data
                 data_json.sort((a,b) => a['vmid'] - b['vmid'])
@@ -50,7 +60,7 @@ const getNode = (user, req, res) => {
         else {vmID = user.split("-").pop()}   
         serverID = PROXMOX_SERVERS[vmID % 3]
         proxmox.qemu.getStatusCurrent(serverID,vmID,(err, data) =>{
-            if (err) {console.log("mal")}
+            if (err) {logger.info("mal")}
             else{
                 data_json = JSON.parse(data).data
                 feedback_fetch(JSON.stringify(data_json), res)
@@ -60,14 +70,14 @@ const getNode = (user, req, res) => {
 }
 const cloneMachine = (group) =>{
     return new Promise ((resolve, reject) => {
-        console.log(group)
+        logger.info(group)
         vmID = (group % 3 + 1) * 10000 + group - group % 100;
         serverID = PROXMOX_SERVERS[group % 3]
-        console.log('Cloning machine', vmID, 'on server ', serverID)
+        logger.info('Cloning machine', vmID, 'on server ', serverID)
         newID = {newid:group, name:group}
         proxmox.qemu.clone(serverID, vmID, newID, (err, data)=>{
-            if (err){console.log(err); resolve('Failed')}
-            if (data){console.log(data);resolve('Success')}
+            if (err){logger.info(err); resolve('Failed')}
+            if (data){logger.info(data);resolve('Success')}
         }) 
     })
 }
@@ -76,7 +86,7 @@ const resumeMachine = (user, req, res) => {
     if (user == null){vmID = req.query['id']}
     else {vmID = user.split("-").pop()}   
     serverID = PROXMOX_SERVERS[vmID % 3]
-    console.log(`Resuming machine ${vmID} on server ${serverID}`)
+    logger.info(`Resuming machine ${vmID} on server ${serverID}`)
     proxmox.qemu.resume(serverID, vmID, (err, data)=>{feedback_fetch("Y", res)})  
 }
 
@@ -84,16 +94,16 @@ const suspendMachine = (user, req, res) => {
     if (user == null){vmID = req.query['id']}
     else {vmID = user.split("-").pop()}   
     serverID = PROXMOX_SERVERS[vmID % 3]
-    console.log(`Suspending machine ${vmID} on server ${serverID}`)
-    proxmox.qemu.suspend(serverID, vmID, (err, data)=>{console.log(err, data)})  
+    logger.info(`Suspending machine ${vmID} on server ${serverID}`)
+    proxmox.qemu.suspend(serverID, vmID, (err, data)=>{logger.info(err, data)})  
 }
 
 const eliminateMachine = (user, req, res) => {
     if (user == null){vmID = req.query['id']}
     else {vmID = user.split("-").pop()} 
     serverID = PROXMOX_SERVERS[vmID % 3] 
-    console.log(`Eliminating machine ${vmID} on server ${serverID}`)
-    proxmox.del(serverID, vmID, (err, data) => {console.log(err, data)})
+    logger.info(`Eliminating machine ${vmID} on server ${serverID}`)
+    proxmox.del(serverID, vmID, (err, data) => {logger.info(err, data)})
 
 }
 

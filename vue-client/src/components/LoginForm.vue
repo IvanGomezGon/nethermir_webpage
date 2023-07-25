@@ -3,7 +3,7 @@
         <div class="inner-element">
             <br>
             <img src="../assets/logo_uab.png" class="logo">
-            <h3>TECTONIC Sign in</h3>
+            <h3>NETHERMIR Sign in</h3>
             <h3>{{feedback}}</h3>
             <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
                 <b>Please correct the following error(s):</b>

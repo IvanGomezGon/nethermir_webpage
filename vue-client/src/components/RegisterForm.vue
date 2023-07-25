@@ -3,7 +3,7 @@
         <div class="inner-element" id="register" >
             <br>
             <img src="../assets/logo_uab.png" class="logo">
-            <h3>TECTONIC Register</h3>
+            <h3>NETHERMIR Register</h3>
             {{ feedback }}<br><br>
             <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
                 <b>Please correct the following error(s):</b>

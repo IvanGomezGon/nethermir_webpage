@@ -2,6 +2,16 @@ const path = require('path');
 const crypto = require('crypto');
 const nodeMailer = require('nodemailer');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
+const winston = require('winston')
+const logger = winston.createLogger({
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({filename: 'error.log', level: 'error'}),
+        new winston.transports.File({ filename: 'combined.log'}),
+        new winston.transports.Console({format: winston.format.simple()})
+    ],
+})
+
 const sendEmail = async (sendTo, txt) => {
     const transporter = nodeMailer.createTransport({
         host: process.env.SMTP_SERVER,
@@ -14,7 +24,7 @@ const sendEmail = async (sendTo, txt) => {
         subject: 'Config wireguard ',
         html: txt,           
     })
-    console.log("Message sent to: " + sendTo);
+    logger.info("Message sent to: " + sendTo);
 }
 
 const sendWarningMail = (user) =>{
@@ -26,7 +36,7 @@ const sendWarningMail = (user) =>{
 }
 const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
     id = idgroup
-    console.log(id)
+    logger.info(id)
     keyPair_user = genKeyPair()
     keyPair_server = genKeyPair()
     emailText = `Bon dia grup ${nameGroup}, la vostra contrasenya serà: ${password} 
@@ -36,7 +46,7 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
                 pubkey: ${keyPair_server.pub}
                 privkey:${keyPair_user.prv}`
     //TODO: save db key_pair privs 
-    console.log(emailText)
+    logger.info(emailText)
     emails.forEach(email=>{ sendEmail(email, emailText) })
 
 }
