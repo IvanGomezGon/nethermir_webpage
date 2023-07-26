@@ -12,7 +12,10 @@
     background-image:url(assets/columnes.svg);
     background-size:cover;
     }   
-    table{
+table{
+  word-wrap: break-word;
+  width: 100%;
+  table-layout: fixed;
   border-spacing:0px;
   border: 5px solid rgb(32, 102, 0);
   margin: auto;
@@ -105,7 +108,8 @@ a.header_element:hover{
   select { height:100%}
   fieldset {
     text-align: left;
-    margin: auto;
+    margin-left: 30px;
+    margin-right: 30px;
     height: 50px;
     width: 400px;
     border-radius: 3px;

@@ -1,6 +1,6 @@
 <template>
-    <button type="button" @click="getData()"> refreshData</button><br><br>
-      <table>
+<h2> Emails info </h2>
+<table>
           <tr>
               <th>email_id</th>
               <th>email</th>

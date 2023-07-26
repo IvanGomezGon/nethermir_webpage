@@ -2,12 +2,12 @@
 <template>
     <div class="header">
         <img src="../assets/logo_uab.png" class="logo" @click="this.$router.push('/')">
-        <h3 class="header_element">NETHERMIR CONTROL PANNEL - ROOT USER</h3>
+        <h3 class="header_element">NETHERMIR CONTROL PANNEL - ROOT</h3>
         <a href="#" class="push header_element" @click="switchTab('ProxmoxInfo')">PROXMOX INFO</a>
         <a href="#" class="header_element" @click="switchTab('groupsInfo')">GROUPS INFO</a>
         <a href="#" class="header_element" @click="switchTab('emailsInfo')">EMAILS INFO</a>
         <a href="#" class="header_element" @click="switchTab('subjectsInfo')">SUBJECTS INFO</a>
-        <a href="#" class="logout" @click="this.$router.push('/restartDatabase')">RESTART DATABASE</a>
+        <button class="logout" @click="this.$router.push('/restartDatabase')">RESTART DATABASE</button>
         <button class="logout" @click="eliminateCookie()">LOG OUT</button>
     </div>
   </template>

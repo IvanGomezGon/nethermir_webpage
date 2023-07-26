@@ -1,9 +1,9 @@
 <template>
-    <button type="button" @click="getData()"> refreshData</button><br><br>
+<h2> Groups info </h2>
       
       <table>
           <tr>
-              <th>group_id</th>
+              <th>id</th>
               <th>group_name</th>
               <th>vlan_id</th>
               <th>active</th>

@@ -1,4 +1,5 @@
 <template>
+<h2> Subjects info </h2>
 <fieldset style="display: inline-block; width:12vw;">
     <legend> Curs: </legend>
         <input type="text" v-model="curs" placeholder="2022-1" ><br>
@@ -15,7 +16,6 @@
         <input type="text" v-model="vmTemplateID" placeholder="01" ><br>
     </fieldset>
     <br><br>
-    <button type="button" @click="getData()" style="display: inline-block; width:20vw;" > refreshData</button>
     <button type="button" @click="addSubject()" style="display: inline-block; width:20vw;"> Add assignatura</button><br><br>
 
     <table>
