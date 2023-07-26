@@ -15,7 +15,7 @@
               <td>{{group.name}}</td>
               <td>{{group.vlan_id + 65434}}</td>
               <td>{{group.active}}</td>
-              <td><button type="button" @click="eliminateGroup(group.idgroup)"> Eliminate Group</button></td>
+              <td><button type="button" @click="eliminateGroup(group.idgroup)">Eliminate</button></td>
           </tr>
        
       </table>  

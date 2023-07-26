@@ -22,6 +22,8 @@ table{
 }
 
 th, td {
+  overflow: hidden;
+  text-overflow: ellipsis;
   border-bottom: 1px solid #ddd;
   padding-right:10px;
   padding-left:10px;
@@ -31,6 +33,8 @@ th, td {
   margin-right: 5px;
 }
 th {
+  overflow: hidden;
+  text-overflow: ellipsis;
   background-color: rgb(32, 102, 0);
   height: 30px;
   color: white;
@@ -75,7 +79,7 @@ a.header_element:hover{
   .inner-element{
     border: 5px solid rgb(32, 102, 0);
     border-radius: 15px;
-    width: 40%;
+    width: 60%;
     margin:20px;
     background-color: white;
 

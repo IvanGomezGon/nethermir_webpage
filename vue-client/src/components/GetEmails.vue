@@ -12,7 +12,7 @@
               <td>{{email.email_id}}</td>
               <td>{{email.email}}</td>
               <td>{{email.group_name}}</td>
-              <td><button type="button" @click="eliminateEmail(email.email_id)"> Eliminate Email</button></td>
+              <td><button type="button" @click="eliminateEmail(email.email_id)">Eliminate</button></td>
           </tr>
        
       </table>   
