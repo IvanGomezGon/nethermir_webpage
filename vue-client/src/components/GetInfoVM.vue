@@ -1,5 +1,5 @@
 <template>
-    <button type="button" @click="getData()"> refreshData</button><br><br>
+<h2> VM info </h2>
       <table>
           <tr>
               <th>VM_ID</th>
