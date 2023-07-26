@@ -20,9 +20,9 @@
             <td>{{vm.template == 1 ? "-" : (vm.cpu*100).toFixed(2) + "%"}}</td>
             <td>{{vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu<0.005 ? "Running (Paused)" : "Running"}}</td>
             <td>{{vm.template == 1 ? "-" : vm.uptime}}</td>
-            <td><button type="button" :disabled="vm.template == 1" @click="stopActivate(vm.status, vm.vmid)" style="width:13vw;">{{vm.status == 'stopped' ? "Start" : "Stop"}} </button></td>
+            <td><button type="button" :disabled="vm.template == 1 || vm.name == nethermir-mgmt" @click="stopActivate(vm.status, vm.vmid)" style="width:13vw;">{{vm.status == 'stopped' ? "Start" : "Stop"}} </button></td>
 
-            <td><button type="button" :disabled="vm.status == 'stopped' || vm.template == 1" @click="resumeSuspend(vm.cpu, vm.vmid)" style="width:13vw;"> {{vm.cpu < 0.005 ? "Resume" : "Pause"}}</button></td>
+            <td><button type="button" :disabled="vm.status == 'stopped' || vm.template == 1 || vm.name == nethermir-mgmt" @click="resumeSuspend(vm.cpu, vm.vmid)" style="width:13vw;"> {{vm.cpu < 0.005 ? "Resume" : "Pause"}}</button></td>
 
         </tr>
      
