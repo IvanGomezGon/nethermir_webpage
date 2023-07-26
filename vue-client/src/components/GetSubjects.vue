@@ -31,8 +31,8 @@
             <td>{{subject.idsubject < 10 ? "0" + subject.idsubject : subject.idsubject}}</td>
             <td>{{subject.subject_name}}</td>   
             <td>{{subject.active ? "True" : "False"}}</td>
-            <td><button type="button" @click="activateSubject(subject.idsubject)" style="width:11vw;"> {{subject.active ? "Desactivate" : "Activate"}}</button></td>
-            <td><button type="button" @click="eliminateSubject(subject.idsubject)" style="width:11vw;"> Eliminate Subject</button></td>
+            <td><button type="button" @click="activateSubject(subject.idsubject)"> {{subject.active ? "Desactivate" : "Activate"}}</button></td>
+            <td><button type="button" @click="eliminateSubject(subject.idsubject)"> Eliminate Subject</button></td>
         </tr>
      
     </table>   

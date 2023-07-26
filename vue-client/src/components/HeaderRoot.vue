@@ -7,7 +7,7 @@
         <a href="#" class="header_element" @click="switchTab('groupsInfo')">GROUPS INFO</a>
         <a href="#" class="header_element" @click="switchTab('emailsInfo')">EMAILS INFO</a>
         <a href="#" class="header_element" @click="switchTab('subjectsInfo')">SUBJECTS INFO</a>
-        <a href="#" class="header_element" @click="this.$router.push('/restartDatabase')">RESTART DATABASE</a>
+        <a href="#" class="logout" @click="this.$router.push('/restartDatabase')">RESTART DATABASE</a>
         <button class="logout" @click="eliminateCookie()">LOG OUT</button>
     </div>
   </template>

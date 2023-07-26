@@ -67,19 +67,20 @@ a.header_element:hover{
   .inner-element{
     border: 5px solid rgb(32, 102, 0);
     border-radius: 15px;
-    width: 500px;
+    width: 40%;
     margin:20px;
     background-color: white;
 
     
   }
   button{
+    padding-left: 15px;
+    padding-right: 15px;
     transition-duration: 0.3s;
     background-color: rgb(32, 102, 0);
-    width: 22vw;
     height: 50px;
     border: 3px solid rgb(32, 102, 0); 
-    border-radius: 15px ;
+    border-radius: 10px ;
     font-size: 15px;
     color: white;
   }
@@ -122,7 +123,6 @@ a.header_element:hover{
     display:inline;
   }
   .rootControl {
-    width:80vw; 
     margin-top:150px;
     padding:30px;
   }
