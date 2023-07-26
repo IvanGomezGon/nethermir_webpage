@@ -1,6 +1,6 @@
 <template>
     <div class="flex-container" v-if="register">
-        <div class="inner-element" id="register" >
+        <div class="inner-element" id="register"  style="width:auto" >
             <br>
             <img src="../assets/logo_uab.png" class="logo">
             <h3>NETHERMIR Register</h3>

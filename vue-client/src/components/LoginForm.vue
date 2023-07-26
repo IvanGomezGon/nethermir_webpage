@@ -1,6 +1,6 @@
 <template>
     <div class="flex-container">
-        <div class="inner-element">
+        <div class="inner-element" style="width:auto">
             <br>
             <img src="../assets/logo_uab.png" class="logo">
             <h3>NETHERMIR Sign in</h3>
