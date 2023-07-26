@@ -1,5 +1,5 @@
-# TECTONIC
-Tectonic is an innovation project by Universitat Autònoma de Barcelona that aims to automate all the process of Virtual Labs on the university. From creating users and managing the database, to clone, pause, start VM Machines from API calls to Proxmox, to generating the tunnels needed for the Wireguard VPN connection by enabling the corresponding routes and VLANS with Routeos API calls to a Mikrotik router.  
+# NETHERMIR
+Nethermir is an innovation project by Universitat Autònoma de Barcelona that aims to automate all the process of Virtual Labs on the university. From creating users and managing the database, to clone, pause, start VM Machines from API calls to Proxmox, to generating the tunnels needed for the Wireguard VPN connection by enabling the corresponding routes and VLANS with Routeos API calls to a Mikrotik router.  
 
 ## Code Structure 
 The project follows the next structure:
