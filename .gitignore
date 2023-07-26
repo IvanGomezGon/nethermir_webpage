@@ -1,6 +1,7 @@
 .DS_Store
 .vscode
-
+**/error.log
+**/combined.log
 **/DS_Store
 **/node_modules/**
 **/package.json
