@@ -25,11 +25,16 @@ th, td {
   border-bottom: 1px solid #ddd;
   padding-right:10px;
   padding-left:10px;
+  width: 1px;
+  white-space: nowrap;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 th {
   background-color: rgb(32, 102, 0);
   height: 30px;
   color: white;
+  
 }
 tr:hover {background-color: rgb(147, 196, 147);}
 tr.userTable:hover {background-color:white;}
@@ -133,7 +138,6 @@ a.header_element:hover{
   .logout{
     background-color: red; 
     color: white; 
-    width:90px; 
     font-weight: bold;
     margin-right: 10px;
     border-color: rgba(255, 0, 0, 0.822);
@@ -143,5 +147,9 @@ a.header_element:hover{
     background-color: white;
     color: red;
 }
+
+
+
+
 
 </style>
