@@ -45,7 +45,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`https://nethermir.uab.cat/backend/getNodes?server=${this.server}`, {credentials: "include"}).then(resolve)
+            fetch(`${process.env.VUE_APP_URL_FETCH}getNodes?server=${this.server}`, {credentials: "include"}).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -63,17 +63,17 @@
             if (cpu<0.005){this.resumeVM(id)}else{this.suspendVM(id)}
         },
         activateVM(id){
-            fetch(`https://nethermir.uab.cat/backend/activateMachine?id=${id}&hours=4`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_URL_FETCH}activateMachine?id=${id}&hours=4`, {credentials: "include"}).then()
         },
         stopVM(id){
-            fetch(`https://nethermir.uab.cat/backend/stopMachine?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_URL_FETCH}stopMachine?id=${id}`, {credentials: "include"}).then()
         },
         resumeVM(id){
             console.log("yay")
-            fetch(`https://nethermir.uab.cat/backend/resumeMachine?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_URL_FETCH}resumeMachine?id=${id}`, {credentials: "include"}).then()
         },
         suspendVM(id){
-            fetch(`https://nethermir.uab.cat/backend/suspendMachine?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_URL_FETCH}suspendMachine?id=${id}`, {credentials: "include"}).then()
         }
     },
   }
