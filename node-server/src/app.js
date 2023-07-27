@@ -22,7 +22,7 @@ const {getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, elimin
 const {setCookie, checkCookie, eliminateCookie} = require(path.resolve(__dirname, 'cookies.js'))
 
 const app = express()
-const port = process.env.LISTENING_PORT
+const port = process.env.SERVER_LISTEN_PORT
 app.use(cors(corsOptions)) 
 app.use(cookieParser())
 

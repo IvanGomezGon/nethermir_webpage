@@ -9,9 +9,9 @@ const logger = winston.createLogger({
     ],
 })
 const conn = new RosApi({
-    host: '192.168.1.50',
-    user: 'admin',
-    password: '',
+    host: process.env.ROUTEROS_HOST,
+    user: process.env.ROUTEROS_USER,
+    password: process.env.ROUTEROS_PASSWORD,
 });
 conn.connect()
     .then(() => {

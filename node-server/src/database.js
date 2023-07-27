@@ -23,7 +23,7 @@ const feedback_fetch = (text, res) => {
 var con = mysql.createConnection({
     host: process.env.SQL_HOST,
     user: process.env.SQL_USER,
-    password: process.env.SQL_PASS
+    password: process.env.SQL_PASSWORD
 });
   
 const queryToDB = (sql, params) => {

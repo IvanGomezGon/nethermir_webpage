@@ -1,7 +1,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
-const proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASS, process.env.PROXMOX_DOM)
-const PROXMOX_SERVERS=process.env.PROXMOX_SERVERS.split(' ');
+const proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASSWORD, process.env.PROXMOX_IP_ADDRESS)
+const PROXMOX_SERVERS=process.env.PROXMOX_SERVERS_NAMES.split(' ');
 const  {sendWarningMail} = require(path.resolve(__dirname, 'emails.js'))
 const winston = require('winston')
 const logger = winston.createLogger({

@@ -19,7 +19,7 @@ const sendEmail = async (sendTo, txt) => {
         secure: false
     });
     const info = await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+        from: process.env.SMTP_ORIGIN,
         to: sendTo,
         subject: 'Config wireguard ',
         html: txt,           
