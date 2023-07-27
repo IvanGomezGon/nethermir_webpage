@@ -29,7 +29,7 @@
     // TODO: Change this for Router Navigation guards 
     // https://stackoverflow.com/questions/69148784/stop-vue-page-from-loading-till-data-fetch-is-loaded
     beforeCreate: function () {
-            fetch(`https://nethermir.uab.cat/backend/checkCookie`, {credentials: "include"}).then(response=>{
+            fetch(`${process.env.VUE_APP_URL_FETCH}checkCookie`, {credentials: "include"}).then(response=>{
                 response.text().then(text=> {
                     console.log("TEXT: ", text)
                     if (text == 'root' || text == 'failed-login'){this.$router.push('/')}

@@ -48,7 +48,7 @@
         login(){
             this.feedback="Processing login..."
             
-            fetch(`https://nethermir.uab.cat/backend/login?user=${this.usuari}&pass=${this.password}`, {credentials: "include"}).then(x=>{x.text().then(y=> {
+            fetch(`${process.env.VUE_APP_URL_FETCH}login?user=${this.usuari}&pass=${this.password}`, {credentials: "include"}).then(x=>{x.text().then(y=> {
                 if (y == "root"){
                     this.$router.push('/controlPannelRoot')
                 }else if (y == 'user'){
