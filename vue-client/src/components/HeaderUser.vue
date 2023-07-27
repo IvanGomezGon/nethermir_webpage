@@ -14,7 +14,7 @@
     props:['modelValue'],
     methods:{
       eliminateCookie(){
-            fetch(`${process.env.VUE_APP_URL_FETCH}eliminateCookie`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateCookie`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
             this.$router.push('/')
         }
     },

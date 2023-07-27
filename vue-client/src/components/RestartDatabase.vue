@@ -13,7 +13,7 @@
     name: 'Restart Database',
     methods:{
         restartDatabase(){
-            fetch(`${process.env.VUE_APP_URL_FETCH}restartDatabase`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}restartDatabase`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
             this.$router.push('/ControlPannelRoot')
         }
     },

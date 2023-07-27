@@ -48,7 +48,7 @@
         login(){
             this.feedback="Processing login..."
             
-            fetch(`${process.env.VUE_APP_URL_FETCH}login?user=${this.usuari}&pass=${this.password}`, {credentials: "include"}).then(x=>{x.text().then(y=> {
+            fetch(`${process.env.VUE_APP_FETCH_URL}login?user=${this.usuari}&pass=${this.password}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then(x=>{x.text().then(y=> {
                 if (y == "root"){
                     this.$router.push('/controlPannelRoot')
                 }else if (y == 'user'){

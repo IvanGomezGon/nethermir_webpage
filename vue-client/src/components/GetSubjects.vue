@@ -58,7 +58,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`${process.env.VUE_APP_URL_FETCH}getSubjects`).then(resolve)
+            fetch(`${process.env.VUE_APP_FETCH_URL}getSubjects`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -67,13 +67,13 @@
             })})    
         },
         eliminateSubject(id){
-            fetch(`${process.env.VUE_APP_URL_FETCH}eliminateSubject?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateSubject?id=${id}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         },
         addSubject(){
-            fetch(`${process.env.VUE_APP_URL_FETCH}addSubject?id=${this.assignatura+"-"+this.curs+"-"+this.vmTemplateID}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}addSubject?id=${this.assignatura+"-"+this.curs+"-"+this.vmTemplateID}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         },
         activateSubject(id){
-            fetch(`${process.env.VUE_APP_URL_FETCH}activateSubject?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}activateSubject?id=${id}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         }
 
     },

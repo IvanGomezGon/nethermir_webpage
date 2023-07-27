@@ -34,7 +34,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`${process.env.VUE_APP_URL_FETCH}getEmails`, {credentials: "include"}).then(resolve)
+            fetch(`${process.env.VUE_APP_FETCH_URL}getEmails`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -43,7 +43,7 @@
             })})    
         },
         eliminateEmail(id){
-            fetch(`${process.env.VUE_APP_URL_FETCH}eliminateEmail?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateEmail?id=${id}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         },
 
     },

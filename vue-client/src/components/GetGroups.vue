@@ -37,16 +37,16 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`${process.env.VUE_APP_URL_FETCH}getGroups`, {credentials: "include"}).then(resolve)
+            fetch(`${process.env.VUE_APP_FETCH_URL}getGroups`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then(resolve)
             })
             p.then(response=>{
-                response.json().then(json=> {
+                response.json().then(json=> { 
                 console.log(json)
                this.data = json
             })})    
         },
         eliminateGroup(id){
-            fetch(`${process.env.VUE_APP_URL_FETCH}eliminateGroup?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateGroup?id=${id}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         },
 
     },

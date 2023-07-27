@@ -96,7 +96,7 @@
 
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`${process.env.VUE_APP_URL_FETCH}getSubjects`).then(resolve)
+            fetch(`${process.env.VUE_APP_FETCH_URL}getSubjects`).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -118,7 +118,7 @@
             this.feedback="Processing register..."
             let emailsString = this.emails.join('xv3dz1g')
             let p = new Promise((resolve, reject)=>{
-            fetch(`${process.env.VUE_APP_URL_FETCH}register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
+            fetch(`${process.env.VUE_APP_FETCH_URL}register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 if (y == "Y"){

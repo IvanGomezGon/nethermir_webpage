@@ -20,7 +20,7 @@
             <td>{{vm.template == 1 ? "-" : (vm.cpu*100).toFixed(2) + "%"}}</td>
             <td>{{vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu<0.005 ? "Running (Paused)" : "Running"}}</td>
             <td>{{vm.template == 1 ? "-" : vm.uptime}}</td>
-            <td><button type="button" :disabled="vm.template == 1 || vm.name == nethermir-mgmt" @click="stopActivate(vm.status, vm.vmid)">{{vm.status == 'stopped' ? "Start" : "Stop"}} </button></td>
+            <td><button type="button" :disabled="vm.template == 1 || vm.name == 'nethermir-mgmt'" @click="stopActivate(vm.status, vm.vmid)">{{vm.status == 'stopped' ? "Start" : "Stop"}} </button></td>
 
             <td><button type="button" :disabled="vm.status == 'stopped' || vm.template == 1 || vm.name == nethermir-mgmt" @click="resumeSuspend(vm.cpu, vm.vmid)"> {{vm.cpu < 0.005 ? "Resume" : "Pause"}}</button></td>
 
@@ -45,7 +45,7 @@
     methods: {
         getData(){
             let p = new Promise((resolve, reject)=>{
-            fetch(`${process.env.VUE_APP_URL_FETCH}getNodes?server=${this.server}`, {credentials: "include"}).then(resolve)
+            fetch(`${process.env.VUE_APP_FETCH_URL}getNodes?server=${this.server}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then(resolve)
             })
             p.then(response=>{
                 response.json().then(json=> {
@@ -63,17 +63,17 @@
             if (cpu<0.005){this.resumeVM(id)}else{this.suspendVM(id)}
         },
         activateVM(id){
-            fetch(`${process.env.VUE_APP_URL_FETCH}activateMachine?id=${id}&hours=4`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine?id=${id}&hours=4`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         },
         stopVM(id){
-            fetch(`${process.env.VUE_APP_URL_FETCH}stopMachine?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}stopMachine?id=${id}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         },
         resumeVM(id){
             console.log("yay")
-            fetch(`${process.env.VUE_APP_URL_FETCH}resumeMachine?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine?id=${id}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         },
         suspendVM(id){
-            fetch(`${process.env.VUE_APP_URL_FETCH}suspendMachine?id=${id}`, {credentials: "include"}).then()
+            fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine?id=${id}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then()
         }
     },
   }
