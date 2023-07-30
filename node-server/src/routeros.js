@@ -1,4 +1,5 @@
 const RosApi = require('node-routeros').RouterOSAPI
+const path = require('path');
 var {logger} = require(path.resolve(__dirname, 'logger.js'))
 
 const conn = new RosApi({

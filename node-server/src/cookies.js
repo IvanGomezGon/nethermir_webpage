@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const path = require('path');
 var {logger} = require(path.resolve(__dirname, 'logger.js'))
 
 
