@@ -36,7 +36,7 @@
     name: 'ControlPannelRoot',
     data: ()=>{
     return {
-        active:['',''],
+        active:'',
         proxmoxInfo:false,
         groupsInfo: false,
         emailsInfo: false,
@@ -55,24 +55,19 @@
             })})
     },
     watch: {
-        active: {
-            handler(newValue, oldValue) {
-                console.log("Gonna change")
+        active() {
                 this.proxmoxInfo = false;
                 this.groupsInfo = false;
                 this.emailsInfo = false;
                 this.subjectsInfo = false;
                 this.areYouSure = false;
-                if (this.active['0']  == 'ProxmoxInfo' || this.active['1'] == 'ProxmoxInfo'){console.log("proxmox"); this.proxmoxInfo=true}
-                if (this.active['0'] == 'groupsInfo' || this.active['1'] == 'groupsInfo' ){console.log("groupsInfo");this.groupsInfo=true}
-                if (this.active['0'] == 'emailsInfo' || this.active['1'] == 'emailsInfo'){console.log("emailsInfo");this.emailsInfo=true}
-                if (this.active['0'] == 'subjectsInfo' || this.active['1'] == 'subjectsInfo'){console.log("subjectsInfo");this.subjectsInfo=true}
-                if (this.active['0'] == 'areYouSure' || this.active['1'] == 'areYouSure'){console.log("areYouSure");this.areYouSure=true}
-                console.log("Changed")
-            },
-            deep: true
-        }
-    },
+                if (this.active  == 'ProxmoxInfo'){this.proxmoxInfo=true}
+                if (this.active == 'groupsInfo'){this.groupsInfo=true}
+                if (this.active == 'emailsInfo'){this.emailsInfo=true}
+                if (this.active == 'subjectsInfo'){this.subjectsInfo=true}
+                if (this.active == 'areYouSure'){this.areYouSure=true}
+            }
+        },
     components: {
         HeaderRoot,
         GetProxmoxVMs,

@@ -1,28 +1,28 @@
 <template>
-    <h2> ProxmoxVMs info </h2> 
+    <h2> Informació Proxmox VMs </h2> 
     <button type="button" @click="server=0" :disabled="server==0"> Nethermir1</button>
     <button type="button" @click="server=1" :disabled="server==1"> Nethermir2</button>
     <button type="button" @click="server=2" :disabled="server==2"> Nethermir3</button><br><br>  
     <table>
         <tr>
-            <th>VM_ID</th>
-            <th>Name</th>
+            <th>VM id</th>
+            <th>Nom</th>
             <th>CPU</th>
-            <th>Status</th>
+            <th>Estat</th>
             <th>Uptime</th>
-            <th>Start / Stop</th>
-            <th>Resume / Suspend</th>
+            <th>Encendre / Parar</th>
+            <th>Resumir / Suspendre</th>
         </tr> 
         
         <tr v-for="vm in data" :style=" 'color: ' + getColor(vm.status, vm.cpu, vm.template)">
             <td>{{vm.vmid}}</td>
             <td>{{vm.name}}</td>
             <td>{{vm.template == 1 ? "-" : (vm.cpu*100).toFixed(2) + "%"}}</td>
-            <td>{{vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu<0.005 ? "Running (Paused)" : "Running"}}</td>
+            <td>{{vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu<0.005 ? "Corrent (Pausat)" : "Corrent"}}</td>
             <td>{{vm.template == 1 ? "-" : vm.uptime}}</td>
-            <td><button type="button" :disabled="vm.template == 1 || vm.name == 'nethermir-mgmt'" @click="stopActivate(vm.status, vm.vmid)">{{vm.status == 'stopped' ? "Start" : "Stop"}} </button></td>
+            <td><button type="button" :disabled="vm.template == 1 || vm.name == 'nethermir-mgmt'" @click="stopActivate(vm.status, vm.vmid)">{{vm.status == 'stopped' ? "Encendre" : "Parar"}} </button></td>
 
-            <td><button type="button" :disabled="vm.status == 'stopped' || vm.template == 1 || vm.name == nethermir-mgmt" @click="resumeSuspend(vm.cpu, vm.vmid)"> {{vm.cpu < 0.005 ? "Resume" : "Pause"}}</button></td>
+            <td><button type="button" :disabled="vm.status == 'stopped' || vm.template == 1 || vm.name == nethermir-mgmt" @click="resumeSuspend(vm.cpu, vm.vmid)"> {{vm.cpu < 0.005 ? "Resumir" : "Pausar"}}</button></td>
 
         </tr>
      

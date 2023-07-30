@@ -3,10 +3,10 @@
         <div class="inner-element" id="register"  style="width:auto" >
             <br>
             <img src="../assets/logo_uab.png" class="logo">
-            <h3>NETHERMIR Register</h3>
+            <h3>NETHERMIR Registre</h3>
             {{ feedback }}<br><br>
             <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
-                <b>Please correct the following error(s):</b>
+                <b>Si us plau, corregeix els següents error(s):</b>
                     <p v-for="error in errors">{{ error }}</p>
             </p>
             <div v-if="!registered">
@@ -26,7 +26,7 @@
                     </fieldset> 
 
                     <fieldset id="num">
-                    <legend> Num integrants: </legend>
+                    <legend> Número d'integrants: </legend>
                         <select v-model="numIntegrants" @change="this.errors=[];">
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -38,12 +38,12 @@
                 <div v-for="index in parseInt(numIntegrants)" :key="index">
                     <fieldset>
                     <legend> Email {{index}}: </legend>
-                        <input type="email" v-model="emails[index-1]" placeholder="user@uab.cat" pattern=".+@uab\.cat"><br>
+                        <input type="email" v-model="emails[index-1]" placeholder="usuari@uab.cat" pattern=".+@uab\.cat"><br>
                     </fieldset>
                 </div><br>
-                <button type="button" @click="checkRegister()"> Create group</button><br><br>
+                <button type="button" @click="checkRegister()"> Crear grup</button><br><br>
             </div>
-            <router-link to="/">Already have an account? Login!</router-link><br><br>
+            <router-link to="/">Ja tens un compte? Inicia sessió!</router-link><br><br>
         </div>
     </div>
   </template>
@@ -105,27 +105,26 @@
         },
         checkRegister(){
             this.errors=[];
-            if (!this.assignatura){this.errors.push('Assignatura required.');}
-            if (!this.curs){this.errors.push('Curs required.');}
-            if (!this.emails.length){this.errors.push('At least 1 email required');}
-            if (this.emails.length != this.numIntegrants){this.errors.push(`You need to enter ${this.numIntegrants} emails` )}
+            if (!this.assignatura){this.errors.push("El camp 'Assignatura' és obligatori.");}
+            if (!this.curs){this.errors.push("El camp 'Curs' és obligatori.");}
+            if (this.emails.length != this.numIntegrants){this.errors.push("El camp 'Email' és obligatori.")}
             this.emails.forEach((value, index)=>{
-                if (!/.+@uab\.cat/.test(value)){this.errors.push(`Email ${index+1} should be in format:"example@uab.cat"`);}
+                if (!/.+@uab\.cat/.test(value)){this.errors.push(`L'email ${index+1} ha de tenir el format:"usuari@uab.cat"`);}
             })
             if (!this.errors.length){this.register()}
         },
         register(){
-            this.feedback="Processing register..."
+            this.feedback="Processant registre..."
             let emailsString = this.emails.join('xv3dz1g')
             let p = new Promise((resolve, reject)=>{
             fetch(`${process.env.VUE_APP_FETCH_URL}register?user=${this.assignatura+'-'+this.curs}&email=${emailsString}`).then(resolve)
             })
             p.then(x=>{x.text().then(y=> {
                 if (y == "Y"){
-                    this.feedback = "Register Succesfull! Email was sent to your account with credentials to log in"
+                    this.feedback = "Registre completat! S'ha enviat un email al teu correu amb les credencials per iniciar sessió"
                     this.registered=true
                 }else{
-                    this.feedback = "Register Succesfull! Email was sent to your account with credentials to log in"
+                    this.feedback = "Registre completat! S'ha enviat un email al teu correu amb les credencials per iniciar sessió"
                     this.errors.push(y)
                 }
             })})    

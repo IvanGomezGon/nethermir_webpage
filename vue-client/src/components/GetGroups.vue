@@ -1,21 +1,21 @@
 <template>
-<h2> Groups info </h2>
+<h2> Informació Grups </h2>
       
       <table>
           <tr>
-              <th>id</th>
-              <th>group_name</th>
-              <th>vlan_id</th>
-              <th>active</th>
-              <th>Eliminate</th>
+              <th>Grup id</th>
+              <th>VLAN id</th>
+              <th>Nom</th>
+              <th>Actiu</th>
+              <th>Eliminar</th>
           </tr> 
        
           <tr v-for="group in data">
               <td>{{group.idgroup}}</td>
-              <td>{{group.name}}</td>
               <td>{{group.vlan_id + 65434}}</td>
+              <td>{{group.name}}</td>
               <td>{{group.active}}</td>
-              <td><button type="button" @click="eliminateGroup(group.idgroup)">Eliminate</button></td>
+              <td><button type="button" @click="eliminateGroup(group.idgroup)">Eliminar</button></td>
           </tr>
        
       </table>  

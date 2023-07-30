@@ -2,8 +2,8 @@
 <template>
     <div class="header">
         <img src="../assets/logo_uab.png" class="logo" @click="this.$router.push('/')">
-        <h3 class="header_element title">NETHERMIR CONTROL PANNEL - USER</h3>
-        <button class="push logout" @click="eliminateCookie()">LOG OUT</button>
+        <h3 class="header_element title">PANELL DE CONTROL D'USUARI</h3>
+        <button class="push logout" @click="eliminateCookie()">SORTIR</button>
 
     </div>
   </template>

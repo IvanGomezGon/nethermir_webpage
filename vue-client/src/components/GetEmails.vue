@@ -1,18 +1,18 @@
 <template>
-<h2> Emails info </h2>
+<h2> Informació Usuaris </h2>
 <table>
           <tr>
-              <th>email_id</th>
-              <th>email</th>
-              <th>group_name</th>
-              <th>Eliminate</th>
+              <th>Usuari id</th>
+              <th>Email</th>
+              <th>Nom del grup</th>
+              <th>Eliminar</th>
           </tr> 
        
           <tr v-for="email in data">
               <td>{{email.email_id}}</td>
               <td>{{email.email}}</td>
               <td>{{email.group_name}}</td>
-              <td><button type="button" @click="eliminateEmail(email.email_id)">Eliminate</button></td>
+              <td><button type="button" @click="eliminateEmail(email.email_id)">Eliminar</button></td>
           </tr>
        
       </table>   

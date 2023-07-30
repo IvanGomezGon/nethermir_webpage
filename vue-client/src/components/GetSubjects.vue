@@ -1,5 +1,5 @@
 <template>
-<h2> Subjects info </h2>
+<h2> Informació Assignatures </h2>
 <fieldset style="display: inline-block; width:12vw;">
     <legend> Curs: </legend>
         <input type="text" v-model="curs" placeholder="2022-1" ><br>
@@ -12,27 +12,27 @@
     </fieldset>
 
     <fieldset style="display: inline-block; width:12vw;">
-    <legend> Assignatura ID: </legend>
+    <legend> Assignatura id: </legend>
         <input type="text" v-model="vmTemplateID" placeholder="01" ><br>
     </fieldset>
     <br><br>
-    <button type="button" @click="addSubject()" style="display: inline-block; width:20vw;"> Add assignatura</button><br><br>
+    <button type="button" @click="addSubject()" style="display: inline-block; width:20vw;"> Agregar assignatura</button><br><br>
 
     <table>
         <tr>
-            <th>subject_id</th>
-            <th>subject_name</th>
-            <th>is_active</th>
-            <th>Activate/Desactivate</th>
-            <th>Eliminate</th>
+            <th>Assignatura id</th>
+            <th>Nom</th>
+            <th>Està activa?</th>
+            <th>Activar/Desactivar</th>
+            <th>Eliminar</th>
         </tr> 
      
         <tr v-for="subject in data">
             <td>{{subject.idsubject < 10 ? "0" + subject.idsubject : subject.idsubject}}</td>
             <td>{{subject.subject_name}}</td>   
             <td>{{subject.active ? "True" : "False"}}</td>
-            <td><button type="button" @click="activateSubject(subject.idsubject)"> {{subject.active ? "Desactivate" : "Activate"}}</button></td>
-            <td><button type="button" @click="eliminateSubject(subject.idsubject)"> Eliminate Subject</button></td>
+            <td><button type="button" @click="activateSubject(subject.idsubject)"> {{subject.active ? "Desactivar" : "Activar"}}</button></td>
+            <td><button type="button" @click="eliminateSubject(subject.idsubject)"> Eliminar Assignatura</button></td>
         </tr>
      
     </table>   

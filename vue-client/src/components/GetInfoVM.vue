@@ -1,27 +1,27 @@
 <template>
-<h2> VM info </h2>
+<h2> Informació VM </h2>
       <table>
           <tr>
-              <th>VM_ID</th>
-              <th>Name</th>
+              <th>VM id</th>
+              <th>Nom</th>
               <th>CPU</th>
-              <th>Status</th>
+              <th>Estat</th>
               <th>Uptime</th>
-              <th>Start VM</th>
-              <th>Resume VM</th>
-              <th>Suspend VM</th>
+              <th>Encendre VM</th>
+              <th>Resumir VM</th>
+              <th>Suspendre VM</th>
           </tr> 
        
           <tr class="userTable" :style=" 'color: ' + getColor(data.status, data.cpu)">
               <td>{{data.vmid}}</td>
               <td>{{data.name}}</td>
               <td>{{(data.cpu*100).toFixed(2) + "%"}}</td>
-              <td>{{data.status == "stopped" ? "Stopped" : data.cpu<0.005 ? "Running (Paused)" : "Running"}}</td>
+              <td>{{data.status == "stopped" ? "Stopped" : data.cpu<0.005 ? "Corrent (Pausat)" : "Corrent"}}</td>
               <td>{{data.uptime}}</td>
               <td><button type="button" @click="activateVM()" style="width:11vw;" :disabled="data.status != 'stopped'"> Start</button></td>
               <td style="display: flex; justify-content: center; align-items: center;">
                   <fieldset style="width:10vw;">
-                      <legend> Hours: </legend>
+                      <legend> Hores: </legend>
                       <input type="number" v-model="hours" min="1" max="6" style="width:10vw;">
                   </fieldset>
                   <button type="button" @click="resumeVM()" style="width:11vw;" :disabled="data.status == 'stopped' || data.cpu>0.005"> Resume</button>              

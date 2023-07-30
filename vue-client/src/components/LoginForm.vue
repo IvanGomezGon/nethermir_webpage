@@ -3,23 +3,23 @@
         <div class="inner-element" style="width:auto">
             <br>
             <img src="../assets/logo_uab.png" class="logo">
-            <h3>NETHERMIR Sign in</h3>
+            <h3>NETHERMIR Inici de sessió</h3>
             <h3>{{feedback}}</h3>
             <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
-                <b>Please correct the following error(s):</b>
+                <b>Si us plau, corregeix els següents error(s):</b>
                     <p v-for="error in errors">{{ error }}</p>
             </p>
             <fieldset>
-                <legend> User: </legend>
+                <legend> Usuari: </legend>
                 <input type="text" v-model="usuari" placeholder="xx-20xx-x-1xx">
             </fieldset><br>
 
             <fieldset>
-                <legend> Password: </legend>
+                <legend> Contrasenya: </legend>
                 <input type="password" v-model="password" placeholder="**********">
             </fieldset><br><br>   
-            <button type="button" @click="checkLogin()" style="width: 426.5px;">Login</button><br><br>
-            <router-link to="/register">Don't have an account yet? Register! </router-link><br><br>
+            <button type="button" @click="checkLogin()" style="width: 426.5px;">Iniciar sessió</button><br><br>
+            <router-link to="/register">No tens un compte encara? Registrat! </router-link><br><br>
         </div>
     </div>
   </template>
@@ -41,12 +41,12 @@
         checkLogin(){
             this.feedback=""
             this.errors=[];
-            if (!this.usuari){this.errors.push('User required');}
-            if (!this.password){this.errors.push('Password required');}
+            if (!this.usuari){this.errors.push('Usuari obligatori');}
+            if (!this.password){this.errors.push('Contrasenya obligatoria');}
             if (!this.errors.length){this.login()}
         },
         login(){
-            this.feedback="Processing login..."
+            this.feedback="Processant inici de sessió..."
             
             fetch(`${process.env.VUE_APP_FETCH_URL}login?user=${this.usuari}&pass=${this.password}`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then(x=>{x.text().then(y=> {
                 if (y == "root"){

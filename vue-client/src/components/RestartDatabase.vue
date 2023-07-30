@@ -1,9 +1,9 @@
 <template>
     <div >
     <br><br><br>
-      <h1 style="text-align: center;"> ARE YOU SURE YOU WANT TO RESTART THE DATABASE? THIS WILL ELIMINATE EVERYTHING</h1>
-      <button type="button" @click="restartDatabase()" style="width:13vw;"> YES, I UNDERSTAND, RESTART</button>
-      <button type="button" @click="this.$router.push('/ControlPannelRoot')" style="width:13vw;"> NO, TAKE ME BACK</button>
+      <h1 style="text-align: center;"> ESTÀS SEGUR QUE VOLS REINICIAR LA BASE DE DADES? AQUESTA ACCIÓ HO ELIMINARÀ TOT</h1>
+      <button type="button" @click="restartDatabase()" style="width:13vw;"> SI, ENTENC EL RISC, REINICIAR BASE DE DADES</button>
+      <button type="button" @click="this.$router.push('/ControlPannelRoot')" style="width:13vw;"> NO, TORNAR ENRERE</button>
     <br><br><br>
     </div>
   </template>
