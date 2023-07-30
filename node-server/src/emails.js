@@ -2,15 +2,8 @@ const path = require('path');
 const crypto = require('crypto');
 const nodeMailer = require('nodemailer');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
-const winston = require('winston')
-const logger = winston.createLogger({
-    format: winston.format.json(),
-    transports: [
-        new winston.transports.File({filename: 'error.log', level: 'error'}),
-        new winston.transports.File({ filename: 'combined.log'}),
-        new winston.transports.Console({format: winston.format.simple()})
-    ],
-})
+var {logger} = require(path.resolve(__dirname, 'logger.js'))
+
 
 const sendEmail = async (sendTo, txt) => {
     const transporter = nodeMailer.createTransport({
@@ -39,12 +32,19 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
     logger.info(id)
     keyPair_user = genKeyPair()
     keyPair_server = genKeyPair()
-    emailText = `Bon dia grup ${nameGroup}, la vostra contrasenya serà: ${password} 
+    emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: 
+                Usuari: ${nameGroup} 
+                Contransenya: ${password} 
+                Adjunt a aquest correu trobareu:
+                    1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN
+                    2. Les credencials d'accès a la VPN
+                
+                //FITXER//
                 interfaceAdr: 10.1.1.2/30
                 allowedIPs:  10.1.1.0/30  10.0.2.0/30
                 endpoint: 158.109.79.32:${65434+id}
-                pubkey: ${keyPair_server.pub}
-                privkey:${keyPair_user.prv}`
+                pubkey ROUTER: ${keyPair_server.pub}
+                privkey USUARI:${keyPair_user.prv}`
     //TODO: save db key_pair privs 
     logger.info(emailText)
     emails.forEach(email=>{ sendEmail(email, emailText) })

@@ -4,16 +4,8 @@ var mysql = require('mysql2');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const {cloneMachine} = require(path.resolve(__dirname, 'proxmox.js'))
 const  {sendPasswordEmail} = require(path.resolve(__dirname, 'emails.js'))
-const {setCookie} = require(path.resolve(__dirname, 'cookies.js'))
-const winston = require('winston')
-const logger = winston.createLogger({
-    format: winston.format.json(),
-    transports: [
-        new winston.transports.File({filename: 'error.log', level: 'error'}),
-        new winston.transports.File({ filename: 'combined.log'}),
-        new winston.transports.Console({format: winston.format.simple()})
-    ],
-})
+var {logger} = require(path.resolve(__dirname, 'logger.js'))
+
 
 const feedback_fetch = (text, res) => {
     res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'}); 
