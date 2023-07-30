@@ -19,7 +19,7 @@ const feedback_fetch = (text, res) => {
 const {activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine, eliminateMachine} = require(path.resolve(__dirname, 'proxmox.js'))
 const {getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject} = require (path.resolve(__dirname, 'database.js'))
 const {setCookie, checkCookie, eliminateCookie} = require(path.resolve(__dirname, 'cookies.js'))
-var {logger} = require(path.resolve(__dirname, 'logger.js'))
+var logger = require(path.resolve(__dirname, 'logger.js'))
 
 const app = express()
 const port = process.env.SERVER_LISTEN_PORT

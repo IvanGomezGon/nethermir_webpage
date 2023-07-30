@@ -3,7 +3,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const proxmox = require('proxmox')(process.env.PROXMOX_USER, process.env.PROXMOX_PASSWORD, process.env.PROXMOX_IP_ADDRESS)
 const PROXMOX_SERVERS=process.env.PROXMOX_SERVERS_NAMES.split(' ');
 const  {sendWarningMail} = require(path.resolve(__dirname, 'emails.js'))
-var {logger} = require(path.resolve(__dirname, 'logger.js'))
+var logger = require(path.resolve(__dirname, 'logger.js'))
 
 
 const feedback_fetch = (text, res) => {
