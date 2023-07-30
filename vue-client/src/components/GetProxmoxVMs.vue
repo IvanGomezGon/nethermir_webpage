@@ -5,7 +5,7 @@
     <button type="button" @click="server=2" :disabled="server==2"> Nethermir3</button><br><br>  
     <table>
         <colgroup>
-        <col style="width:20px">
+        <col style="width:70px">
         <col span ="6">
     </colgroup>
         <tr>
