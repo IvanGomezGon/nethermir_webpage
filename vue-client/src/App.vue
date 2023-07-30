@@ -13,12 +13,10 @@
     background-size:cover;
     }   
 table{
-  word-wrap: break-word;
   width: 100%;
   table-layout: fixed;
   border-spacing:0px;
   border: 5px solid rgb(32, 102, 0);
-  margin: auto;
 }
 
 th, td {
@@ -27,14 +25,9 @@ th, td {
   border-bottom: 1px solid #ddd;
   padding-right:10px;
   padding-left:10px;
-  width: 1px;
   white-space: nowrap;
-  margin-left: 5px;
-  margin-right: 5px;
 }
 th {
-  overflow: hidden;
-  text-overflow: ellipsis;
   background-color: rgb(32, 102, 0);
   height: 30px;
   color: white;

@@ -4,6 +4,10 @@
     <button type="button" @click="server=1" :disabled="server==1"> Nethermir2</button>
     <button type="button" @click="server=2" :disabled="server==2"> Nethermir3</button><br><br>  
     <table>
+        <colgroup>
+        <col style="width:20px">
+        <col span ="6">
+    </colgroup>
         <tr>
             <th>VM id</th>
             <th>Nom</th>
