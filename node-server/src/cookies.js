@@ -10,7 +10,6 @@ const feedback_fetch = (text, res) => {
 } 
 
 const setCookie = (type, res) => {
-    logger.info("res: ", res)
     const token = jwt.sign({user: type}, process.env.COOKIE_PASSWORD, {expiresIn: "1h"})
     res.cookie("token", token, {
         httpOnly: true,
