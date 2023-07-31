@@ -44,6 +44,6 @@ const eliminateCookie = (req, res) => {
 module.exports = {
     setCookie,
     checkCookie,
-    eliminateCookie
+    eliminateCookie,
  }
 

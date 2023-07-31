@@ -64,5 +64,5 @@ const sendPasswordEmail = (emails, groupName, idgroup, password, keyPairUser, ke
 
 module.exports = {
     sendWarningMail,
-    sendPasswordEmail
+    sendPasswordEmail,
  }
