@@ -3,8 +3,8 @@ const bcrypt = require("bcrypt")
 const crypto = require('crypto')
 var mysql = require('mysql2');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
-const {cloneMachine} = require(path.resolve(__dirname, 'proxmox.js'))
-const  {sendPasswordEmail} = require(path.resolve(__dirname, 'emails.js'))
+const cloneMachine = require(path.resolve(__dirname, 'proxmox.js'))
+const sendPasswordEmail = require(path.resolve(__dirname, 'emails.js'))
 var logger = require(path.resolve(__dirname, 'logger.js'))
 
 
