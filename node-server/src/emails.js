@@ -36,12 +36,12 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
     logger.info(id)
     keyPair_user = genKeyPair()
     keyPair_server = genKeyPair()
-    emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: 
-                Usuari: ${nameGroup} 
-                Contransenya: ${password} 
-                Adjunt a aquest correu trobareu:
-                    1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN
-                    2. Les credencials d'accès a la VPN
+    emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
+                Usuari: ${nameGroup} <br>
+                Contransenya: ${password} <br><br>
+                Adjunt a aquest correu trobareu: <br>
+                    1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN <br>
+                    2. Les credencials d'accès a la VPN <br><br>
                 
                 //FITXER//
                 interfaceAdr: 10.1.1.2/30
