@@ -150,7 +150,7 @@ const registerGroup = async (req, res) => {
         .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))) 
     logger.info("before sending password emails..." )
     Promise.all(promises).then(async () =>{
-        logger.info("sending password emails..." )
+        logger.info("sending password emails...", emailManager, emailManager.sendPasswordEmail )
         emailManager.sendPasswordEmail(emails, nameGroup, idgroup, password, keyPairUser, keyPairRouter)
         feedback_fetch("Y", res)           
     })
