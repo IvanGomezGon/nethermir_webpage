@@ -128,8 +128,7 @@ const registerGroup = async (req, res) => {
     idgroup = await generateGroup(user)
     nameGroup = user + '-' + idgroup
     password_login_hash = await bcrypt.hash(password, 10);
-    keyPairUser = genKeyPairVLAN()
-    keyPairRouter = genKeyPairVLAN()
+    [keyPairUser, keyPairRouter] = genKeyPairVLAN()
     privKeyUserHash = await bcrypt.hash(keyPairUser.prv, 10);
     privKeyRouterHash = await bcrypt.hash(keyPairRouter.prv, 10);
     logger.info("PrivKeys: " ,privKeyUserHash.prv, "Starting check" )
