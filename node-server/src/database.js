@@ -126,14 +126,18 @@ const registerGroup = async (req, res) => {
     idgroup = await generateGroup(user)
     nameGroup = user + '-' + idgroup
     password_login_hash = await bcrypt.hash(password, 10);
+    keyPairUser = genKeyPairVLAN()
+    keyPairRouter = genKeyPairVLAN()
+    privKeyUserHash = await bcrypt.hash(keyPairUser.prv, 10);
+    privKeyRouterHash = await bcrypt.hash(keyPairRouter.prv, 10);
     feedback_check = await checkEmails(emails, res)
     if (feedback_check != "Correct"){
         feedback_fetch(feedback_check, res)
         return 0
     }
     let promises = [];
-    sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash) VALUES (?, ?, ?)`                       
-    promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash])
+    sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_user_hash, private_key_router_hash) VALUES (?, ?, ?, ?, ?)`                       
+    promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash, privKeyUserHash, privKeyRouterHash])
             .then(logger.info("Group Registrat"))
             .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))
     sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `
@@ -141,9 +145,9 @@ const registerGroup = async (req, res) => {
     emails.forEach(email => promises.push(queryToDB(sql, [email, nameGroup])
         .then(logger.info("Email Registrat"))
         .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))) 
-
+        
     Promise.all(promises).then(async () =>{
-        sendPasswordEmail(emails, nameGroup, idgroup, password)
+        sendPasswordEmail(emails, nameGroup, idgroup, password, keyPairUser, keyPairRouter)
         feedback_fetch("Y", res)           
     })
 }
@@ -229,23 +233,12 @@ const restartDatabase = async() =>{
     })
 }
 
-const genKeyPairVLAN = (idGroup) => {
+const genKeyPairVLAN = () => {
     keyPairUser = genKeyPair()
     keyPairRouter = genKeyPair()
-    storeKeyPairs(keyPairUser, keyPairRouter, idGroup)
-    //TODO: call a function for VLAN setting
     return [keyPairUser, keyPairRouter]
 }
 
-const storeKeyPairs = (keyPairUser, keyPairRouter, idGroup) => {
-    return new Promise(async (resolve, reject) => {
-        privKeyUserHash = await bcrypt.hash(keyPairUser.prv, 10);
-        privKeyRouterHash = await bcrypt.hash(keyPairRouter.prv, 10);
-        sql = `UPDATE nethermir.groups SET private_key_user_hash=(?), private_key_router_hash=(?) WHERE idsubject=(?)` 
-        queryToDB(sql, [idGroup, privKeyUserHash, privKeyRouterHash]).then(x =>{logger.info(x); resolve(x)})
-    })
-
-}
 const genKeyPair = () => {
     let k = crypto.generateKeyPairSync("x25519", {
         publicKeyEncoding: { format: "der", type: "spki" },

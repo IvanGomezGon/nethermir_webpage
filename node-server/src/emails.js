@@ -4,7 +4,6 @@ const crypto = require('crypto');
 const nodeMailer = require('nodemailer');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 var logger = require(path.resolve(__dirname, 'logger.js'))
-const {genKeyPairVLAN} = require(path.resolve(__dirname, 'database.js'))
 
 
 
@@ -31,9 +30,8 @@ const sendWarningMail = (user) =>{
                 `
     emails.forEach(email => sendEmail(email, emailText))
 }
-const sendPasswordEmail = (emails, groupName, idgroup, password) => {
+const sendPasswordEmail = (emails, groupName, idgroup, password, keyPairUser, keyPairRouter) => {
     logger.info(id)
-    [keyPairUser, keyPairRouter] = genKeyPairVLAN(idgroup)
     emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
                 Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>
