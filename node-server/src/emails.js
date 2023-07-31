@@ -47,11 +47,11 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
     logger.info(emailText)
     wireguardTxtPath = `${process.env.FOLDER_CONFIGURATION_WIREGUARD_FILEPATH}${nameGroup}.txt`
     wireguardTxt = `
-    interfaceAdr: 10.1.1.2/30 \n
-    allowedIPs:  10.1.1.0/30  10.0.2.0/30 \n
-    endpoint: 158.109.79.32:${65434+id} \n
-    pubkey ROUTER: ${keyPair_server.pub} \n
-    privkey USUARI:${keyPair_user.prv} \n`
+    interfaceAdr: 10.1.1.2/30 
+    allowedIPs:  10.1.1.0/30  10.0.2.0/30 
+    endpoint: 158.109.79.32:${65434+id} 
+    pubkey ROUTER: ${keyPair_server.pub} 
+    privkey USUARI:${keyPair_user.prv}`
 
     attachements = [
         {   filename: 'instructions.pdf',
