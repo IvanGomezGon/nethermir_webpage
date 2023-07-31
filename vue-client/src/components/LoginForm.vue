@@ -16,7 +16,8 @@
 
             <fieldset>
                 <legend> Contrasenya: </legend>
-                <input type="password" v-model="password" placeholder="**********">
+                <input :type="passwordType ? 'password' : 'text'" v-model="password" placeholder="**********">
+                <img @click="passwordType = (passwordType+1)%2" :src="passwordType ? '../assets/password_eye_hide.png' : '../assets/password_eye_show.png'" style="transform: translate(-50%, -70%); height: 30px; float: right;">
             </fieldset><br><br>   
             <button type="button" @click="checkLogin()" style="width: 426.5px;">Iniciar sessió</button><br><br>
             <router-link to="/register">No tens un compte encara? Registrat! </router-link><br><br>
@@ -34,6 +35,7 @@
             usuari:"",
             password:"",
             errors:[],
+            passwordType: 1,
         }
     },
     

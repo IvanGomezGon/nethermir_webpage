@@ -57,7 +57,7 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
         {   filename: 'instructions.pdf',
             path: process.env.PDF_WIREGUARD_FILEPATH
         },
-        {   filename: nameGroup,
+        {   filename: `${nameGroup}.txt`,
             path: wireguardTxtPath
         }] 
 
