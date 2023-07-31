@@ -45,22 +45,28 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
                 `
     //TODO: save db key_pair privs 
     logger.info(emailText)
+    wireguardTxtPath = `${nameGroup}Wireguard.txt`
+    wireguardTxt = `
+    interfaceAdr: 10.1.1.2/30 \n
+    allowedIPs:  10.1.1.0/30  10.0.2.0/30 \n
+    endpoint: 158.109.79.32:${65434+id} \n
+    pubkey ROUTER: ${keyPair_server.pub} \n
+    privkey USUARI:${keyPair_user.prv} \n`
+
     attachements = [
-    {   filename: 'instructions.pdf',
-        path: process.env.PDF_WIREGUARD_FILEPATH
-    },
-    {
-        filename: `${nameGroup}Wireguard.txt`,
-        content: `
-        interfaceAdr: 10.1.1.2/30 \n
-        allowedIPs:  10.1.1.0/30  10.0.2.0/30 \n
-        endpoint: 158.109.79.32:${65434+id} \n
-        pubkey ROUTER: ${keyPair_server.pub} \n
-        privkey USUARI:${keyPair_user.prv} \n
-        `
-    }
-    ]   
-    emails.forEach(email=>{ sendEmail(email, emailText, attachements) })
+        {   filename: 'instructions.pdf',
+            path: process.env.PDF_WIREGUARD_FILEPATH
+        },
+        {   filename: wireguardTxtPath,
+            path: wireguardTxtPath
+        }] 
+
+    fs.writeFile(wireguardTxtPath, wireguardTxt, function (){
+        emails.forEach(email=>{ sendEmail(email, emailText, attachements) })
+    })
+
+      
+    
 
 }
 

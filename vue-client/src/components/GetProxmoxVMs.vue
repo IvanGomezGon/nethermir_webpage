@@ -26,7 +26,7 @@
             <td>{{vm.template == 1 ? "-" : vm.uptime}}</td>
             <td><button type="button" :disabled="vm.template == 1 || vm.name == 'nethermir-mgmt'" @click="stopActivate(vm.status, vm.vmid)">{{vm.status == 'stopped' ? "Encendre" : "Parar"}} </button></td>
 
-            <td><button type="button" :disabled="vm.status == 'stopped' || vm.template == 1 || vm.name == nethermir-mgmt" @click="resumeSuspend(vm.cpu, vm.vmid)"> {{vm.cpu < 0.005 ? "Resumir" : "Pausar"}}</button></td>
+            <td><button type="button" :disabled="vm.status == 'stopped' || vm.template == 1 || vm.name == 'nethermir-mgmt'" @click="resumeSuspend(vm.cpu, vm.vmid)"> {{vm.cpu < 0.005 ? "Resumir" : "Pausar"}}</button></td>
 
         </tr>
      
