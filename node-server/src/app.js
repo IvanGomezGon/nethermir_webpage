@@ -80,7 +80,6 @@ app.get('/backend/eliminateGroup', function(req, res){
         .catch(() => {logger.info("Failed to eliminateGroup")})
 })
 app.get('/backend/getEmails', function(req, res){
-    logger.info("getEmails")
     checkCookie(req,res)
         .then(()=> {getEmails(res)})
         .catch(() => {logger.info("Failed to getEmails")})
