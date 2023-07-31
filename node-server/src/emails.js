@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const crypto = require('crypto');
 const nodeMailer = require('nodemailer');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 var logger = require(path.resolve(__dirname, 'logger.js'))
