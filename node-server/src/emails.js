@@ -15,7 +15,11 @@ const sendEmail = async (sendTo, txt) => {
         from: process.env.SMTP_ORIGIN,
         to: sendTo,
         subject: 'Config wireguard ',
-        html: txt,           
+        html: txt,
+        attachments: [{
+            filename: 'instructions.pdf',
+            path: process.env.PDF_WIREGUARD_FILEPATH
+        }]      
     })
     logger.info("Message sent to: " + sendTo);
 }
