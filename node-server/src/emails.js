@@ -4,6 +4,8 @@ const crypto = require('crypto');
 const nodeMailer = require('nodemailer');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 var logger = require(path.resolve(__dirname, 'logger.js'))
+const {genKeyPairVLAN} = require(path.resolve(__dirname, 'database.js'))
+
 
 
 const sendEmail = async (sendTo, txt, attachements = [{}]) => {
@@ -29,29 +31,24 @@ const sendWarningMail = (user) =>{
                 `
     emails.forEach(email => sendEmail(email, emailText))
 }
-const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
-    id = idgroup
+const sendPasswordEmail = (emails, groupName, idgroup, password) => {
     logger.info(id)
-    keyPair_user = genKeyPair()
-    keyPair_server = genKeyPair()
+    keyPairUser, keyPairRouter = genKeyPairVLAN(idgroup)
     emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
-                Usuari: ${nameGroup} <br>
+                Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>
                 Adjunt a aquest correu trobareu: <br>
                     1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN <br>
                     2. Les credencials d'accès a la VPN <br><br>
-                
-                //FITXER//
                 `
-    //TODO: save db key_pair privs 
     logger.info(emailText)
-    wireguardTxtPath = `${process.env.FOLDER_CONFIGURATION_WIREGUARD_FILEPATH}${nameGroup}.txt`
+    wireguardTxtPath = `${process.env.FOLDER_CONFIGURATION_WIREGUARD_FILEPATH}${groupName}.txt`
     wireguardTxt = `
     interfaceAdr: 10.1.1.2/30 
     allowedIPs:  10.1.1.0/30  10.0.2.0/30 
-    endpoint: 158.109.79.32:${65434+id} 
-    pubkey ROUTER: ${keyPair_server.pub} 
-    privkey USUARI:${keyPair_user.prv}`
+    endpoint: 158.109.79.32:${65434+idgroup} 
+    pubkey ROUTER: ${keyPairRouter.pub} 
+    privkey USUARI:${keyPairUser.prv}`
 
     attachements = [
         {   filename: 'instructions.pdf',
@@ -65,24 +62,7 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
         if (err){logger.info(err)}
         emails.forEach(email=>{ sendEmail(email, emailText, attachements) })
     })
-
-      
-    
-
 }
-
-const genKeyPair = () => {
-    let k = crypto.generateKeyPairSync("x25519", {
-        publicKeyEncoding: { format: "der", type: "spki" },
-        privateKeyEncoding: { format: "der", type: "pkcs8" }
-    });
-
-    return {
-        pub: k.publicKey.subarray(12).toString("base64"),
-        prv: k.privateKey.subarray(16).toString("base64")
-    };
-};
-
 
 module.exports = {
     sendWarningMail,

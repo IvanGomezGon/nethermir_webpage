@@ -95,10 +95,10 @@ const authenticate = async(req, res) => {
         if (user.startsWith(process.env.ROOT_USER) && pass == process.env.ROOT_PASS){
             resolve("root")
         }else{
-        sql = `SELECT idgroup, active, p_hash FROM nethermir.groups WHERE name=?`            
+        sql = `SELECT idgroup, active, password_login_hash FROM nethermir.groups WHERE name=?`            
         queryToDB(sql, [user]).then(async x =>{
             if (x.length > 0){
-                pass_hash = x[0].p_hash
+                pass_hash = x[0].password_login_hash
                 auth = await bcrypt.compare(pass, pass_hash);
                 if (auth){
                     if (x[0].active != 1){
@@ -107,8 +107,7 @@ const authenticate = async(req, res) => {
                         else {
                             feedback_fetch("Clonning failed - Contact Professor", res)
                             reject()
-                        }
-                            
+                        }   
                     }else{
                         resolve(user)
                     }
@@ -126,15 +125,15 @@ const registerGroup = async (req, res) => {
     password = generatePassword()
     idgroup = await generateGroup(user)
     nameGroup = user + '-' + idgroup
-    p_hash = await bcrypt.hash(password, 10);
+    password_login_hash = await bcrypt.hash(password, 10);
     feedback_check = await checkEmails(emails, res)
     if (feedback_check != "Correct"){
         feedback_fetch(feedback_check, res)
         return 0
     }
     let promises = [];
-    sql = `INSERT INTO nethermir.groups (idgroup, name, p_hash) VALUES (?, ?, ?)`                       
-    promises.push(queryToDB(sql, [idgroup, nameGroup, p_hash])
+    sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash) VALUES (?, ?, ?)`                       
+    promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash])
             .then(logger.info("Group Registrat"))
             .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))
     sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `
@@ -198,13 +197,15 @@ const restartDatabase = async() =>{
         sql = `CREATE TABLE nethermir.groups (
             idgroup INT NOT NULL,
             name VARCHAR(45) NOT NULL,
-            p_hash VARCHAR(60) NULL,
+            password_login_hash VARCHAR(60) NULL,
+            private_key_user_hash VARCHAR(60) NULL,
+            private_key_router_hash VARCHAR(60) NULL,
             active TINYINT NULL DEFAULT 0,
             vlan_id INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY (vlan_id),
             UNIQUE INDEX idgroup_UNIQUE (idgroup ASC) VISIBLE,
             UNIQUE INDEX name_UNIQUE (name ASC) VISIBLE,
-            UNIQUE INDEX p_hash_UNIQUE (p_hash ASC) VISIBLE);` 
+            UNIQUE INDEX password_login_hash_UNIQUE (password_login_hash ASC) VISIBLE);` 
         await queryToDB(sql)  
         sql = `CREATE TABLE nethermir.emails (
             email_id INT NOT NULL AUTO_INCREMENT,
@@ -228,6 +229,36 @@ const restartDatabase = async() =>{
     })
 }
 
+const genKeyPairVLAN = (idGroup) => {
+    keyPairUser = genKeyPair()
+    keyPairRouter = genKeyPair()
+    storeKeyPairs(keyPairUser, keyPairRouter, idGroup)
+    //TODO: call a function for VLAN setting
+    return keyPairUser, keyPairRouter
+}
+
+const storeKeyPairs = (keyPairUser, keyPairRouter, idGroup) => {
+    return new Promise(async (resolve, reject) => {
+        privKeyUserHash = await bcrypt.hash(keyPairUser.prv, 10);
+        privKeyRouterHash = await bcrypt.hash(keyPairRouter.prv, 10);
+        sql = `UPDATE nethermir.groups SET private_key_user_hash=(?), private_key_router_hash=(?) WHERE idsubject=(?)` 
+        queryToDB(sql, [idGroup, privKeyUserHash, privKeyRouterHash]).then(x =>{logger.info(x); resolve(x)})
+    })
+
+}
+const genKeyPair = () => {
+    let k = crypto.generateKeyPairSync("x25519", {
+        publicKeyEncoding: { format: "der", type: "spki" },
+        privateKeyEncoding: { format: "der", type: "pkcs8" }
+    });
+
+    return {
+        pub: k.publicKey.subarray(12).toString("base64"),
+        prv: k.privateKey.subarray(16).toString("base64")
+    };
+};
+
+
 module.exports = {
     getGroups,
     getEmails,
@@ -240,6 +271,7 @@ module.exports = {
     eliminateSubject,
     addSubject,
     activateSubject,
+    genKeyPairVLAN,
  }
 
 
