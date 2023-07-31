@@ -4,7 +4,7 @@ const crypto = require('crypto')
 var mysql = require('mysql2');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const cloneMachine = require(path.resolve(__dirname, 'proxmox.js'))
-const sendPasswordEmail = require(path.resolve(__dirname, 'emails.js'))
+const emailManager = require(path.resolve(__dirname, 'emails.js'))
 var logger = require(path.resolve(__dirname, 'logger.js'))
 
 
@@ -151,7 +151,7 @@ const registerGroup = async (req, res) => {
     logger.info("before sending password emails..." )
     Promise.all(promises).then(async () =>{
         logger.info("sending password emails..." )
-        sendPasswordEmail(emails, nameGroup, idgroup, password, keyPairUser, keyPairRouter)
+        emailManager.sendPasswordEmail(emails, nameGroup, idgroup, password, keyPairUser, keyPairRouter)
         feedback_fetch("Y", res)           
     })
 }
