@@ -131,7 +131,7 @@ const registerGroup = async (req, res) => {
     [keyPairUser, keyPairRouter] = genKeyPairVLAN()
     privKeyUserHash = await bcrypt.hash(keyPairUser.prv, 10);
     privKeyRouterHash = await bcrypt.hash(keyPairRouter.prv, 10);
-    logger.info("PrivKeys: " ,privKeyUserHash.prv, "Starting check" )
+    logger.info("PrivKeys: " ,privKeyUserHash, "Starting check" )
     feedback_check = await checkEmails(emails, res)
     if (feedback_check != "Correct"){
         feedback_fetch(feedback_check, res)
@@ -148,8 +148,9 @@ const registerGroup = async (req, res) => {
     emails.forEach(email => promises.push(queryToDB(sql, [email, nameGroup])
         .then(logger.info("Email Registrat"))
         .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))) 
-        
+    logger.info("before sending password emails..." )
     Promise.all(promises).then(async () =>{
+        logger.info("sending password emails..." )
         sendPasswordEmail(emails, nameGroup, idgroup, password, keyPairUser, keyPairRouter)
         feedback_fetch("Y", res)           
     })
