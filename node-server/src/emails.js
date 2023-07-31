@@ -19,7 +19,7 @@ const sendEmail = async (sendTo, txt, attachements = [{}]) => {
         html: txt,
         attachments: attachements    
     })
-    logger.info("Message sent to: " + sendTo);
+    logger.info("Message sent to: " + sendTo, "Info: ", info);
 }
 
 const sendWarningMail = (user) =>{
