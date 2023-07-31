@@ -61,7 +61,8 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
             path: wireguardTxtPath
         }] 
 
-    fs.writeFile(wireguardTxtPath, wireguardTxt, function (){
+    fs.writeFile(wireguardTxtPath, wireguardTxt, function (err){
+        if (err){logger.info(err)}
         emails.forEach(email=>{ sendEmail(email, emailText, attachements) })
     })
 
