@@ -234,7 +234,7 @@ const genKeyPairVLAN = (idGroup) => {
     keyPairRouter = genKeyPair()
     storeKeyPairs(keyPairUser, keyPairRouter, idGroup)
     //TODO: call a function for VLAN setting
-    return keyPairUser, keyPairRouter
+    return [keyPairUser, keyPairRouter]
 }
 
 const storeKeyPairs = (keyPairUser, keyPairRouter, idGroup) => {

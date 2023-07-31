@@ -33,7 +33,7 @@ const sendWarningMail = (user) =>{
 }
 const sendPasswordEmail = (emails, groupName, idgroup, password) => {
     logger.info(id)
-    keyPairUser, keyPairRouter = genKeyPairVLAN(idgroup)
+    [keyPairUser, keyPairRouter] = genKeyPairVLAN(idgroup)
     emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
                 Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>
