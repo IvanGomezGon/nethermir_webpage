@@ -121,6 +121,7 @@ const authenticate = async(req, res) => {
 }
 
 const registerGroup = async (req, res) => {
+    logger.info("Register Iniciated")
     user = req.query['user']
     emails = (req.query['email']).split('xv3dz1g')
     password = generatePassword()
@@ -131,11 +132,13 @@ const registerGroup = async (req, res) => {
     keyPairRouter = genKeyPairVLAN()
     privKeyUserHash = await bcrypt.hash(keyPairUser.prv, 10);
     privKeyRouterHash = await bcrypt.hash(keyPairRouter.prv, 10);
+    logger.info("PrivKeys: " ,privKeyUserHash.prv, "Starting check" )
     feedback_check = await checkEmails(emails, res)
     if (feedback_check != "Correct"){
         feedback_fetch(feedback_check, res)
         return 0
     }
+    logger.info("Lets sql")
     let promises = [];
     sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_user_hash, private_key_router_hash) VALUES (?, ?, ?, ?, ?)`                       
     promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash, privKeyUserHash, privKeyRouterHash])
