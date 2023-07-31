@@ -45,7 +45,7 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
                 `
     //TODO: save db key_pair privs 
     logger.info(emailText)
-    wireguardTxtPath = `${nameGroup}Wireguard.txt`
+    wireguardTxtPath = `${process.env.CONFIGURATION_WIREGUARD_FILEPATH}-${nameGroup}.txt`
     wireguardTxt = `
     interfaceAdr: 10.1.1.2/30 \n
     allowedIPs:  10.1.1.0/30  10.0.2.0/30 \n
