@@ -45,7 +45,7 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
                 `
     //TODO: save db key_pair privs 
     logger.info(emailText)
-    [
+    attachements = [
     {   filename: 'instructions.pdf',
         path: process.env.PDF_WIREGUARD_FILEPATH
     },
@@ -60,7 +60,7 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
         `
     }
     ]   
-    emails.forEach(email=>{ sendEmail(email, emailText) })
+    emails.forEach(email=>{ sendEmail(email, emailText, attachements) })
 
 }
 
