@@ -1,11 +1,12 @@
 const path = require('path');
+const fs = require('fs');
 const crypto = require('crypto');
 const nodeMailer = require('nodemailer');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 var logger = require(path.resolve(__dirname, 'logger.js'))
 
 
-const sendEmail = async (sendTo, txt) => {
+const sendEmail = async (sendTo, txt, attachements = [{}]) => {
     const transporter = nodeMailer.createTransport({
         host: process.env.SMTP_SERVER,
         port: process.env.SMTP_PORT,
@@ -16,10 +17,7 @@ const sendEmail = async (sendTo, txt) => {
         to: sendTo,
         subject: 'Config wireguard ',
         html: txt,
-        attachments: [{
-            filename: 'instructions.pdf',
-            path: process.env.PDF_WIREGUARD_FILEPATH
-        }]      
+        attachments: attachements    
     })
     logger.info("Message sent to: " + sendTo);
 }
@@ -44,13 +42,24 @@ const sendPasswordEmail = (emails, nameGroup, idgroup, password) => {
                     2. Les credencials d'accès a la VPN <br><br>
                 
                 //FITXER//
-                interfaceAdr: 10.1.1.2/30
-                allowedIPs:  10.1.1.0/30  10.0.2.0/30
-                endpoint: 158.109.79.32:${65434+id}
-                pubkey ROUTER: ${keyPair_server.pub}
-                privkey USUARI:${keyPair_user.prv}`
+                `
     //TODO: save db key_pair privs 
     logger.info(emailText)
+    [
+    {   filename: 'instructions.pdf',
+        path: process.env.PDF_WIREGUARD_FILEPATH
+    },
+    {
+        filename: `${nameGroup}Wireguard.txt`,
+        content: `
+        interfaceAdr: 10.1.1.2/30 \n
+        allowedIPs:  10.1.1.0/30  10.0.2.0/30 \n
+        endpoint: 158.109.79.32:${65434+id} \n
+        pubkey ROUTER: ${keyPair_server.pub} \n
+        privkey USUARI:${keyPair_user.prv} \n
+        `
+    }
+    ]   
     emails.forEach(email=>{ sendEmail(email, emailText) })
 
 }
