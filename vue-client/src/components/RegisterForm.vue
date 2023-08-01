@@ -41,7 +41,7 @@
                         <input type="email" v-model="emails[index-1]" placeholder="usuari@uab.cat" pattern=".+@uab\.cat"><br>
                     </fieldset>
                 </div><br>
-                <button type="button" @click="checkRegister()"> Crear grup</button><br><br>
+                <button type="button" @click="checkRegister()" style="width: 426.5px;"> Crear grup</button><br><br>
             </div>
             <router-link to="/">Ja tens un compte? Inicia sessió!</router-link><br><br>
         </div>
