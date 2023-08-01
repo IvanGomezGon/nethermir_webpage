@@ -4,7 +4,7 @@
             <br>
             <img src="../assets/logo_uab.png" class="logo">
             <h3>NETHERMIR Inici de sessió</h3>
-            <h3>{{feedback}}</h3>
+            <h3>{{feedback}}</h3><br>
             <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
                 <b>Si us plau, corregeix els següents error(s):</b>
                     <p v-for="error in errors">{{ error }}</p>

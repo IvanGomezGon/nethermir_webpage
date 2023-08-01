@@ -126,6 +126,7 @@ a.header_element:hover{
     width: 175px;
     margin-right: 10px;
     margin-left: 10px;
+    margin-bottom: 15px;
     display:inline;
   }
   .rootControl {
