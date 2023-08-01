@@ -2,8 +2,8 @@
     <div class="flexbox">
     <br><br>
       <h1 style="text-align: center;"> Estàs segur que vols reiniciar la base de dades? Aquesta acció ho eliminarà tot</h1>
-      <button type="button" @click="restartDatabase()" style="width:13vw;"> Si, entenc el risc, reiniciar base de dades</button>
-      <button type="button" @click="this.$router.push('/ControlPannelRoot')" style="width:13vw;"> No, tornar enrere</button>
+      <button type="button" class ="spacedOut" @click="restartDatabase()" style="width:13vw;"> Si, entenc el risc, reiniciar base de dades</button>
+      <button type="button" class ="spacedOut" @click="this.$router.push('/ControlPannelRoot')" style="width:13vw;"> No, tornar enrere</button>
     <br><br>
     </div>
   </template>
@@ -28,7 +28,10 @@
     justify-content: center;  
   }
   .spacedOut{
+    font-weight: bold;
     margin: 5px;
+    margin-bottom: 20px;
+
   }
 
 
