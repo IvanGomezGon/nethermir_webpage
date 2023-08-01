@@ -1,17 +1,17 @@
 <template>
 <h2> Informació Assignatures </h2>
-<fieldset style="display: inline-block; width:12vw;">
+<fieldset style="display: inline-flex; width:12vw;">
     <legend> Curs: </legend>
         <input type="text" v-model="curs" placeholder="2022-1" ><br>
     </fieldset>
 
     
-    <fieldset style="display: inline-block; width:12vw;">
+    <fieldset style="display: inline-flex; width:12vw;">
     <legend> Assignatura: </legend>
         <input type="text" v-model="assignatura" placeholder="FX" ><br>
     </fieldset>
 
-    <fieldset style="display: inline-block; width:12vw;">
+    <fieldset style="display: inline-flex; width:12vw;">
     <legend> Assignatura id: </legend>
         <input type="text" v-model="vmTemplateID" placeholder="01" ><br>
     </fieldset>
