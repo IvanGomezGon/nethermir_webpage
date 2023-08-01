@@ -75,7 +75,7 @@ a.header_element::after{
     content: '';
     display: block;
     width: 0;
-    height: 2px;
+    height: 3px;
     background: rgb(32, 102, 0);
     transition: width .3s;
 }
@@ -156,6 +156,7 @@ a.header_element:hover::after{
     color: white; 
     font-weight: bold;
     margin-right: 10px;
+    border-width: 0px;
   }
   .logout:hover{
     background-color: #c82333;
