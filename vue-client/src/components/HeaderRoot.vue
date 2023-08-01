@@ -3,10 +3,10 @@
     <div class="header">
         <img src="../assets/logo_uab.png" class="logo selector" @click="this.$router.push('/')">
         <h3 class="header_element title">PANELL DE CONTROL ROOT</h3>
-        <a href="#" class="header_element push" id ="proxmox" @click="saveStatus = !proxmox; switchTab('ProxmoxInfo'); proxmox = saveStatus">Proxmox VMs</a>
-        <a href="#" class="header_element" id="grups" @click="saveStatus = !grups; switchTab('groupsInfo'); grups = saveStatus" >Grups</a>
-        <a href="#" class="header_element" id="usuaris" @click="saveStatus = !usuaris; switchTab('emailsInfo'); usuaris = saveStatus">Usuaris</a>
-        <a href="#" class="header_element" id="assignatures" @click="saveStatus = !assignatures; switchTab('subjectsInfo'); assignatures = saveStatus">Assignatures</a>
+        <a href="#" :style="{'--widthVar': cssProxmox}" class="header_element push" id ="proxmox" @click="saveStatus = !proxmox; switchTab('ProxmoxInfo'); proxmox = saveStatus">Proxmox VMs</a>
+        <a href="#" :style="{'--widthVar': cssGrups}" class="header_element" id="grups" @click="saveStatus = !grups; switchTab('groupsInfo'); grups = saveStatus" >Grups</a>
+        <a href="#" :style="{'--widthVar': cssUsuaris}" class="header_element" id="usuaris" @click="saveStatus = !usuaris; switchTab('emailsInfo'); usuaris = saveStatus">Usuaris</a>
+        <a href="#" :style="{'--widthVar': cssAssignatures}" class="header_element" id="assignatures" @click="saveStatus = !assignatures; switchTab('subjectsInfo'); assignatures = saveStatus">Assignatures</a>
         <button class="logout" @click="this.$router.push('/restartDatabase')">Reiniciar base de dades</button>
         <button class="logout" @click="eliminateCookie()">Sortir</button>
     </div>
@@ -26,16 +26,16 @@
     },
     computed:{
         cssProxmox(){ 
-            if (this.proxmox == true){return '100%'}else{return 0} 
+            if (this.proxmox){return '100%'}else{return 0} 
         },
         cssGrups(){
-            if (this.grups == true){return '100%'}else{return 0}
+            if (this.grups){return '100%'}else{return 0}
         },
         cssUsuaris(){
-            if (this.usuaris == true){return '100%'}else{return 0}
+            if (this.usuaris){return '100%'}else{return 0}
         },
         cssAssignatures(){
-            if (this.assignatures == true){return '100%'}else{return 0}
+            if (this.assignatures){return '100%'}else{return 0}
         },
     },
     methods:{
@@ -57,18 +57,10 @@
   </script>
 
 <style>
-   #proxmox:after {
-    width: var(--cssProxmox)
+   #header_element:after {
+    width: var(--widthVar)
    }
-   #grups:after {
-    width: var(--cssGrups)
-   }
-   #usuaris:after {
-    width: var(--cssUsuaris)
-   }
-   #assignatures:after {
-    width: var(--cssAssignatures)
-   }
+
 </style>
 
 
