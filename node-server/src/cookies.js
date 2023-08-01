@@ -15,7 +15,7 @@ const setCookie = (type, res) => {
         httpOnly: true,
         Path:"/",
     })
-    logger.info("Setting cookie", token)
+    logger.info(`Setting cookie ${token}`)
     if (type != 'root') {feedback_fetch('user', res)}
     else {feedback_fetch(type, res)}
 }

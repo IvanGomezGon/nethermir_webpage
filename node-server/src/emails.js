@@ -19,7 +19,7 @@ const sendEmail = async (sendTo, txt, attachements = [{}]) => {
         html: txt,
         attachments: attachements    
     })
-    logger.info("Message sent to: " + sendTo, "Info: ", info);
+    logger.info(`Message sent to: ${sendTo} Info: ${info}`);
 }
 
 const sendWarningMail = (user) =>{
@@ -30,7 +30,6 @@ const sendWarningMail = (user) =>{
     emails.forEach(email => sendEmail(email, emailText))
 }
 const sendPasswordEmail = (emails, groupName, idgroup, password, keyPairUser, keyPairRouter) => {
-    logger.info(`HELLOOOO ${idgroup}`)
     emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
                 Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>
@@ -38,7 +37,6 @@ const sendPasswordEmail = (emails, groupName, idgroup, password, keyPairUser, ke
                     1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN <br>
                     2. Les credencials d'accès a la VPN <br><br>
                 `
-    logger.info(`DOES THIS WORK, ${emailText}`)
     wireguardTxtPath = `${process.env.FOLDER_CONFIGURATION_WIREGUARD_FILEPATH}${groupName}.txt`
     wireguardTxt = `
     interfaceAdr: 10.1.1.2/30 
@@ -57,7 +55,7 @@ const sendPasswordEmail = (emails, groupName, idgroup, password, keyPairUser, ke
 
     fs.writeFile(wireguardTxtPath, wireguardTxt, function (err){
         if (err){logger.info(`ERROR: ${err}`)}
-        logger.info("file written")
+        logger.info("File written")
         emails.forEach(email=>{ sendEmail(email, emailText, attachements) })
     })
 }

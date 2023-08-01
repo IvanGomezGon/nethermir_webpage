@@ -66,7 +66,7 @@ const cloneMachine = (group) =>{
         logger.info(group)
         vmID = (group % 3 + 1) * 10000 + group - group % 100;
         serverID = PROXMOX_SERVERS[group % 3]
-        logger.info('Cloning machine', vmID, 'on server ', serverID)
+        logger.info(`Cloning machine ${vmID} on server ${serverID}`)
         newID = {newid:group, name:group}
         proxmox.qemu.clone(serverID, vmID, newID, (err, data)=>{
             if (err){logger.info(err); resolve('Failed')}
@@ -88,7 +88,7 @@ const suspendMachine = (user, req, res) => {
     else {vmID = user.split("-").pop()}   
     serverID = PROXMOX_SERVERS[vmID % 3]
     logger.info(`Suspending machine ${vmID} on server ${serverID}`)
-    proxmox.qemu.suspend(serverID, vmID, (err, data)=>{logger.info(err, data)})  
+    proxmox.qemu.suspend(serverID, vmID, (err, data)=>{logger.info(`${err} ${data}`)})
 }
 
 const eliminateMachine = (user, req, res) => {
@@ -96,7 +96,7 @@ const eliminateMachine = (user, req, res) => {
     else {vmID = user.split("-").pop()} 
     serverID = PROXMOX_SERVERS[vmID % 3] 
     logger.info(`Eliminating machine ${vmID} on server ${serverID}`)
-    proxmox.del(serverID, vmID, (err, data) => {logger.info(err, data)})
+    proxmox.del(serverID, vmID, (err, data) => {logger.info(`${err} ${data}`)})
 
 }
 
