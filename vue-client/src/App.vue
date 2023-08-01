@@ -75,7 +75,7 @@ a.header_element::after{
     content: '';
     display: block;
     width: 0;
-    height: 3px;
+    height: 4px;
     background: rgb(32, 102, 0);
     transition: width .3s;
 }
@@ -106,8 +106,8 @@ a.header_element:hover::after{
     color: white;
   }
   button:hover{
-    background-color: rgb(255, 255, 255);
-    color: rgb(32, 102, 0);
+    background-color: #174b00;
+    border-color: #174b00;
   }
   button:disabled{
     background-color: rgb(181, 181, 181);
