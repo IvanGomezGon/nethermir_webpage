@@ -95,6 +95,7 @@ a.header_element:hover::after{
     
   }
   button{
+    min-width: 107px;
     padding-left: 15px;
     padding-right: 15px;
     transition-duration: 0.3s;
