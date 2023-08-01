@@ -118,7 +118,6 @@ a.header_element:hover::after{
   }
   input, select{
     width: 100%;
-    padding-top: 5px;
     border-width: 0px;
     outline: none;
     font-size: 15px;
@@ -157,12 +156,11 @@ a.header_element:hover::after{
     color: white; 
     font-weight: bold;
     margin-right: 10px;
-    border-color: rgba(255, 0, 0, 0.822);
-    border-width: 3px; 
-}
-.logout:hover{
+  }
+  .logout:hover{
     background-color: #c82333;
-}
+    color: white; 
+  }
 
 
 

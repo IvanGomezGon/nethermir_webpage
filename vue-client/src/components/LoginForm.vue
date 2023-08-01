@@ -2,7 +2,7 @@
     <div class="flex-container">
         <div class="inner-element" style="width:auto">
             <br>
-            <img src="../assets/logo_uab.png" class="logo selector">
+            <img src="../assets/logo_uab.png" class="selector" style="height: 100px;">
             <h3>NETHERMIR Inici de sessió</h3>
             <h3>{{feedback}}</h3><br>
             <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">

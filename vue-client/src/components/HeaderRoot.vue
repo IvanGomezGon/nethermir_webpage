@@ -2,7 +2,7 @@
 <template>
     <div class="header">
         <img src="../assets/logo_uab.png" class="logo selector" @click="this.$router.push('/')">
-        <h3 class="header_element title">Panell de control</h3>
+        <h3 class="header_element title">PANELL DE CONTROL ROOT</h3>
         <a href="#" :style="getStyle('proxmox')" class="push header_element" @click="saveStatus = !proxmox; switchTab('ProxmoxInfo'); proxmox = saveStatus">Proxmox VMs</a>
         <a href="#" :style="getStyle('grups')" class="header_element" @click="saveStatus = !grups; switchTab('groupsInfo'); grups = saveStatus" >Grups</a>
         <a href="#" :style="getStyle('usuaris')" class="header_element" @click="saveStatus = !usuaris; switchTab('emailsInfo'); usuaris = saveStatus">Usuaris</a>
