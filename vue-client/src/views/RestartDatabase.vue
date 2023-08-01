@@ -1,6 +1,6 @@
 <template>
     <div class="flex-container" v-if="render">
-        <div class="inner-element" style="width:50vw; height: 30vh;">
+        <div class="inner-element" style="width:50vw;">
             <RestartDatabase/>
         </div>
     </div>
@@ -31,3 +31,4 @@
     },
   }
   </script>
+
