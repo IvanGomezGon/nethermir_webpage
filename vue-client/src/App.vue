@@ -125,8 +125,8 @@ a.header_element:hover{
   #assignatura,  #curs {
     width: 175px;
     margin-right: 10px;
-    margin-left: 10px;
-    margin-bottom: 15px;
+    margin-left: 11px;
+    margin-bottom: 18px;
     display:inline;
   }
   .rootControl {
