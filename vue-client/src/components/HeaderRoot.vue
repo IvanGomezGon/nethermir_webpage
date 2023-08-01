@@ -26,16 +26,16 @@
     },
     computed:{
         cssProxmox(){ 
-            if (this.proxmox){return '100%'}else{return '0'} 
+            if (this.proxmox == true){return '100%'}else{return '0'} 
         },
         cssGrups(){
-            if (this.grups){return '100%'}else{return '0'}
+            if (this.grups == true){return '100%'}else{return '0'}
         },
         cssUsuaris(){
-            if (this.usuaris){return '100%'}else{return '0'}
+            if (this.usuaris == true){return '100%'}else{return '0'}
         },
         cssAssignatures(){
-            if (this.assignatures){return '100%'}else{return '0'}
+            if (this.assignatures == true){return '100%'}else{return '0'}
         },
     },
     methods:{
