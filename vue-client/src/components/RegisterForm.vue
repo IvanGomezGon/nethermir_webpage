@@ -24,7 +24,7 @@
                             <option v-for="subject in subjects()" :value="subject">{{subject}}</option>
                         </select> <br>
                     </fieldset> 
-
+                    <br>
                     <fieldset id="num">
                     <legend> Número d'integrants: </legend>
                         <select v-model="numIntegrants" @change="this.errors=[];">
