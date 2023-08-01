@@ -3,8 +3,17 @@
 </template>
 
 <style>
+.selector {
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
 .logo {
-    height: 100px;
+    height: 90px;
+    padding-right: 30px;
   }
     body {
     font-family: 'Source Sans Pro', 'Lucida Grande', sans-serif;
@@ -62,9 +71,16 @@ tr.userTable:hover {background-color:white;}
     text-decoration:none;
     color: black;
 }
-
-a.header_element:hover{
-    border-bottom: 2px solid rgb(32, 102, 0);
+a.header_element::after{
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: rgb(32, 102, 0);
+    transition: width .3s;
+}
+a.header_element:hover::after{
+    width: 100%;
 }
 .push {
     margin-left: auto;
@@ -106,6 +122,7 @@ a.header_element:hover{
     border-width: 0px;
     outline: none;
     font-size: 15px;
+    padding-bottom: 3px;
   }
   select { height:100%}
   fieldset {
@@ -116,6 +133,8 @@ a.header_element:hover{
     width: 400px;
     border-radius: 3px;
     font-size: 15px;
+    display: flex;
+    align-items: center;
   }
   fieldset:focus-within{
     border-color: green;
@@ -124,7 +143,7 @@ a.header_element:hover{
 
   #assignatura,  #curs {
     width: 175px;
-    margin-right: 10px;
+    margin-right: 12px;
     margin-left: 11px;
     margin-bottom: 18px;
     display:inline;

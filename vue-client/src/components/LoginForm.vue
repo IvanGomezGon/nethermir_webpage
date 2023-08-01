@@ -2,7 +2,7 @@
     <div class="flex-container">
         <div class="inner-element" style="width:auto">
             <br>
-            <img src="../assets/logo_uab.png" class="logo">
+            <img src="../assets/logo_uab.png" class="logo selector">
             <h3>NETHERMIR Inici de sessió</h3>
             <h3>{{feedback}}</h3><br>
             <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
@@ -17,7 +17,7 @@
             <fieldset>
                 <legend> Contrasenya: </legend>
                 <input :type="passwordType ? 'password' : 'text'" v-model="password" placeholder="**********">
-                <img @click="passwordType = (passwordType+1)%2" :src="passwordType ? require('../assets/password_eye_hide.png') : require('../assets/password_eye_show.png')" style="transform: translate(-50%, -70%); height: 30px; float: right; filter: opacity(80%)">
+                <img class="selector" @click="passwordType = (passwordType+1)%2" :src="passwordType ? require('../assets/password_eye_hide.png') : require('../assets/password_eye_show.png')" style="padding-bottom:3px; height: 30px; float: right; filter: opacity(80%)">
             </fieldset><br><br>   
             <button type="button" @click="checkLogin()" style="width: 426.5px;">Iniciar sessió</button><br><br>
             <router-link to="/register">No tens un compte encara? Registrat! </router-link><br><br>

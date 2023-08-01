@@ -1,7 +1,7 @@
 
 <template>
     <div class="header">
-        <img src="../assets/logo_uab.png" class="logo" @click="this.$router.push('/')">
+        <img src="../assets/logo_uab.png" class="logo selector" @click="this.$router.push('/')">
         <h3 class="header_element title">PANELL DE CONTROL D'USUARI</h3>
         <button class="push logout" @click="eliminateCookie()">SORTIR</button>
 

@@ -2,7 +2,7 @@
     <div class="flex-container" v-if="register">
         <div class="inner-element" id="register"  style="width:auto" >
             <br>
-            <img src="../assets/logo_uab.png" class="logo">
+            <img src="../assets/logo_uab.png" class="logo selector">
             <h3>NETHERMIR Registre</h3>
             {{ feedback }}<br>
             <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
