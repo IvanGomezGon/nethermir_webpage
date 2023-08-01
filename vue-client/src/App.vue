@@ -153,7 +153,7 @@ a.header_element:hover::after{
     padding:30px;
   }
   .logout{
-    background-color: red; 
+    background-color: #dc3545; 
     color: white; 
     font-weight: bold;
     margin-right: 10px;
@@ -161,8 +161,7 @@ a.header_element:hover::after{
     border-width: 3px; 
 }
 .logout:hover{
-    background-color: white;
-    color: red;
+    background-color: #c82333;
 }
 
 

@@ -2,13 +2,13 @@
 <template>
     <div class="header">
         <img src="../assets/logo_uab.png" class="logo selector" @click="this.$router.push('/')">
-        <h3 class="header_element title">PANELL DE CONTROL ROOT</h3>
-        <a href="#" :style="getStyle('proxmox')" class="push header_element" @click="saveStatus = !proxmox; switchTab('ProxmoxInfo'); proxmox = saveStatus">PROXMOX VMs</a>
-        <a href="#" :style="getStyle('grups')" class="header_element" @click="saveStatus = !grups; switchTab('groupsInfo'); grups = saveStatus" >GRUPS</a>
-        <a href="#" :style="getStyle('usuaris')" class="header_element" @click="saveStatus = !usuaris; switchTab('emailsInfo'); usuaris = saveStatus">USUARIS</a>
-        <a href="#" :style="getStyle('assignatures')" class="header_element" @click="saveStatus = !assignatures; switchTab('subjectsInfo'); assignatures = saveStatus">ASSIGNATURES</a>
-        <button class="logout" @click="this.$router.push('/restartDatabase')">REINICIAR BASE DE DADES</button>
-        <button class="logout" @click="eliminateCookie()">SORTIR</button>
+        <h3 class="header_element title">Panell de control</h3>
+        <a href="#" :style="getStyle('proxmox')" class="push header_element" @click="saveStatus = !proxmox; switchTab('ProxmoxInfo'); proxmox = saveStatus">Proxmox VMs</a>
+        <a href="#" :style="getStyle('grups')" class="header_element" @click="saveStatus = !grups; switchTab('groupsInfo'); grups = saveStatus" >Grups</a>
+        <a href="#" :style="getStyle('usuaris')" class="header_element" @click="saveStatus = !usuaris; switchTab('emailsInfo'); usuaris = saveStatus">Usuaris</a>
+        <a href="#" :style="getStyle('assignatures')" class="header_element" @click="saveStatus = !assignatures; switchTab('subjectsInfo'); assignatures = saveStatus">Assignatures</a>
+        <button class="logout" @click="this.$router.push('/restartDatabase')">Reiniciar base de dades</button>
+        <button class="logout" @click="eliminateCookie()">Sortir</button>
     </div>
   </template>
   
