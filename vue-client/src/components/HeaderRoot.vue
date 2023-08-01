@@ -57,7 +57,7 @@
   </script>
 
 <style>
-   #header_element:after {
+   a.header_element::after {
     width: var(--widthVar)
    }
 
