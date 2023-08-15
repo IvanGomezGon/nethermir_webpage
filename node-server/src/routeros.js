@@ -114,6 +114,8 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
             .catch((err) =>{
                 console.log(`Error routeros${err}`)
+                console.log(`closing connection routeros...`)
+                conn.close();
             })
 
 }) .catch((err) =>{

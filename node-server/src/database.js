@@ -5,6 +5,7 @@ var mysql = require('mysql2');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const cloneMachine = require(path.resolve(__dirname, 'proxmox.js'))
 const emailManager = require(path.resolve(__dirname, 'emails.js'))
+const routeros = require(path.resolve(__dirname, 'routeros.js'))
 var logger = require(path.resolve(__dirname, 'logger.js'))
 
 
@@ -96,7 +97,7 @@ const authenticate = async(req, res) => {
         if (user.startsWith(process.env.ROOT_USER) && pass == process.env.ROOT_PASS){
             resolve("root")
         }else{
-        sql = `SELECT idgroup, active, password_login_hash FROM nethermir.groups WHERE name=?`            
+        sql = `SELECT idgroup, active, password_login_hash, private_key_router_hash, public_key_user_hash  FROM nethermir.groups WHERE name=?`            
         queryToDB(sql, [user]).then(async x =>{
             if (x.length > 0){
                 pass_hash = x[0].password_login_hash
@@ -104,7 +105,16 @@ const authenticate = async(req, res) => {
                 if (auth){
                     if (x[0].active != 1){
                         cloneRes = await cloneMachine(x[0].idgroup)
-                        if (cloneRes == "Success") {activateGroup(x[0].idgroup); resolve(user)}
+                        if (cloneRes == "Success") {
+                            activateGroup(x[0].idgroup); 
+                            wgRouterPrivateKey = x[0].private_key_router_hash
+                            wgGroupPublicKey = x[0].public_key_user_hash
+                            vlanId = x[0].idgroup
+                            //TODO
+                            portUDP = 65434 + vlanID
+                            logger.info(groupName, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId)
+                            //routeros.generateRouterOSConfig(groupName, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId)
+                            resolve(user)}
                         else {
                             feedback_fetch("Clonning failed - Contact Professor", res)
                             reject()
@@ -120,6 +130,22 @@ const authenticate = async(req, res) => {
     })    
 }
 
+const getConfigForRouterOS = (user) => {
+    return new Promise(async (resolve, reject) => {
+        sql = `SELECT idsubject FROM nethermir.subjects WHERE subject_name = (?)` 
+        idsubject = await queryToDB(sql, [user])
+        idsubject = idsubject[0]['idsubject']
+        sql = `SELECT MAX(idgroup) as idgroup_max FROM nethermir.groups WHERE (idgroup - (idgroup MOD 100)) /100 = (?) `                
+        idgroups = await queryToDB(sql, [idsubject])
+        idgroups = idgroups[0]['idgroup_max']
+        if (idgroups != null){idgroup = idgroups+1;}
+        else {idgroup = idsubject*100;}
+        resolve(idgroup)
+    })
+
+
+
+}
 const registerGroup = async (req, res) => {
     logger.info("Register Iniciated")
     user = req.query['user']
@@ -129,8 +155,10 @@ const registerGroup = async (req, res) => {
     nameGroup = user + '-' + idgroup
     password_login_hash = await bcrypt.hash(password, 10);
     [keyPairUser, keyPairRouter] = genKeyPairVLAN()
-    privKeyUserHash = await bcrypt.hash(keyPairUser.prv, 10);
-    privKeyRouterHash = await bcrypt.hash(keyPairRouter.prv, 10);
+    privKeyUser = keyPairUser.prv;
+    pubKeyUser = keyPairUser.pub
+    privKeyRouter = keyPairRouter.prv;
+    pubKeyRouter = keyPairRouter.pub
     feedback_check = await checkEmails(emails, res)
     if (feedback_check != "Correct"){
         feedback_fetch(feedback_check, res)
@@ -138,8 +166,8 @@ const registerGroup = async (req, res) => {
     }
     logger.info("Lets sql")
     let promises = [];
-    sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_user_hash, private_key_router_hash) VALUES (?, ?, ?, ?, ?)`                       
-    promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash, privKeyUserHash, privKeyRouterHash])
+    sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_user, private_key_router, public_key_user, public_key_router) VALUES (?, ?, ?, ?, ?)`                       
+    promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash, privKeyUser, privKeyRouter, pubKeyUser, pubKeyRouter])
             .then(logger.info("Group Registrat"))
             .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))
     sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `
@@ -205,7 +233,9 @@ const restartDatabase = async() =>{
             name VARCHAR(45) NOT NULL,
             password_login_hash VARCHAR(60) NULL,
             private_key_user_hash VARCHAR(60) NULL,
+            public_key_user_hash VARCHAR(60) NULL,
             private_key_router_hash VARCHAR(60) NULL,
+            public_key_router_hash VARCHAR(60) NULL,
             active TINYINT NULL DEFAULT 0,
             vlan_id INT NOT NULL AUTO_INCREMENT,
             PRIMARY KEY (vlan_id),
