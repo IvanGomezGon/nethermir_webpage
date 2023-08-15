@@ -2,18 +2,21 @@
 <h2> Informació Grups </h2>
       
       <table>
-          <tr>
-              <th>Grup id</th>
-              <th>VLAN id</th>
-              <th>Nom</th>
-              <th>Actiu</th>
-              <th>Eliminar</th>
+          <tr> //306
+              <th>Identificador</th> //XX-2022-2-306	
+              <th>Assignatura</th> // 03
+              <th>Grup</th>   // 06
+              <th>VLAN</th> // 306
+              <th>Port UDP</th> //65555
+              <th>Actiu?</th>
+              <th>Eliminar?</th>
           </tr> 
        
           <tr v-for="group in data">
-              <td>{{group.idgroup}}</td>
-              <td>{{group.vlan_id + 65434}}</td>
               <td>{{group.name}}</td>
+              <td>{{(group.idgroup-group.idgroup%100)/100}}</td>
+              <td>{{group.idgroup%100}}</td>
+              <td>{{group.vlan_id + 65434}}</td>
               <td>{{group.active}}</td>
               <td><button type="button" @click="eliminateGroup(group.idgroup)">Eliminar</button></td>
           </tr>
