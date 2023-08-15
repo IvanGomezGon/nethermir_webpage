@@ -16,6 +16,7 @@
               <td>{{group.name}}</td>
               <td>{{(group.idgroup-group.idgroup%100)/100}}</td>
               <td>{{group.idgroup%100}}</td>
+              <td>{{group.idgroup}}</td>
               <td>{{group.vlan_id + 65434}}</td>
               <td>{{group.active}}</td>
               <td><button type="button" @click="eliminateGroup(group.idgroup)">Eliminar</button></td>
