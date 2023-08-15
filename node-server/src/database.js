@@ -166,8 +166,8 @@ const registerGroup = async (req, res) => {
     }
     logger.info("Lets sql")
     let promises = [];
-    sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_user, private_key_router, public_key_user, public_key_router) VALUES (?, ?, ?, ?, ?)`                       
-    promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash, privKeyUser, privKeyRouter, pubKeyUser, pubKeyRouter])
+    sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user) VALUES (?, ?, ?, ?, ?)`                       
+    promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash, privKeyRouter, pubKeyUser])
             .then(logger.info("Group Registrat"))
             .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))
     sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `
