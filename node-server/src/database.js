@@ -128,29 +128,15 @@ const authenticate = async(req, res) => {
                         resolve(user)
                     }
                 }   
+            }else{
+                feedback_fetch("Login Incorrect", res)
+                reject()
             }
-            feedback_fetch("Login Incorrect", res)
-            reject()
+            
         })}
     })    
 }
 
-const getConfigForRouterOS = (user) => {
-    return new Promise(async (resolve, reject) => {
-        sql = `SELECT idsubject FROM nethermir.subjects WHERE subject_name = (?)` 
-        idsubject = await queryToDB(sql, [user])
-        idsubject = idsubject[0]['idsubject']
-        sql = `SELECT MAX(idgroup) as idgroup_max FROM nethermir.groups WHERE (idgroup - (idgroup MOD 100)) /100 = (?) `                
-        idgroups = await queryToDB(sql, [idsubject])
-        idgroups = idgroups[0]['idgroup_max']
-        if (idgroups != null){idgroup = idgroups+1;}
-        else {idgroup = idsubject*100;}
-        resolve(idgroup)
-    })
-
-
-
-}
 const registerGroup = async (req, res) => {
     logger.info("Register Iniciated")
     user = req.query['user']

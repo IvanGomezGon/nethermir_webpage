@@ -51,7 +51,7 @@ app.get('/backend/login', function(req, res){
     logger.info("login")
     authenticate(req,res)
         .then((x)=> {setCookie(x, res);})
-        .catch(() => {logger.info("Failed to login")})  
+        .catch((x) => {logger.info(`Failed to login ${x}`)})  
 })
 app.get('/backend/register', function(req, res){
     logger.info("register")
