@@ -97,6 +97,7 @@ const authenticate = async(req, res) => {
         if (user.startsWith(process.env.ROOT_USER) && pass == process.env.ROOT_PASS){
             resolve("root")
         }else{
+        logger.info("Authenticate before query")
         sql = `SELECT idgroup, active, password_login_hash, private_key_router, public_key_user  FROM nethermir.groups WHERE name=?`            
         queryToDB(sql, [user]).then(async x =>{
             if (x.length > 0){
@@ -104,15 +105,18 @@ const authenticate = async(req, res) => {
                 auth = await bcrypt.compare(pass, pass_hash);
                 if (auth){
                     if (x[0].active != 1){
-                        cloneRes = await cloneMachine(x[0].idgroup)
+                        //cloneRes = await cloneMachine(x[0].idgroup)
+                        //TODO
+                        cloneRes = "Sucesss"
                         if (cloneRes == "Success") {
+                            logger.info("Clone success!")
                             activateGroup(x[0].idgroup); 
                             wgRouterPrivateKey = x[0].private_key_router
                             wgGroupPublicKey = x[0].public_key_user
                             vlanId = x[0].idgroup
                             //TODO
                             portUDP = 65434 + vlanID
-                            logger.info(groupName, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId)
+                            logger.info(`${groupName}, ${wgRouterPrivateKey}, ${wgGroupPublicKey}, ${portUDP}, ${process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME}, ${vlanId}`)
                             //routeros.generateRouterOSConfig(groupName, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId)
                             resolve(user)}
                         else {
