@@ -23,7 +23,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             `=name=LIST-${groupName}`,
         ])
             .then((data) =>{
-                console.log(`interface list name added, ${data}`)
+                logger.info(`interface list name added, ${data}`)
                 return conn.write('/interface/wireguard/add', [
                     `=comment=WG-${groupName}`,
                     `=listen-port=${port_udp}`,
@@ -34,7 +34,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                console.log(`interface vlan added, ${data}`)
+                logger.info(`interface vlan added, ${data}`)
                 return conn.write('/interface/wireguard/peers/add', [
                     `=allowed-address=10.0.1.0/30,10.1.1.0/30`,
                     `=comment=WG-${groupName}`,
@@ -44,7 +44,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                console.log(`interface wireguard peers added, ${data}`)
+                logger.info(`interface wireguard peers added, ${data}`)
                 return conn.write('/interface/vlan/add', [
                     `=comment=VLAN-${groupName}`,
                     `=interface=${interface}`,
@@ -54,7 +54,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                console.log(`interface vlan added, ${data}`)
+                logger.info(`interface vlan added, ${data}`)
                 return conn.write('/ip/vrf/add', [
                     `=interfaces=WG-${groupName},VLAN-${groupName}`,
                     `=name=VRF-${groupName}`,
@@ -62,7 +62,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                console.log(`ip vrf added, ${data}`)
+                logger.info(`ip vrf added, ${data}`)
                 return conn.write('/interface/list/member/add', [
                     `=interface=VLAN-${groupName}`,
                     `=list=LIST-${groupName}`,
@@ -70,7 +70,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                console.log(`interface list member vlan added, ${data}`)
+                logger.info(`interface list member vlan added, ${data}`)
                 return conn.write('/interface/list/member/add', [
                     `=interface=WG-${groupName}`,
                     `=list=LIST-${groupName}`,
@@ -78,7 +78,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                console.log(`interface list member wireguard added, ${data}`)
+                logger.info(`interface list member wireguard added, ${data}`)
                 return conn.write('/ip/address/add', [
                     `=address=10.0.1.1/30`,
                     `=comment=VLAN-${groupName}`,
@@ -88,7 +88,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                console.log(`ip address vlan added, ${data}`)
+                logger.info(`ip address vlan added, ${data}`)
                 return conn.write('/ip/address/add', [
                     `=address=10.1.1.1/30`,
                     `=comment=WG-${groupName}`,
@@ -98,7 +98,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                console.log(`ip address wireguard added, ${data}`)
+                logger.info(`ip address wireguard added, ${data}`)
                 return conn.write('/ip/firewall/filter/add', [
                     `=action=accept`,
                     `=chain=forward`,
@@ -109,22 +109,21 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
                 ])
             })
             .then((data) => {
-                console.log(`ip firewall filter added, ${data}`);
-                console.log(`closing connection routeros...`)
+                logger.info(`ip firewall filter added, ${data}`);
+                logger.info(`closing connection routeros...`)
                 conn.close();
             })
             .catch((err) =>{
-                console.log(`Error routeros${err}`)
-                console.log(`closing connection routeros...`)
+                logger.info(`Error routeros${err}`)
+                logger.info(`closing connection routeros...`)
                 conn.close();
             })
 
 }) .catch((err) =>{
-    console.log(`Error routeros${err}`)
+    logger.info(`Error routeros${err}`)
 })
 
 }
-generateRouterOSConfig('XX-2022-2-300', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 65439, 'ether1', 300)
 module.exports = {
     generateRouterOSConfig,
  }

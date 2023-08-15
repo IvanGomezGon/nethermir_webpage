@@ -98,7 +98,7 @@ const authenticate = async(req, res) => {
             resolve("root")
         }else{
         logger.info("Authenticate before query")
-        sql = `SELECT idgroup, active, password_login_hash, private_key_router, public_key_user  FROM nethermir.groups WHERE name=?`            
+        sql = `SELECT idgroup, active, password_login_hash, private_key_router, public_key_user, vlan_id  FROM nethermir.groups WHERE name=?`            
         queryToDB(sql, [user]).then(async x =>{
             if (x.length > 0){
                 pass_hash = x[0].password_login_hash
@@ -113,7 +113,7 @@ const authenticate = async(req, res) => {
                             activateGroup(x[0].idgroup); 
                             wgRouterPrivateKey = x[0].private_key_router
                             wgGroupPublicKey = x[0].public_key_user
-                            vlanId = x[0].idgroup
+                            vlanId = x[0].vlan_id
                             //TODO
                             portUDP = 65434 + vlanId
                             logger.info(`Before big logger`)
