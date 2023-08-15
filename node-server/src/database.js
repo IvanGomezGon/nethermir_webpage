@@ -5,7 +5,7 @@ var mysql = require('mysql2');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const cloneMachine = require(path.resolve(__dirname, 'proxmox.js'))
 const emailManager = require(path.resolve(__dirname, 'emails.js'))
-const routeros = require(path.resolve(__dirname, 'routeros.js'))
+const {routeros} = require(path.resolve(__dirname, 'routeros.js'))
 var logger = require(path.resolve(__dirname, 'logger.js'))
 
 
