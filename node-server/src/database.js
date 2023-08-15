@@ -107,7 +107,7 @@ const authenticate = async(req, res) => {
                     if (x[0].active != 1){
                         //cloneRes = await cloneMachine(x[0].idgroup)
                         //TODO
-                        cloneRes = "Sucesss"
+                        cloneRes = "Success"
                         if (cloneRes == "Success") {
                             logger.info("Clone success!")
                             activateGroup(x[0].idgroup); 
@@ -115,8 +115,9 @@ const authenticate = async(req, res) => {
                             wgGroupPublicKey = x[0].public_key_user
                             vlanId = x[0].idgroup
                             //TODO
-                            portUDP = 65434 + vlanID
-                            logger.info(`${groupName}, ${wgRouterPrivateKey}, ${wgGroupPublicKey}, ${portUDP}, ${process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME}, ${vlanId}`)
+                            portUDP = 65434 + vlanId
+                            logger.info(`Before big logger`)
+                            logger.info(`ROUTEROS: ${user}, ${wgRouterPrivateKey}, ${wgGroupPublicKey}, ${portUDP}, ${process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME}, ${vlanId}`)
                             //routeros.generateRouterOSConfig(groupName, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId)
                             resolve(user)}
                         else {
