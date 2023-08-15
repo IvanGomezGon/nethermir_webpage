@@ -97,7 +97,7 @@ const authenticate = async(req, res) => {
         if (user.startsWith(process.env.ROOT_USER) && pass == process.env.ROOT_PASS){
             resolve("root")
         }else{
-        sql = `SELECT idgroup, active, password_login_hash, private_key_router_hash, public_key_user_hash  FROM nethermir.groups WHERE name=?`            
+        sql = `SELECT idgroup, active, password_login_hash, private_key_router, public_key_user  FROM nethermir.groups WHERE name=?`            
         queryToDB(sql, [user]).then(async x =>{
             if (x.length > 0){
                 pass_hash = x[0].password_login_hash
@@ -107,8 +107,8 @@ const authenticate = async(req, res) => {
                         cloneRes = await cloneMachine(x[0].idgroup)
                         if (cloneRes == "Success") {
                             activateGroup(x[0].idgroup); 
-                            wgRouterPrivateKey = x[0].private_key_router_hash
-                            wgGroupPublicKey = x[0].public_key_user_hash
+                            wgRouterPrivateKey = x[0].private_key_router
+                            wgGroupPublicKey = x[0].public_key_user
                             vlanId = x[0].idgroup
                             //TODO
                             portUDP = 65434 + vlanID
