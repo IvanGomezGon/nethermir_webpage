@@ -36,7 +36,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             })
 
             .then((data) =>{
-                logger.info(`interface vlan added, ${data}`)
+                logger.info(`interface wireguard added, ${data}`)
                 return conn.write('/interface/wireguard/peers/add', [
                     `=allowed-address=10.0.1.0/30,10.1.1.0/30`,
                     `=comment=WG-${groupName}`,
