@@ -29,6 +29,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
                     `=listen-port=${port_udp}`,
                     `=mtu=1420`,
                     `=name=WG-${groupName}`,
+                    `=private-key=${wgRouterPrivateKey}`
                 ])
             })
 

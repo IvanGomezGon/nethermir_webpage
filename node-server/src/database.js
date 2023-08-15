@@ -118,7 +118,7 @@ const authenticate = async(req, res) => {
                             portUDP = 65434 + vlanId
                             logger.info(`Before big logger`)
                             logger.info(`ROUTEROS: ${user}, ${wgRouterPrivateKey}, ${wgGroupPublicKey}, ${portUDP}, ${process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME}, ${vlanId}`)
-                            //routeros.generateRouterOSConfig(groupName, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId)
+                            routeros.generateRouterOSConfig(user, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId)
                             resolve(user)}
                         else {
                             feedback_fetch("Clonning failed - Contact Professor", res)
