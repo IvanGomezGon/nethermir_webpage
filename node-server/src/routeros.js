@@ -17,8 +17,10 @@ const conn = new RosApi({
 // vlanId = 300
 // Interface = eth3
 const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey, port_udp, interface, vlanId) => {
+    logger.info("generateRouterOSConfig")
     conn.connect()
     .then(() => {
+        logger.info("Connected to host!")
         conn.write('/interface/list/add', [
             `=name=LIST-${groupName}`,
         ])
