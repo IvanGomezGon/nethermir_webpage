@@ -2,12 +2,12 @@
 <h2> Informació Grups </h2>
       
       <table>
-          <tr> //306
-              <th>Identificador</th> //XX-2022-2-306	
-              <th>Assignatura</th> // 03
-              <th>Grup</th>   // 06
-              <th>VLAN</th> // 306
-              <th>Port UDP</th> //65555
+          <tr> 
+              <th>Identificador</th> 
+              <th>Assignatura</th> 
+              <th>Grup</th>   
+              <th>VLAN</th> 
+              <th>Port UDP</th>
               <th>Actiu?</th>
               <th>Eliminar?</th>
           </tr> 
