@@ -1,35 +1,39 @@
 const path = require('path');
 const fs = require('fs');
 const nodeMailer = require('nodemailer');
+const JSZip = require('jszip')
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 var logger = require(path.resolve(__dirname, 'logger.js'))
 
 
 
 const sendEmail = async (sendTo, txt, attachements = [{}]) => {
-    const transporter = nodeMailer.createTransport({
-        host: process.env.SMTP_SERVER,
-        port: process.env.SMTP_PORT,
-        secure: false
-    });
-    const info = await transporter.sendMail({
-        from: process.env.SMTP_ORIGIN,
-        to: sendTo,
-        subject: 'Config wireguard ',
-        html: txt,
-        attachments: attachements    
+    return new Promise(async (resolve, reject) =>{
+        const transporter = nodeMailer.createTransport({
+            host: process.env.SMTP_SERVER,
+            port: process.env.SMTP_PORT,
+            secure: false
+        });
+        const info = await transporter.sendMail({
+            from: process.env.SMTP_ORIGIN,
+            to: sendTo,
+            subject: 'Config wireguard',
+            html: txt,
+            attachments: attachements    
+        })
+        logger.info(`Message sent to: ${sendTo} Info: ${info}`);
+        resolve()
     })
-    logger.info(`Message sent to: ${sendTo} Info: ${info}`);
 }
 
 const sendWarningMail = (user) =>{
-    //Query for group email
+    //TODO: EMAILS CHANGES, EMAIL TEXT 
     emails = ["ivangg02@gmail.com", "ivangg1202@gmail.com"]
     emailText = `Bon dia, la vostra VM serà apagada en 30 minuts
                 `
     emails.forEach(email => sendEmail(email, emailText))
 }
-const sendPasswordEmail = (emails, groupName, idgroup, password, keyPairUser, keyPairRouter) => {
+const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyPairUser, keyPairRouter) => {
     emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
                 Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>
@@ -37,13 +41,17 @@ const sendPasswordEmail = (emails, groupName, idgroup, password, keyPairUser, ke
                     1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN <br>
                     2. Les credencials d'accès a la VPN <br><br>
                 `
-    wireguardTxtPath = `${process.env.FOLDER_CONFIGURATION_WIREGUARD_FILEPATH}${groupName}.txt`
+    wireguardTxtPath = ``
     wireguardTxt = `
-    interfaceAdr: 10.1.1.2/30 
-    allowedIPs:  10.1.1.0/30  10.0.2.0/30 
-    endpoint: 158.109.79.32:${65434+idgroup} 
-    pubkey ROUTER: ${keyPairRouter.pub} 
-    privkey USUARI:${keyPairUser.prv}`
+    [Interface]
+    PrivateKey = ${keyPairUser.prv}
+    Address = 10.1.1.2/30
+
+    [Peer]
+    PublicKey = ${keyPairRouter.pub}
+    AllowedIPs = 10.1.1.0/30, 10.0.1.0/30
+    Endpoint = 158.109.79.32:${endpointPort}
+    PersistentKeepalive = 30`
 
     attachements = [
         {   filename: 'instructions.pdf',
@@ -52,12 +60,18 @@ const sendPasswordEmail = (emails, groupName, idgroup, password, keyPairUser, ke
         {   filename: `${nameGroup}.txt`,
             path: wireguardTxtPath
         }] 
-
-    fs.writeFile(wireguardTxtPath, wireguardTxt, function (err){
-        if (err){logger.info(`ERROR: ${err}`)}
-        logger.info("File written")
-        emails.forEach(email=>{ sendEmail(email, emailText, attachements) })
+    const zip = new JSZip()
+    zip.file(`${groupName}.conf`, wireguardTxt);
+    const content = await zip.generateAsync({ type: "nodebuffer" })
+    fs.writeFileSync(`${groupName}.zip`, content)
+    for (const email of emails){
+        await sendEmail(email, emailText, attachements)
+    }
+    fs.unlink(`${groupName}.zip`, (err) => {
+        if (err) {logger.error(`Error eliminating zip ${err}`)}
     })
+   
+    
 }
 
 module.exports = {

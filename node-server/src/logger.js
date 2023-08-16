@@ -2,6 +2,9 @@ var winston = require('winston');
 
 var logger = winston.createLogger({
   transports: [
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
     new winston.transports.File({
       name: 'error-file',
       filename: `${process.env.LOGS_FILEPATH}/nethermir.err`,

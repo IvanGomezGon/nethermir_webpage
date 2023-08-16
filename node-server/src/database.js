@@ -115,7 +115,7 @@ const authenticate = async(req, res) => {
                             wgGroupPublicKey = x[0].public_key_user
                             vlanId = x[0].vlan_id
                             //TODO
-                            portUDP = 65434 + vlanId
+                            portUDP = process.env.PORT_UDP_FIRST_ID + vlanId
                             logger.info(`Before big logger`)
                             logger.info(`ROUTEROS: ${user}, ${wgRouterPrivateKey}, ${wgGroupPublicKey}, ${portUDP}, ${process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME}, ${vlanId}`)
                             generateRouterOSConfig(user, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId)
@@ -142,14 +142,10 @@ const registerGroup = async (req, res) => {
     user = req.query['user']
     emails = (req.query['email']).split('xv3dz1g')
     password = generatePassword()
-    idgroup = await generateGroup(user)
-    nameGroup = user + '-' + idgroup
+    idGroup = await generateGroup(user)
+    nameGroup = user + '-' + idGroup
     password_login_hash = await bcrypt.hash(password, 10);
     [keyPairUser, keyPairRouter] = genKeyPairVLAN()
-    privKeyUser = keyPairUser.prv;
-    pubKeyUser = keyPairUser.pub
-    privKeyRouter = keyPairRouter.prv;
-    pubKeyRouter = keyPairRouter.pub
     feedback_check = await checkEmails(emails, res)
     if (feedback_check != "Correct"){
         feedback_fetch(feedback_check, res)
@@ -158,17 +154,21 @@ const registerGroup = async (req, res) => {
     logger.info("Lets sql")
     let promises = [];
     sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user) VALUES (?, ?, ?, ?, ?)`                       
-    promises.push(queryToDB(sql, [idgroup, nameGroup, password_login_hash, privKeyRouter, pubKeyUser])
+    promises.push(queryToDB(sql, [idGroup, nameGroup, password_login_hash, keyPairRouter.prv, keyPairUser.pub])
             .then(logger.info("Group Registrat"))
             .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))
     sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `
     
+    sql = `SELECT vlan_id FROM nethermir.groups WHERE idgroup = (?)` 
+    endpointPort = await queryToDB(sql, [idGroup])
+    endpointPort = endpointPort[0]['vlan_id'] + process.env.PORT_UDP_FIRST_ID
+
     emails.forEach(email => promises.push(queryToDB(sql, [email, nameGroup])
         .then(logger.info("Email Registrat"))
         .catch(x=>feedback_fetch("Error mySQL nethermir.groups: " + x, res)))) 
     Promise.all(promises).then(async () =>{
         logger.info("sending password emails...")
-        emailManager.sendPasswordEmail(emails, nameGroup, idgroup, password, keyPairUser, keyPairRouter)
+        emailManager.sendPasswordEmail(emails, nameGroup, endpointPort, password, keyPairUser, keyPairRouter)
         feedback_fetch("Y", res)           
     })
 }
