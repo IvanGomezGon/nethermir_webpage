@@ -1,41 +1,45 @@
 <template>
-  <div class="flex-container" v-if="render">
+<div class="flex-container" v-if="render">
     <div class="header">
-        <HeaderUser/>
+        <HeaderUser />
     </div>
     <div class="inner-element rootControl">
-      <GetInfoVM></GetInfoVM>
+        <GetInfoVM></GetInfoVM>
     </div>
-  </div>
-  </template>
-  
-  <script>
+</div>
+</template>
 
-  // @ is an alias to /src
-  import GetInfoVM from '@/components/GetInfoVM.vue'
-  import HeaderUser from '@/components/HeaderUser.vue'
+<script>
+// @ is an alias to /src
+import GetInfoVM from "@/components/GetInfoVM.vue";
+import HeaderUser from "@/components/HeaderUser.vue";
 
-  export default {
-    name: 'controlPannelUser',
-    data: ()=>{
-    return {
-      render: false,
-    }
+export default {
+    name: "controlPannelUser",
+    data: () => {
+        return {
+            render: false,
+        };
     },
     components: {
         GetInfoVM,
         HeaderUser,
     },
-    // TODO: Change this for Router Navigation guards 
+    // TODO: Change this for Router Navigation guards
     // https://stackoverflow.com/questions/69148784/stop-vue-page-from-loading-till-data-fetch-is-loaded
     beforeCreate: function () {
-            fetch(`${process.env.VUE_APP_FETCH_URL}checkCookie`, {credentials: process.env.VUE_APP_FETCH_CREDENTIALS}).then(response=>{
-                response.text().then(text=> {
-                    console.log("TEXT: ", text)
-                    if (text == 'root' || text == 'failed-login'){this.$router.push('/')}
-                    else {this.render = true}
-            })})
+        fetch(`${process.env.VUE_APP_FETCH_URL}checkCookie`, {
+            credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+        }).then((response) => {
+            response.text().then((text) => {
+                console.log("TEXT: ", text);
+                if (text == "root" || text == "failed-login") {
+                    this.$router.push("/");
+                } else {
+                    this.render = true;
+                }
+            });
+        });
     },
-  }
-  
-  </script>
+};
+</script>
