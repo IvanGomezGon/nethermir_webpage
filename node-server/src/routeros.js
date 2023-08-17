@@ -20,7 +20,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
     conn.connect()
         .then(() => {
             logger.info("Connected to host!");
-            conn.write("/interface/list/add", [`=name=LIST-${groupName}`])
+            conn.write("/interface/list/add", [`=comment=LIST-${groupName}, =name=LIST-${groupName}`])
                 .then((data) => {
                     logger.info(`interface list name added, ${data}`);
                     return conn.write("/interface/wireguard/add", [`=comment=WG-${groupName}`, `=listen-port=${port_udp}`, `=mtu=1420`, `=name=WG-${groupName}`, `=private-key=${wgRouterPrivateKey}`]);
@@ -38,17 +38,17 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
 
                 .then((data) => {
                     logger.info(`interface vlan added, ${data}`);
-                    return conn.write("/ip/vrf/add", [`=interfaces=WG-${groupName},VLAN-${groupName}`, `=name=VRF-${groupName}`]);
+                    return conn.write("/ip/vrf/add", [`=comment=VRF-${groupName}, =interfaces=WG-${groupName},VLAN-${groupName}`, `=name=VRF-${groupName}`]);
                 })
 
                 .then((data) => {
                     logger.info(`ip vrf added, ${data}`);
-                    return conn.write("/interface/list/member/add", [`=interface=VLAN-${groupName}`, `=list=LIST-${groupName}`]);
+                    return conn.write("/interface/list/member/add", [`=comment=LIST-${groupName}, =interface=VLAN-${groupName}`, `=list=LIST-${groupName}`]);
                 })
 
                 .then((data) => {
                     logger.info(`interface list member vlan added, ${data}`);
-                    return conn.write("/interface/list/member/add", [`=interface=WG-${groupName}`, `=list=LIST-${groupName}`]);
+                    return conn.write("/interface/list/member/add", [`=comment=LIST-${groupName}, =interface=WG-${groupName}`, `=list=LIST-${groupName}`]);
                 })
 
                 .then((data) => {
@@ -71,13 +71,13 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
                     conn.close();
                 })
                 .catch((err) => {
-                    logger.info(`Error routeros${err}`);
+                    logger.info(`Error routeros on execution${err}`);
                     logger.info(`closing connection routeros...`);
                     conn.close();
                 });
         })
         .catch((err) => {
-            logger.info(`Error routeros${err}`);
+            logger.info(`Error routeros failed to connect${err}`);
         });
 };
 
@@ -234,7 +234,7 @@ const eliminateRouterOSConfig = (groupName) => {
         });
 };
 ///generateRouterOSConfig('XX-2022-2-300', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 65439, "ether1", 300)
-eliminateRouterOSConfigMain("XX-2022-2-300");
+//eliminateRouterOSConfigMain("XX-2022-2-300");
 
 module.exports = {
     generateRouterOSConfig,

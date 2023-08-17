@@ -6,6 +6,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var logger = require(path.resolve(__dirname, "logger.js"));
 
 const sendEmail = async (sendTo, txt, attachements = [{}]) => {
+    logger.info("SendEmail started")
     return new Promise(async (resolve, reject) => {
         const transporter = nodeMailer.createTransport({
             host: process.env.SMTP_SERVER,
@@ -32,6 +33,7 @@ const sendWarningMail = (user) => {
     emails.forEach((email) => sendEmail(email, emailText));
 };
 const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyPairUser, keyPairRouter) => {
+    logger.info("sendPasswordEmail")
     emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
                 Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>
@@ -58,17 +60,21 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
         },
         { filename: `${nameGroup}.txt`, path: wireguardTxtPath },
     ];
+    logger.info(`Attachements: ${attachements}`)
     const zip = new JSZip();
     zip.file(`${groupName}.conf`, wireguardTxt);
     const content = await zip.generateAsync({ type: "nodebuffer" });
+    logger.info(`Content: ${content}`)
     fs.writeFileSync(`${groupName}.zip`, content);
     for (const email of emails) {
         await sendEmail(email, emailText, attachements);
     }
+    logger.info("Sending finished, unlinking")
     fs.unlink(`${groupName}.zip`, (err) => {
         if (err) {
             logger.error(`Error eliminating zip ${err}`);
         }
+        logger.info("Unlinking ended")
     });
 };
 
