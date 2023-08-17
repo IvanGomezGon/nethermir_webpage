@@ -41,7 +41,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
                     1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN <br>
                     2. Les credencials d'accès a la VPN <br><br>
                 `;
-    wireguardTxtPath = `/tmp/${groupName}`;
+    wireguardTxtPath = `/tmp/${groupName}.zip`;
     wireguardTxt = `
     [Interface]
     PrivateKey = ${keyPairUser.prv}
