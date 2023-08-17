@@ -20,7 +20,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
     conn.connect()
         .then(() => {
             logger.info("Connected to host!");
-            conn.write("/interface/list/add", [`=comment=LIST-${groupName}, =name=LIST-${groupName}`])
+            conn.write("/interface/list/add", [`=comment=LIST-${groupName}`, `=name=LIST-${groupName}`])
                 .then((data) => {
                     logger.info(`interface list name added, ${data}`);
                     return conn.write("/interface/wireguard/add", [`=comment=WG-${groupName}`, `=listen-port=${port_udp}`, `=mtu=1420`, `=name=WG-${groupName}`, `=private-key=${wgRouterPrivateKey}`]);
@@ -38,17 +38,17 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
 
                 .then((data) => {
                     logger.info(`interface vlan added, ${data}`);
-                    return conn.write("/ip/vrf/add", [`=comment=VRF-${groupName}, =interfaces=WG-${groupName},VLAN-${groupName}`, `=name=VRF-${groupName}`]);
+                    return conn.write("/ip/vrf/add", [`=comment=VRF-${groupName}`, `=interfaces=WG-${groupName},VLAN-${groupName}`, `=name=VRF-${groupName}`]);
                 })
 
                 .then((data) => {
                     logger.info(`ip vrf added, ${data}`);
-                    return conn.write("/interface/list/member/add", [`=comment=LIST-${groupName}, =interface=VLAN-${groupName}`, `=list=LIST-${groupName}`]);
+                    return conn.write("/interface/list/member/add", [`=comment=LIST-${groupName}`, `=interface=VLAN-${groupName}`, `=list=LIST-${groupName}`]);
                 })
 
                 .then((data) => {
                     logger.info(`interface list member vlan added, ${data}`);
-                    return conn.write("/interface/list/member/add", [`=comment=LIST-${groupName}, =interface=WG-${groupName}`, `=list=LIST-${groupName}`]);
+                    return conn.write("/interface/list/member/add", [`=comment=LIST-${groupName}`, `=interface=WG-${groupName}`, `=list=LIST-${groupName}`]);
                 })
 
                 .then((data) => {
