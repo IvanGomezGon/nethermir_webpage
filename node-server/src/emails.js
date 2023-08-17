@@ -41,7 +41,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
                     1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN <br>
                     2. Les credencials d'accès a la VPN <br><br>
                 `;
-    wireguardTxtPath = ``;
+    wireguardTxtPath = `/tmp/`;
     wireguardTxt = `
     [Interface]
     PrivateKey = ${keyPairUser.prv}
@@ -58,14 +58,14 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
             filename: "instructions.pdf",
             path: process.env.PDF_WIREGUARD_FILEPATH,
         },
-        { filename: `${nameGroup}.txt`, path: wireguardTxtPath },
+        { filename: `${nameGroup}.zip`, path: wireguardTxtPath },
     ];
     logger.info(`Attachements: ${attachements}`);
     const zip = new JSZip();
     zip.file(`${groupName}.conf`, wireguardTxt);
     const content = await zip.generateAsync({ type: "nodebuffer" });
     logger.info(`Content: ${content}`);
-    fs.writeFile(`${groupName}.zip`, content, async (err) => {
+    fs.writeFile(`/tmp/${groupName}.zip`, content, async (err) => {
         if (err) {
             logger.error(`Error creating zip ${err}`);
         }
