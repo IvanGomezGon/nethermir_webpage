@@ -133,7 +133,9 @@ const authenticate = async (req, res) => {
                                 wgRouterPrivateKey = x[0].private_key_router;
                                 wgGroupPublicKey = x[0].public_key_user;
                                 vlanId = x[0].vlan_id;
-                                portUDP = process.env.PORT_UDP_FIRST_ID + vlanId;
+
+                                //TODO
+                                portUDP = int(process.env.PORT_UDP_FIRST_ID) + int(vlanId);
                                 logger.info(`Before big logger`);
                                 logger.info(`ROUTEROS: ${user}, ${wgRouterPrivateKey}, ${wgGroupPublicKey}, ${portUDP}, ${process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME}, ${vlanId}`);
                                 generateRouterOSConfig(user, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId);
@@ -180,7 +182,7 @@ const registerGroup = async (req, res) => {
     
     sql = `SELECT vlan_id FROM nethermir.groups WHERE idgroup = (?)`;
     endpointPort = await queryToDB(sql, [idGroup]);
-    endpointPort = endpointPort[0]["vlan_id"] + process.env.PORT_UDP_FIRST_ID;
+    endpointPort = int(endpointPort[0]["vlan_id"]) + int(process.env.PORT_UDP_FIRST_ID);
     
     sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `;
     emails.forEach((email) =>
