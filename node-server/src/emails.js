@@ -5,23 +5,26 @@ const JSZip = require("jszip");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var logger = require(path.resolve(__dirname, "logger.js"));
 
-const sendEmail = async (sendTo, txt, attachements = [{}]) => {
+const sendEmail = (sendTo, txt, attachements = [{}]) => {
     logger.info("SendEmail started");
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const transporter = nodeMailer.createTransport({
             host: process.env.SMTP_SERVER,
             port: process.env.SMTP_PORT,
             secure: false,
         });
-        const info = await transporter.sendMail({
+        mailOptions = {
             from: process.env.SMTP_ORIGIN,
             to: sendTo,
             subject: "Config wireguard",
             html: txt,
             attachments: attachements,
+        }
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {logger.error(`Error sending email ${err}`)}
+            logger.info(`Message sent to: ${sendTo} Info: ${info}`);
+            resolve();
         });
-        logger.info(`Message sent to: ${sendTo} Info: ${info}`);
-        resolve();
     });
 };
 
