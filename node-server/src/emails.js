@@ -67,6 +67,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
     logger.info(`Content: ${content}`)
     fs.writeFileSync(`${groupName}.zip`, content);
     for (const email of emails) {
+        logger.info(`Email ${email}`)
         await sendEmail(email, emailText, attachements);
     }
     logger.info("Sending finished, unlinking")
