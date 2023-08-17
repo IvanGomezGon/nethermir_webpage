@@ -65,7 +65,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
     zip.file(`${groupName}.conf`, wireguardTxt);
     const content = await zip.generateAsync({ type: "nodebuffer" });
     logger.info(`Content: ${content}`)
-    fs.writeFileSync(`${groupName}.zip`, content);
+    fs.writeFile(`${groupName}.zip`, content);
     logger.info(`.zip created, sending emails...`)
     for (const email of emails) {
         logger.info(`Email ${email}`)
