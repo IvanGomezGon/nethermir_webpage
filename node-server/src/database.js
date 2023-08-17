@@ -177,12 +177,12 @@ const registerGroup = async (req, res) => {
             .then(logger.info("Group Registrat"))
             .catch((x) => feedback_fetch("Error mySQL nethermir.groups: " + x, res))
     );
-    sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `;
-
+    
     sql = `SELECT vlan_id FROM nethermir.groups WHERE idgroup = (?)`;
     endpointPort = await queryToDB(sql, [idGroup]);
     endpointPort = endpointPort[0]["vlan_id"] + process.env.PORT_UDP_FIRST_ID;
-
+    
+    sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `;
     emails.forEach((email) =>
         promises.push(
             queryToDB(sql, [email, nameGroup])
