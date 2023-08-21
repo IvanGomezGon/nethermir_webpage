@@ -105,7 +105,13 @@ a.header_element:hover::after {
     margin-left: auto;
 }
 
+.corner {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
 .inner-element {
+    position: relative;
     border: 5px solid rgb(32, 102, 0);
     border-radius: 15px;
     width: 60%;

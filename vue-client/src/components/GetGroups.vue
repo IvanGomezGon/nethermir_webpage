@@ -1,4 +1,5 @@
 <template>
+<button class="logout corner">Eliminar Taula</button>
 <h2>Informació Grups</h2>
 
 <table>
@@ -43,7 +44,7 @@ export default {
         getData() {
             let p = new Promise((resolve, reject) => {
                 fetch(`${process.env.VUE_APP_FETCH_URL}getGroups`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then(resolve);
             });
             p.then((response) => {
@@ -55,7 +56,7 @@ export default {
         },
         eliminateGroup(id) {
             fetch(`${process.env.VUE_APP_FETCH_URL}eliminateGroup?id=${id}`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },
     },

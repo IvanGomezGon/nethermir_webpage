@@ -1,4 +1,5 @@
 <template>
+<button class="logout corner">Eliminar Taula</button>
 <h2>Informació Assignatures</h2>
 <fieldset style="display: inline-flex; width: 12vw">
     <legend>Curs:</legend>

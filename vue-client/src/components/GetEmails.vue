@@ -1,4 +1,5 @@
 <template>
+<button class="logout corner">Eliminar Taula</button>
 <h2>Informació Usuaris</h2>
 <table>
     <tr>
