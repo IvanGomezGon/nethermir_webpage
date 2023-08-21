@@ -12,7 +12,8 @@
 }
 
 .logo {
-    height: 90px;
+    padding: 15px;
+    height: 60px;
     padding-right: 30px;
 }
 
