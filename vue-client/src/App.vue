@@ -108,7 +108,7 @@ a.header_element:hover::after {
 .corner {
     position: absolute;
     top: 30px;
-    right: 30px;
+    right: 20px;
 }
 .inner-element {
     position: relative;

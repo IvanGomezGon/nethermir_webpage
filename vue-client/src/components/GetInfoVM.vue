@@ -1,5 +1,5 @@
 <template>
-<button class="logout corner">Eliminar Taula</button>
+<button class="logout corner">Eliminar taula</button>
 <h2>Informació VM</h2>
 <table>
     <tr>

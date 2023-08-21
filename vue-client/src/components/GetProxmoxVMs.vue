@@ -1,5 +1,5 @@
 <template>
-<button class="logout corner">Eliminar Taula</button>
+<button class="logout corner">Eliminar taula</button>
 <h2>Informació Proxmox VMs</h2>
 <button type="button" @click="server = 0" :disabled="server == 0">Nethermir1</button>
 <button type="button" @click="server = 1" :disabled="server == 1">Nethermir2</button>
