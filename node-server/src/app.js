@@ -11,14 +11,11 @@ const corsOptions = {
     allowCredentials: true,
     exposedHeaders: ["set-cookie"],
 };
-const feedback_fetch = (text, res) => {
-    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
-    res.write(text);
-    res.end();
-};
+
 const { activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine, eliminateMachine } = require(path.resolve(__dirname, "proxmox.js"));
 const { getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject } = require(path.resolve(__dirname, "database.js"));
 const { setCookie, checkCookie, eliminateCookie } = require(path.resolve(__dirname, "cookies.js"));
+const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
 
 const app = express();

@@ -4,27 +4,23 @@ const proxmox = require("proxmox")(process.env.PROXMOX_USER, process.env.PROXMOX
 const PROXMOX_SERVERS = process.env.PROXMOX_SERVERS_NAMES.split(" ");
 const { sendWarningMail } = require(path.resolve(__dirname, "emails.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
+const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
 
-const feedback_fetch = (text, res) => {
-    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
-    res.write(text);
-    res.end();
-};
-const getVmId = (req, user) => {
-    if (user == null) {
+const getVmId = (req, groupName) => {
+    if (groupName == null) {
         return req.query["id"];
     } else {
-        return user.split("-").pop();
+        return groupName.split("-").pop();
     }
 };
 
-const activateMachine = (user, req, res) => {
+const activateMachine = (groupName, req, res) => {
     try {
         if (req.query["hours"] < 1) {
             feedback_fetch("N", res);
             return 0;
         }
-        vmID = getVmId(req, user);
+        vmID = getVmId(req, groupName);
         serverID = PROXMOX_SERVERS[vmID % 3];
         logger.info(`Activating machine ${req.query["node"]} on server ${serverID}`);
         proxmox.qemu.start(serverID, vmID, (err, data) => {
@@ -41,9 +37,9 @@ const activateMachine = (user, req, res) => {
         sendWarningMail(req.query["user"]);
     }, 1800000);
 };
-const stopMachine = (user, req, res) => {
+const stopMachine = (groupName, req, res) => {
     try {
-        vmID = getVmId(req, user);
+        vmID = getVmId(req, groupName);
         serverID = PROXMOX_SERVERS[vmID % 3];
         logger.info(`Stopping machine ${req.query["node"]} on server ${serverID}`);
         proxmox.qemu.stop(serverID, vmID, (err, data) => {
@@ -75,9 +71,9 @@ const getNodes = (req, res) => {
         logger.error("getNodes failed trycatch");
     }
 };
-const getNode = (user, req, res) => {
+const getNode = (groupName, req, res) => {
     try {
-        vmID = getVmId(req, user);
+        vmID = getVmId(req, groupName);
         serverID = PROXMOX_SERVERS[vmID % 3];
         proxmox.qemu.getStatusCurrent(serverID, vmID, (err, data) => {
             if (err) {
@@ -116,10 +112,10 @@ const cloneMachine = (group) => {
     });
 };
 
-const resumeMachine = (user, req, res) => {
+const resumeMachine = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         try {
-            vmID = getVmId(req, user);
+            vmID = getVmId(req, groupName);
             serverID = PROXMOX_SERVERS[vmID % 3];
             logger.info(`Resuming machine ${vmID} on server ${serverID}`);
             proxmox.qemu.resume(serverID, vmID, (err, data) => {
@@ -139,10 +135,10 @@ const resumeMachine = (user, req, res) => {
     });
 };
 
-const suspendMachine = (user, req, res) => {
+const suspendMachine = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         try {
-            vmID = getVmId(req, user);
+            vmID = getVmId(req, groupName);
             serverID = PROXMOX_SERVERS[vmID % 3];
             logger.info(`Suspending machine ${vmID} on server ${serverID}`);
             proxmox.qemu.suspend(serverID, vmID, (err, data) => {
@@ -162,11 +158,10 @@ const suspendMachine = (user, req, res) => {
     });
 };
 
-const eliminateMachine = (user, req, res) => {
+const eliminateMachine = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         try {
-            //vmID = getVmId(req, user);
-            vmID = 108;
+            vmID = getVmId(req, groupName);
             serverID = PROXMOX_SERVERS[vmID % 3];
             logger.info(`Eliminating machine ${vmID} on server ${serverID}`);
             proxmox.qemu.del(serverID, vmID, (err, data) => {
@@ -186,11 +181,10 @@ const eliminateMachine = (user, req, res) => {
     });
 };
 
-const modifyMachineVLAN = (user, vlan, req, res) => {
+const modifyMachineVLAN = (groupName, vlan, req, res) => {
     return new Promise((resolve, reject) => {
         try {
-            vmID = getVmId(req, user);
-            vmID = 105;
+            vmID = getVmId(req, groupName);
             serverID = PROXMOX_SERVERS[vmID % 3];
             logger.info(`Modifiying machine ${vmID} VLAN to ${vlan} on server ${serverID} ${PROXMOX_SERVERS}`);
             data = { net0: `virtio,tag=${vlan}` };
@@ -210,7 +204,7 @@ const modifyMachineVLAN = (user, vlan, req, res) => {
         }
     });
 };
-eliminateMachine(null, null, 1)
+
 //modifyMachineVLAN(1, 300, 1, 1).then(console.log);
 module.exports = {
     activateMachine,

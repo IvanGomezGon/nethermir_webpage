@@ -1,12 +1,7 @@
 const jwt = require("jsonwebtoken");
 const path = require("path");
 var logger = require(path.resolve(__dirname, "logger.js"));
-
-const feedback_fetch = (text, res) => {
-    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
-    res.write(text);
-    res.end();
-};
+const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
 
 const setCookie = (type, res) => {
     const token = jwt.sign({ user: type }, process.env.COOKIE_PASSWORD, {

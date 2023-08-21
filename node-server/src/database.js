@@ -3,16 +3,12 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 var mysql = require("mysql2");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
-const cloneMachine = require(path.resolve(__dirname, "proxmox.js"));
+const { cloneMachine, eliminateMachine } = require(path.resolve(__dirname, "proxmox.js"));
 const emailManager = require(path.resolve(__dirname, "emails.js"));
-const { generateRouterOSConfig } = require(path.resolve(__dirname, "routeros.js"));
+const { generateRouterOSConfig, eliminateRouterOSConfig } = require(path.resolve(__dirname, "routeros.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
+const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
 
-const feedback_fetch = (text, res) => {
-    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
-    res.write(text);
-    res.end();
-};
 var con = mysql.createConnection({
     host: process.env.SQL_HOST,
     user: process.env.SQL_USER,
@@ -42,11 +38,36 @@ const getGroups = (res) => {
     });
 };
 
-const eliminateGroup = (req, res) => {
+const eliminateGroup = async (req, res) => {
     id = req.query["id"];
-    sql = `DELETE FROM nethermir.groups WHERE idgroup=(?)`;
-    queryToDB(sql, [id]).then((x) => {
-        feedback_fetch("Y", res);
+    groupName = await getGroupName(id);
+    if (groupName == "Failed") {
+        logger.error("GroupName not found")
+        return 0;
+    }
+    eliminateGroupDatabaseQuery(id);
+    eliminateMachine(groupName, req, res);
+    eliminateRouterOSConfig(groupName)
+};
+
+const getGroupName = (id) => {
+    return new Promise((resolve, reject) => {
+        sql = `SELECT name FROM nethermir.groups WHERE idgroup=(?)`;
+        queryToDB(sql, [id]).then((data) => {
+            if (data.length > 0) {
+                resolve(data[0].name);
+            } else {
+                resolve("Failed");
+            }
+        });
+    });
+};
+const eliminateGroupDatabaseQuery = (id) => {
+    return new Promise((resolve, reject) => {
+        sql = `DELETE FROM nethermir.groups WHERE idgroup=(?)`;
+        queryToDB(sql, [id]).then((x) => {
+            resolve("Success");
+        });
     });
 };
 
@@ -138,8 +159,14 @@ const authenticate = async (req, res) => {
                                 portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(vlanId);
                                 logger.info(`Before big logger`);
                                 logger.info(`ROUTEROS: ${user}, ${wgRouterPrivateKey}, ${wgGroupPublicKey}, ${portUDP}, ${process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME}, ${vlanId}`);
-                                generateRouterOSConfig(user, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId);
-                                resolve(user);
+                                generateRes = await generateRouterOSConfig(user, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId);
+                                if (generateRes == "Success") {
+                                    resolve(user);
+                                } else {
+                                    eliminateRouterOSConfig(user);
+                                    feedback_fetch("Generating router config failed - Contact Professor", res);
+                                    reject();
+                                }
                             } else {
                                 feedback_fetch("Clonning failed - Contact Professor", res);
                                 reject();
@@ -179,11 +206,11 @@ const registerGroup = async (req, res) => {
             .then(logger.info("Group Registrat"))
             .catch((x) => feedback_fetch("Error mySQL nethermir.groups: " + x, res))
     );
-    
+
     sql = `SELECT vlan_id FROM nethermir.groups WHERE idgroup = (?)`;
     endpointPort = await queryToDB(sql, [idGroup]);
     endpointPort = parseInt(endpointPort[0]["vlan_id"]) + parseInt(process.env.PORT_UDP_FIRST_ID);
-    
+
     sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `;
     emails.forEach((email) =>
         promises.push(

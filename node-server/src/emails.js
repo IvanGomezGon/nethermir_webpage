@@ -36,7 +36,7 @@ const sendWarningMail = (user) => {
     emails.forEach((email) => sendEmail(email, emailText));
 };
 const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyPairUser, keyPairRouter) => {
-    logger.info("sendPasswordEmail");
+    logger.info(`sendPasswordEmail ${groupName} ${password}`);
     emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
                 Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>

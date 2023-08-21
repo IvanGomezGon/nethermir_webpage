@@ -66,9 +66,12 @@ export default {
     },
     mounted: function () {
         this.getData()
-        setInterval(() => {
+        this.interval = setInterval(() => {
             this.getData()
         }, 10000)
+    },
+    destroyed() {
+        clearInterval(this.interval)
     },
     computed: {
 

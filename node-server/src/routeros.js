@@ -2,12 +2,13 @@ const RosApi = require("node-routeros").RouterOSAPI;
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var logger = require(path.resolve(__dirname, "logger.js"));
-
+const {sleep} = require(path.resolve(__dirname, "globalFunctions.js"));
 const conn = new RosApi({
     host: process.env.ROUTEROS_HOST,
     user: process.env.ROUTEROS_USER,
     password: process.env.ROUTEROS_PASSWORD,
 });
+
 
 // groupName = XX-2022-2-300
 // portUdp = 65439
@@ -16,135 +17,118 @@ const conn = new RosApi({
 // vlanId = 300
 // Interface = eth3
 const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey, port_udp, interface, vlanId) => {
-    logger.info("generateRouterOSConfig");
-    conn.connect()
-        .then(() => {
-            logger.info("Connected to host!");
-            conn.write("/interface/list/add", [`=comment=LIST-${groupName}`, `=name=LIST-${groupName}`])
-                .then((data) => {
-                    logger.info(`interface list name added, ${data}`);
-                    return conn.write("/interface/wireguard/add", [`=comment=WG-${groupName}`, `=listen-port=${port_udp}`, `=mtu=1420`, `=name=WG-${groupName}`, `=private-key=${wgRouterPrivateKey}`]);
-                })
-
-                .then((data) => {
-                    logger.info(`interface wireguard added, ${data}`);
-                    return conn.write("/interface/wireguard/peers/add", [`=allowed-address=10.0.1.0/30,10.1.1.0/30`, `=comment=WG-${groupName}`, `=interface=WG-${groupName}`, `=public-key=${wgGroupPublicKey}`]);
-                })
-
-                .then((data) => {
-                    logger.info(`interface wireguard peers added, ${data}`);
-                    return conn.write("/interface/vlan/add", [`=comment=VLAN-${groupName}`, `=interface=${interface}`, `=name=VLAN-${groupName}`, `=vlan-id=${vlanId}`]);
-                })
-
-                .then((data) => {
-                    logger.info(`interface vlan added, ${data}`);
-                    return conn.write("/ip/vrf/add", [`=comment=VRF-${groupName}`, `=interfaces=WG-${groupName},VLAN-${groupName}`, `=name=VRF-${groupName}`]);
-                })
-
-                .then((data) => {
-                    logger.info(`ip vrf added, ${data}`);
-                    return conn.write("/interface/list/member/add", [`=comment=LIST-${groupName}`, `=interface=VLAN-${groupName}`, `=list=LIST-${groupName}`]);
-                })
-
-                .then((data) => {
-                    logger.info(`interface list member vlan added, ${data}`);
-                    return conn.write("/interface/list/member/add", [`=comment=LIST-${groupName}`, `=interface=WG-${groupName}`, `=list=LIST-${groupName}`]);
-                })
-
-                .then((data) => {
-                    logger.info(`interface list member wireguard added, ${data}`);
-                    return conn.write("/ip/address/add", [`=address=10.0.1.1/30`, `=comment=VLAN-${groupName}`, `=interface=VLAN-${groupName}`, `=network=10.0.1.0`]);
-                })
-
-                .then((data) => {
-                    logger.info(`ip address vlan added, ${data}`);
-                    return conn.write("/ip/address/add", [`=address=10.1.1.1/30`, `=comment=WG-${groupName}`, `=interface=WG-${groupName}`, `=network=10.1.1.0`]);
-                })
-
-                .then((data) => {
-                    logger.info(`ip address wireguard added, ${data}`);
-                    return conn.write("/ip/firewall/filter/add", [`=action=accept`, `=chain=forward`, `=comment=defconf: accept from ${groupName} to ${groupName}`, `=in-interface-list=LIST-${groupName}`, `=out-interface-list=LIST-${groupName}`]);
-                })
-                .then((data) => {
-                    logger.info(`ip firewall filter added, ${data}`);
-                    logger.info(`closing connection routeros...`);
-                    conn.close();
-                })
-                .catch((err) => {
-                    logger.info(`Error routeros on execution${err}`);
-                    logger.info(`closing connection routeros...`);
-                    conn.close();
-                });
-        })
-        .catch((err) => {
-            logger.info(`Error routeros failed to connect${err}`);
-        });
-};
-
-const getIdToRemove = (data, searchKey, searchValue) => {
-    for (row of data) {
-        //logger.info(`ROW: ${JSON.stringify(row)}`)
-        //logger.info(` row: ${row[searchKey]} searchValue: ${searchValue} id ${row}`)
-        if (row[searchKey] == searchValue) {
-            return row[".id"];
-        }
-    }
-    logger.error(`Couldn't find searchValue ${searchValue} from column ${searchKey} in data ${JSON.stringify(data)} to remove in routeros`);
-    return false;
-};
-const eliminateRouterOSConfigMain = async (groupName) => {
-    await eliminateListMemberOSConfig(groupName);
-    //TODO: This timeout shouldn't be necessary but it is
-    setTimeout(function () {
-        eliminateRouterOSConfigSecond(groupName);
-    }, 5000);
-};
-const eliminateListMemberOSConfig = (groupName) => {
     return new Promise((resolve, reject) => {
+        logger.info("generateRouterOSConfig");
+
         conn.connect()
             .then(() => {
                 logger.info("Connected to host!");
-                conn.write("/interface/list/member/print", [])
+
+                ///interface/list/add
+                conn.write("/interface/list/add", [`=comment=LIST-${groupName}`, `=name=LIST-${groupName}`])
+
+                    ///interface/wireguard/add
                     .then((data) => {
-                        idRemove = getIdToRemove(data, "interface", `VLAN-${groupName}`);
-                        return conn.write("/interface/list/member/remove", [`=.id=${idRemove}`]);
+                        logger.info(`interface list name added, ${data}`);
+                        return conn.write("/interface/wireguard/add", [`=comment=WG-${groupName}`, `=listen-port=${port_udp}`, `=mtu=1420`, `=name=WG-${groupName}`, `=private-key=${wgRouterPrivateKey}`]);
                     })
 
-                    ///interface/list/member/remove
+                    ///interface/wireguard/peers/add
                     .then((data) => {
-                        logger.info(`interface list member vlan removed, ${data}`);
-                        return conn.write("/interface/list/member/print", []);
-                    })
-                    .then((data) => {
-                        idRemove = getIdToRemove(data, "interface", `WG-${groupName}`);
-                        return conn.write("/interface/list/member/remove", [`=.id=${idRemove}`]);
+                        logger.info(`interface wireguard added, ${data}`);
+                        return conn.write("/interface/wireguard/peers/add", [`=allowed-address=10.0.1.0/30,10.1.1.0/30`, `=comment=WG-${groupName}`, `=interface=WG-${groupName}`, `=public-key=${wgGroupPublicKey}`]);
                     })
 
+                    ///interface/vlan/add
                     .then((data) => {
-                        logger.info(`ip firewall filter removed, ${data}`);
+                        logger.info(`interface wireguard peers added, ${data}`);
+                        return conn.write("/interface/vlan/add", [`=comment=VLAN-${groupName}`, `=interface=${interface}`, `=name=VLAN-${groupName}`, `=vlan-id=${vlanId}`]);
+                    })
+
+                    ///ip/vrf/add
+                    .then((data) => {
+                        logger.info(`interface vlan added, ${data}`);
+                        return conn.write("/ip/vrf/add", [`=comment=VRF-${groupName}`, `=interfaces=WG-${groupName},VLAN-${groupName}`, `=name=VRF-${groupName}`]);
+                    })
+
+                    ///interface/list/member/add
+                    .then((data) => {
+                        logger.info(`ip vrf added, ${data}`);
+                        return conn.write("/interface/list/member/add", [`=comment=VLAN-${groupName}`, `=interface=VLAN-${groupName}`, `=list=LIST-${groupName}`]);
+                    })
+
+                    ///interface/list/member/add
+                    .then((data) => {
+                        logger.info(`interface list member vlan added, ${data}`);
+                        return conn.write("/interface/list/member/add", [`=comment=WG-${groupName}`, `=interface=WG-${groupName}`, `=list=LIST-${groupName}`]);
+                    })
+
+                    ///ip/address/add
+                    .then((data) => {
+                        logger.info(`interface list member wireguard added, ${data}`);
+                        return conn.write("/ip/address/add", [`=address=10.0.1.1/30`, `=comment=VLAN-${groupName}`, `=interface=VLAN-${groupName}`, `=network=10.0.1.0`]);
+                    })
+
+                    ///ip/address/add
+                    .then((data) => {
+                        logger.info(`ip address vlan added, ${data}`);
+                        return conn.write("/ip/address/add", [`=address=10.1.1.1/30`, `=comment=WG-${groupName}`, `=interface=WG-${groupName}`, `=network=10.1.1.0`]);
+                    })
+
+                    ///ip/firewall/filter/add
+                    .then((data) => {
+                        logger.info(`ip address wireguard added, ${data}`);
+                        return conn.write("/ip/firewall/filter/add", [`=action=accept`, `=chain=forward`, `=comment=defconf: accept from ${groupName} to ${groupName}`, `=in-interface-list=LIST-${groupName}`, `=out-interface-list=LIST-${groupName}`]);
+                    })
+
+                    //Closing connection
+                    .then((data) => {
+                        logger.info(`ip firewall filter added, ${data}`);
                         logger.info(`closing connection routeros...`);
-                        conn.close().then(resolve());
+                        conn.close();
+                        resolve("Success")
                     })
+
+                    //Catching errors in execution
                     .catch((err) => {
-                        logger.info(`Error routeros${err}`);
+                        logger.info(`Error routeros on execution${err}`);
                         logger.info(`closing connection routeros...`);
-                        conn.close().then(resolve());
+                        conn.close();
+                        resolve(`Error routeros on execution ${err}`)
                     });
             })
+
+            //Catching errors in connection
             .catch((err) => {
-                logger.info(`Error routeros${err}`);
-                conn.close().then(resolve());
+                logger.info(`Error routeros failed to connect${err}`);
+                resolve(`Error routeros failed to connect${err}`)
             });
     });
 };
-const eliminateRouterOSConfig = (groupName) => {
+
+const getIdToRemove = (data, searchValue) => {
+    for (row of data) {
+        //logger.info(`ROW: ${JSON.stringify(row)}`)
+        //logger.info(` row: ${row[searchKey]} searchValue: ${searchValue} id ${row}`)
+        if (row["comment"] == searchValue) {
+            return row[".id"];
+        }
+    }
+    logger.error(`Couldn't find searchValue ${searchValue} from column comment in data ${JSON.stringify(data)} to remove in routeros`);
+    return false;
+};
+
+const eliminateRouterOSConfig = async (groupName) => {
     logger.info("eliminateRouterOSConfig");
+    await sleep(5000);
     conn.connect()
         .then(() => {
             logger.info("Connected to host!");
+
+            //interface/list/remove
             conn.write("/interface/list/print", [])
                 .then((data) => {
-                    idRemove = getIdToRemove(data, "name", `LIST-${groupName}`);
+                    idRemove = getIdToRemove(data, `LIST-${groupName}`);
                     return conn.write("/interface/list/remove", [`=.id=${idRemove}`]);
                 })
 
@@ -154,7 +138,7 @@ const eliminateRouterOSConfig = (groupName) => {
                     return conn.write("/interface/wireguard/print", []);
                 })
                 .then((data) => {
-                    idRemove = getIdToRemove(data, "comment", `WG-${groupName}`);
+                    idRemove = getIdToRemove(data, `WG-${groupName}`);
                     return conn.write("/interface/wireguard/remove", [`=.id=${idRemove}`]);
                 })
 
@@ -164,7 +148,7 @@ const eliminateRouterOSConfig = (groupName) => {
                     return conn.write("/interface/wireguard/peers/print", []);
                 })
                 .then((data) => {
-                    idRemove = getIdToRemove(data, "comment", `WG-${groupName}`);
+                    idRemove = getIdToRemove(data, `WG-${groupName}`);
                     return conn.write("/interface/wireguard/peers/remove", [`=.id=${idRemove}`]);
                 })
 
@@ -174,7 +158,7 @@ const eliminateRouterOSConfig = (groupName) => {
                     return conn.write("/interface/vlan/print", []);
                 })
                 .then((data) => {
-                    idRemove = getIdToRemove(data, "comment", `VLAN-${groupName}`);
+                    idRemove = getIdToRemove(data, `VLAN-${groupName}`);
                     return conn.write("/interface/vlan/remove", [`=.id=${idRemove}`]);
                 })
 
@@ -184,17 +168,37 @@ const eliminateRouterOSConfig = (groupName) => {
                     return conn.write("/ip/vrf/print", []);
                 })
                 .then((data) => {
-                    idRemove = getIdToRemove(data, "name", `VRF-${groupName}`);
+                    idRemove = getIdToRemove(data, `VRF-${groupName}`);
                     return conn.write("/ip/vrf/remove", [`=.id=${idRemove}`]);
+                })
+
+                ///interface/list/member/remove
+                .then((data) => {
+                    logger.info(`ip vrf removed, ${data}`);
+                    return conn.write("/interface/list/member/print", []);
+                })
+                .then((data) => {
+                    idRemove = getIdToRemove(data, `VLAN-${groupName}`);
+                    return conn.write("/interface/list/member/remove", [`=.id=${idRemove}`]);
+                })
+
+                ///interface/list/member/remove
+                .then((data) => {
+                    logger.info(`interface list member vlan removed, ${data}`);
+                    return conn.write("/interface/list/member/print", []);
+                })
+                .then((data) => {
+                    idRemove = getIdToRemove(data, `WG-${groupName}`);
+                    return conn.write("/interface/list/member/remove", [`=.id=${idRemove}`]);
                 })
 
                 ///ip/address/remove
                 .then((data) => {
-                    logger.info(`ip vrf removed, ${data}`);
+                    logger.info(`interface list member wireguard removed, ${data}`);
                     return conn.write("/ip/address/print", []);
                 })
                 .then((data) => {
-                    idRemove = getIdToRemove(data, "comment", `VLAN-${groupName}`);
+                    idRemove = getIdToRemove(data, `VLAN-${groupName}`);
                     return conn.write("/ip/address/remove", [`=.id=${idRemove}`]);
                 })
 
@@ -204,7 +208,7 @@ const eliminateRouterOSConfig = (groupName) => {
                     return conn.write("/ip/address/print", []);
                 })
                 .then((data) => {
-                    idRemove = getIdToRemove(data, "comment", `WG-${groupName}`);
+                    idRemove = getIdToRemove(data, `WG-${groupName}`);
                     return conn.write("/ip/address/remove", [`=.id=${idRemove}`]);
                 })
 
@@ -214,21 +218,26 @@ const eliminateRouterOSConfig = (groupName) => {
                     return conn.write("/ip/firewall/filter/print", []);
                 })
                 .then((data) => {
-                    idRemove = getIdToRemove(data, "comment", `defconf: accept from ${groupName} to ${groupName}`);
+                    idRemove = getIdToRemove(data, `defconf: accept from ${groupName} to ${groupName}`);
                     return conn.write("/ip/firewall/filter/remove", [`=.id=${idRemove}`]);
                 })
 
+                //Closing connection
                 .then((data) => {
                     logger.info(`ip firewall filter removed, ${data}`);
                     logger.info(`closing connection routeros...`);
                     conn.close();
                 })
+
+                //Catching errors in execution
                 .catch((err) => {
                     logger.info(`Error routeros${err}`);
                     logger.info(`closing connection routeros...`);
                     conn.close();
                 });
         })
+
+        //Catching errors in connection
         .catch((err) => {
             logger.info(`Error routeros${err}`);
         });
@@ -238,4 +247,5 @@ const eliminateRouterOSConfig = (groupName) => {
 
 module.exports = {
     generateRouterOSConfig,
+    eliminateRouterOSConfig,
 };
