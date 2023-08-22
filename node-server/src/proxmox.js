@@ -92,7 +92,7 @@ const cloneMachine = (group) => {
         try {
             logger.info(group);
             vmID = ((group % 3) + 1) * 10000 + group - (group % 100);
-            serverID = PROXMOX_SERVERS[group % 3];
+            serverID = PROXMOX_SERVERS[0];
             logger.info(`Cloning machine ${vmID} on server ${serverID}`);
             newID = { newid: group, name: group };
             proxmox.qemu.clone(serverID, vmID, newID, (err, data) => {
