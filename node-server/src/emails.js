@@ -61,7 +61,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
             filename: "instructions.pdf",
             path: process.env.PDF_WIREGUARD_FILEPATH,
         },
-        { filename: `${nameGroup}.zip`, path: wireguardTxtPath },
+        { filename: `${groupName}.zip`, path: wireguardTxtPath },
     ];
     logger.info(`Attachements: ${attachements}`);
     const zip = new JSZip();

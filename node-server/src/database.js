@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 var mysql = require("mysql2");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
-const { cloneMachine } = require(path.resolve(__dirname, "proxmox.js"));
+const { cloneMachine, modifyMachineVLAN } = require(path.resolve(__dirname, "proxmox.js"));
 const emailManager = require(path.resolve(__dirname, "emails.js"));
 const { generateRouterOSConfig, eliminateRouterOSConfig } = require(path.resolve(__dirname, "routeros.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
@@ -141,12 +141,13 @@ const getGroupData = (groupName) => {
     });
 };
 
-const firstTimeLogin = (groupData) => {
+const firstTimeLogin = (user, groupData, req, res) => {
     return new Promise(async (resolve, reject) => {
-        //cloneRes = await cloneMachine(x[0].idgroup)
+        cloneRes = await cloneMachine(groupData.idgroup)
         //TODO: CLONING DOESNT WORK STILL
-        cloneRes = "Success";
+        //cloneRes = "Success";
         if (cloneRes == "Success") {
+            modifyMachineVLAN(user, groupData.idgroup, req, res);
             logger.info("Clone success!");
             portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
             activateGroup(groupData.idgroup);
@@ -176,7 +177,7 @@ const authenticate = async (req, res) => {
             auth = await bcrypt.compare(pass, groupData.password_login_hash);
             if (auth) {
                 if (groupData.active != 1) {
-                    firstTimeLogin(groupData).then(resolve).catch(reject);
+                    firstTimeLogin(user, groupData, req, res).then(resolve).catch(reject);
                 } else {
                     resolve(user);
                 }
@@ -185,14 +186,16 @@ const authenticate = async (req, res) => {
     });
 };
 
-const insertGroup = (idGroup, nameGroup, password_login_hash, privateKeyRouter, publicKeyUser, res) => {
+const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, res) => {
     return new Promise((resolve, reject) => {
+        logger.info("insertGroup started");
+        logger.info(`${idGroup}, ${groupName}, ${password_login_hash}, ${privateKeyRouter}, ${publicKeyUser}`)
         sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user) VALUES (?, ?, ?, ?, ?)`;
-        queryToDB(sql, [idGroup, nameGroup, password_login_hash, privateKeyRouter, publicKeyUser])
+        queryToDB(sql, [idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser])
             .then(resolve)
             .catch((err) => {
                 feedback_fetch(`Insert Group failed sql${err}`, res);
-                resolve()
+                resolve();
             });
     });
 };
@@ -230,8 +233,8 @@ const registerGroup = async (req, res) => {
     }
     idGroup = await generateGroup(req.query["user"]);
     groupName = req.query["user"] + "-" + idGroup;
-    [password, paswordHash] = generatePassword();
-    [keyPairUser, keyPairRouter] = genKeyPairVLAN();
+    [password, paswordHash] = await generatePassword();
+    [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
     await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub, res);
     await insertEmails(emails, groupName, res);
     emailManager.sendPasswordEmail(emails, groupName, getEndpointPortGroup(idgroup), password, keyPairUser, keyPairRouter);
@@ -256,13 +259,20 @@ function generateGroup(user) {
 }
 
 function generatePassword() {
-    var length = 8,
-        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        retVal = "";
-    for (var i = 0, n = charset.length; i < length; ++i) {
-        retVal += charset.charAt(Math.floor(Math.random() * n));
-    }
-    return [retVal, bcrypt.hash(retVal, 10)];
+    return new Promise((resolve, reject) => {
+        var length = 8,
+            charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+            retVal = "";
+        for (var i = 0, n = charset.length; i < length; ++i) {
+            retVal += charset.charAt(Math.floor(Math.random() * n));
+        }
+        bcrypt.hash(retVal, 10, (err, hash) => {
+            if (err){
+                logger.error(`Error hashing ${err}`)
+            }
+            resolve([retVal, hash]);
+        })
+    });
 }
 
 const checkEmails = (emails) => {
@@ -328,21 +338,25 @@ const restartDatabase = async () => {
 };
 
 const genKeyPairVLAN = () => {
-    keyPairUser = genKeyPair();
-    keyPairRouter = genKeyPair();
-    return [keyPairUser, keyPairRouter];
+    return new Promise(async (resolve, reject) => {
+        keyPairUser = await genKeyPair();
+        keyPairRouter = await genKeyPair();
+        resolve([keyPairUser, keyPairRouter]);
+    });
 };
 
 const genKeyPair = () => {
-    let k = crypto.generateKeyPairSync("x25519", {
-        publicKeyEncoding: { format: "der", type: "spki" },
-        privateKeyEncoding: { format: "der", type: "pkcs8" },
-    });
+    return new Promise((resolve, reject) => {
+        let k = crypto.generateKeyPairSync("x25519", {
+            publicKeyEncoding: { format: "der", type: "spki" },
+            privateKeyEncoding: { format: "der", type: "pkcs8" },
+        });
 
-    return {
-        pub: k.publicKey.subarray(12).toString("base64"),
-        prv: k.privateKey.subarray(16).toString("base64"),
-    };
+        resolve({
+            pub: k.publicKey.subarray(12).toString("base64"),
+            prv: k.privateKey.subarray(16).toString("base64"),
+        });
+    });
 };
 
 module.exports = {
