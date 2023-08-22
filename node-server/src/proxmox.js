@@ -21,7 +21,7 @@ const activateMachine = (groupName, req, res) => {
             return 0;
         }
         vmID = getVmId(req, groupName);
-        serverID = PROXMOX_SERVERS[vmID % 3];
+        serverID = PROXMOX_SERVERS[0];
         logger.info(`Activating machine ${req.query["node"]} on server ${serverID}`);
         proxmox.qemu.start(serverID, vmID, (err, data) => {
             feedback_fetch("Y", res);
@@ -40,7 +40,7 @@ const activateMachine = (groupName, req, res) => {
 const stopMachine = (groupName, req, res) => {
     try {
         vmID = getVmId(req, groupName);
-        serverID = PROXMOX_SERVERS[vmID % 3];
+        serverID = PROXMOX_SERVERS[0];
         logger.info(`Stopping machine ${req.query["node"]} on server ${serverID}`);
         proxmox.qemu.stop(serverID, vmID, (err, data) => {
             if (err) {
@@ -74,7 +74,7 @@ const getNodes = (req, res) => {
 const getNode = (groupName, req, res) => {
     try {
         vmID = getVmId(req, groupName);
-        serverID = PROXMOX_SERVERS[vmID % 3];
+        serverID = PROXMOX_SERVERS[0];
         proxmox.qemu.getStatusCurrent(serverID, vmID, (err, data) => {
             if (err) {
                 logger.error(`Failed to getNode: ${err}`);
@@ -116,7 +116,7 @@ const resumeMachine = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         try {
             vmID = getVmId(req, groupName);
-            serverID = PROXMOX_SERVERS[vmID % 3];
+            serverID = PROXMOX_SERVERS[0];
             logger.info(`Resuming machine ${vmID} on server ${serverID}`);
             proxmox.qemu.resume(serverID, vmID, (err, data) => {
                 if (err) {
@@ -139,7 +139,7 @@ const suspendMachine = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         try {
             vmID = getVmId(req, groupName);
-            serverID = PROXMOX_SERVERS[vmID % 3];
+            serverID = PROXMOX_SERVERS[0];
             logger.info(`Suspending machine ${vmID} on server ${serverID}`);
             proxmox.qemu.suspend(serverID, vmID, (err, data) => {
                 if (err) {
@@ -162,7 +162,7 @@ const eliminateMachine = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         try {
             vmID = getVmId(req, groupName);
-            serverID = PROXMOX_SERVERS[vmID % 3];
+            serverID = PROXMOX_SERVERS[0];
             logger.info(`Eliminating machine ${vmID} on server ${serverID}`);
             proxmox.qemu.del(serverID, vmID, (err, data) => {
                 if (err) {
@@ -185,7 +185,7 @@ const modifyMachineVLAN = (groupName, vlan, req, res) => {
     return new Promise((resolve, reject) => {
         try {
             vmID = getVmId(req, groupName);
-            serverID = PROXMOX_SERVERS[vmID % 3];
+            serverID = PROXMOX_SERVERS[0];
             logger.info(`Modifiying machine ${vmID} VLAN to ${vlan} on server ${serverID} ${PROXMOX_SERVERS}`);
             data = { net0: `virtio,tag=${vlan}` };
             proxmox.qemu.updateConfig(serverID, vmID, data, (err, data) => {
