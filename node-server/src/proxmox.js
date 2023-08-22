@@ -167,16 +167,16 @@ const eliminateMachine = (groupName, req, res) => {
             proxmox.qemu.del(serverID, vmID, (err, data) => {
                 if (err) {
                     logger.error(`Failed to eliminate machine: ${err}`);
-                    resolve("Failed");
+                    reject();
                 }
                 if (data) {
                     logger.info(`Sucess to eliminate machine: ${data}`);
-                    resolve("Success");
+                    resolve(groupName);
                 }
             });
         } catch {
             logger.error("eliminateMachine failed trycatch");
-            resolve("Failed");
+            reject();
         }
     });
 };

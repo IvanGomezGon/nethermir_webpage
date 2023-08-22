@@ -107,9 +107,14 @@ app.get("/backend/getGroups", function (req, res) {
 app.get("/backend/eliminateGroup", function (req, res) {
     logger.info("eliminateGroup");
     checkCookie(req, res)
-        //      .then((user) => {eliminateMachine(user, req, res)})
         .then(() => {
             eliminateGroup(req, res);
+        })
+        .then((groupName) => {
+            eliminateMachine(groupName, req, res)
+        })
+        .then((groupName) => {
+            eliminateRouterOSConfig(groupName)
         })
         .catch(() => {
             logger.info("Failed to eliminateGroup");

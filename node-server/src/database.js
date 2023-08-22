@@ -3,11 +3,11 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 var mysql = require("mysql2");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
-const { cloneMachine, eliminateMachine } = require(path.resolve(__dirname, "proxmox.js"));
+const { cloneMachine } = require(path.resolve(__dirname, "proxmox.js"));
 const emailManager = require(path.resolve(__dirname, "emails.js"));
 const { generateRouterOSConfig, eliminateRouterOSConfig } = require(path.resolve(__dirname, "routeros.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
-const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
+const { feedback_fetch } = require(path.resolve(__dirname, "globalFunctions.js"));
 
 var con = mysql.createConnection({
     host: process.env.SQL_HOST,
@@ -19,10 +19,9 @@ const queryToDB = (sql, params) => {
     return new Promise((resolve, reject) => {
         con.connect(function (err) {
             if (err) throw err;
-
             con.query(sql, params, function (err, result) {
                 if (err) {
-                    logger.info(`Err:${err}`);
+                    logger.info(`Err: ${err}`);
                     reject();
                 }
                 resolve(result);
@@ -39,15 +38,15 @@ const getGroups = (res) => {
 };
 
 const eliminateGroup = async (req, res) => {
-    id = req.query["id"];
-    groupName = await getGroupName(id);
-    if (groupName == "Failed") {
-        logger.error("GroupName not found")
-        return 0;
-    }
-    eliminateGroupDatabaseQuery(id);
-    eliminateMachine(groupName, req, res);
-    eliminateRouterOSConfig(groupName)
+    return new Promise(async (resolve, reject) => {
+        id = req.query["id"];
+        groupName = await getGroupName(id);
+        if (groupName == "Failed") {
+            logger.error("GroupName not found");
+            reject();
+        }
+        eliminateGroupDatabaseQuery(id).then(resolve(groupName));
+    });
 };
 
 const getGroupName = (id) => {
@@ -129,101 +128,114 @@ const activateGroup = (id) => {
     });
 };
 
-const authenticate = async (req, res) => {
+const getGroupData = (groupName) => {
     return new Promise((resolve, reject) => {
+        sql = `SELECT idgroup, active, password_login_hash, private_key_router, public_key_user, vlan_id  FROM nethermir.groups WHERE name=?`;
+        queryToDB(sql, [groupName]).then(async (data) => {
+            if (data.length > 0) {
+                resolve(data[0]);
+            } else {
+                reject();
+            }
+        });
+    });
+};
+
+const firstTimeLogin = (groupData) => {
+    return new Promise(async (resolve, reject) => {
+        //cloneRes = await cloneMachine(x[0].idgroup)
+        //TODO: CLONING DOESNT WORK STILL
+        cloneRes = "Success";
+        if (cloneRes == "Success") {
+            logger.info("Clone success!");
+            portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
+            activateGroup(groupData.idgroup);
+            generateRes = await generateRouterOSConfig(user, groupData.private_key_router, groupData.public_key_user, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, groupData.vlan_id);
+            if (generateRes == "Success") {
+                resolve(user);
+            } else {
+                eliminateRouterOSConfig(user);
+                feedback_fetch("Generating router config failed - Contact Professor", res);
+                reject();
+            }
+        } else {
+            feedback_fetch("Clonning failed - Contact Professor", res);
+            reject();
+        }
+    });
+};
+const authenticate = async (req, res) => {
+    return new Promise(async (resolve, reject) => {
         user = req.query["user"];
         pass = req.query["pass"];
-        pass_hash = "";
         if (user.startsWith(process.env.ROOT_USER) && pass == process.env.ROOT_PASS) {
             resolve("root");
         } else {
             logger.info("Authenticate before query");
-            sql = `SELECT idgroup, active, password_login_hash, private_key_router, public_key_user, vlan_id  FROM nethermir.groups WHERE name=?`;
-            queryToDB(sql, [user]).then(async (x) => {
-                if (x.length > 0) {
-                    pass_hash = x[0].password_login_hash;
-                    auth = await bcrypt.compare(pass, pass_hash);
-                    if (auth) {
-                        if (x[0].active != 1) {
-                            //cloneRes = await cloneMachine(x[0].idgroup)
-                            //TODO: CLONING DOESNT WORK STILL
-                            cloneRes = "Success";
-                            if (cloneRes == "Success") {
-                                logger.info("Clone success!");
-                                activateGroup(x[0].idgroup);
-                                wgRouterPrivateKey = x[0].private_key_router;
-                                wgGroupPublicKey = x[0].public_key_user;
-                                vlanId = x[0].vlan_id;
-
-                                //TODO
-                                portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(vlanId);
-                                logger.info(`Before big logger`);
-                                logger.info(`ROUTEROS: ${user}, ${wgRouterPrivateKey}, ${wgGroupPublicKey}, ${portUDP}, ${process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME}, ${vlanId}`);
-                                generateRes = await generateRouterOSConfig(user, wgRouterPrivateKey, wgGroupPublicKey, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, vlanId);
-                                if (generateRes == "Success") {
-                                    resolve(user);
-                                } else {
-                                    eliminateRouterOSConfig(user);
-                                    feedback_fetch("Generating router config failed - Contact Professor", res);
-                                    reject();
-                                }
-                            } else {
-                                feedback_fetch("Clonning failed - Contact Professor", res);
-                                reject();
-                            }
-                        } else {
-                            resolve(user);
-                        }
-                    }
+            groupData = await getGroupData(user);
+            auth = await bcrypt.compare(pass, groupData.password_login_hash);
+            if (auth) {
+                if (groupData.active != 1) {
+                    firstTimeLogin(groupData).then(resolve).catch(reject);
                 } else {
-                    feedback_fetch("Login Incorrect", res);
-                    reject();
+                    resolve(user);
                 }
-            });
+            }
         }
     });
 };
 
+const insertGroup = (idGroup, nameGroup, password_login_hash, privateKeyRouter, publicKeyUser, res) => {
+    return new Promise((resolve, reject) => {
+        sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user) VALUES (?, ?, ?, ?, ?)`;
+        queryToDB(sql, [idGroup, nameGroup, password_login_hash, privateKeyRouter, publicKeyUser])
+            .then(resolve)
+            .catch((err) => {
+                feedback_fetch(`Insert Group failed sql${err}`, res);
+                resolve()
+            });
+    });
+};
+
+const getEndpointPortGroup = (idGroup) => {
+    return new Promise(async (resolve, reject) => {
+        sql = `SELECT vlan_id FROM nethermir.groups WHERE idgroup = (?)`;
+        data = await queryToDB(sql, [idGroup]);
+        endpointPort = parseInt(data[0]["vlan_id"]) + parseInt(process.env.PORT_UDP_FIRST_ID);
+        resolve(endpointPort);
+    });
+};
+
+const insertEmails = (emails, groupName, res) => {
+    return new Promise((resolve, reject) => {
+        let promises = [];
+        sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `;
+        emails.forEach((email) =>
+            promises.push(
+                queryToDB(sql, [email, groupName])
+                    .then(logger.info("Email Registrat"))
+                    .catch((x) => feedback_fetch("Error mySQL nethermir.groups: " + x, res))
+            )
+        );
+        Promise.all(promises).then(resolve);
+    });
+};
 const registerGroup = async (req, res) => {
     logger.info("Register Iniciated");
-    user = req.query["user"];
     emails = req.query["email"].split("xv3dz1g");
-    password = generatePassword();
-    idGroup = await generateGroup(user);
-    nameGroup = user + "-" + idGroup;
-    password_login_hash = await bcrypt.hash(password, 10);
-    [keyPairUser, keyPairRouter] = genKeyPairVLAN();
-    feedback_check = await checkEmails(emails, res);
-    if (feedback_check != "Correct") {
-        feedback_fetch(feedback_check, res);
+    checkRes = await checkEmails(emails, res);
+    if (checkRes != "Correct") {
+        feedback_fetch(checkRes, res);
         return 0;
     }
-    logger.info("Lets sql");
-    let promises = [];
-    sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user) VALUES (?, ?, ?, ?, ?)`;
-    promises.push(
-        queryToDB(sql, [idGroup, nameGroup, password_login_hash, keyPairRouter.prv, keyPairUser.pub])
-            .then(logger.info("Group Registrat"))
-            .catch((x) => feedback_fetch("Error mySQL nethermir.groups: " + x, res))
-    );
-
-    sql = `SELECT vlan_id FROM nethermir.groups WHERE idgroup = (?)`;
-    endpointPort = await queryToDB(sql, [idGroup]);
-    endpointPort = parseInt(endpointPort[0]["vlan_id"]) + parseInt(process.env.PORT_UDP_FIRST_ID);
-
-    sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `;
-    emails.forEach((email) =>
-        promises.push(
-            queryToDB(sql, [email, nameGroup])
-                .then(logger.info("Email Registrat"))
-                .catch((x) => feedback_fetch("Error mySQL nethermir.groups: " + x, res))
-        )
-    );
-    Promise.all(promises).then(async () => {
-        logger.info("sending password emails...");
-        emailManager.sendPasswordEmail(emails, nameGroup, endpointPort, password, keyPairUser, keyPairRouter);
-        feedback_fetch("Y", res);
-    });
+    idGroup = await generateGroup(req.query["user"]);
+    groupName = req.query["user"] + "-" + idGroup;
+    [password, paswordHash] = generatePassword();
+    [keyPairUser, keyPairRouter] = genKeyPairVLAN();
+    await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub, res);
+    await insertEmails(emails, groupName, res);
+    emailManager.sendPasswordEmail(emails, groupName, getEndpointPortGroup(idgroup), password, keyPairUser, keyPairRouter);
+    feedback_fetch("Y", res);
 };
 
 function generateGroup(user) {
@@ -250,7 +262,7 @@ function generatePassword() {
     for (var i = 0, n = charset.length; i < length; ++i) {
         retVal += charset.charAt(Math.floor(Math.random() * n));
     }
-    return retVal;
+    return [retVal, bcrypt.hash(retVal, 10)];
 }
 
 const checkEmails = (emails) => {
