@@ -151,7 +151,7 @@ const firstTimeLogin = (user, groupData, req, res) => {
             logger.info("Clone success!");
             portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
             activateGroup(groupData.idgroup);
-            generateRes = await generateRouterOSConfig(user, groupData.private_key_router, groupData.public_key_user, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, groupData.vlan_id);
+            generateRes = await generateRouterOSConfig(user, groupData.private_key_router, groupData.public_key_user, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, groupData.idgroup);
             if (generateRes == "Success") {
                 resolve(user);
             } else {
@@ -237,7 +237,8 @@ const registerGroup = async (req, res) => {
     [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
     await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub, res);
     await insertEmails(emails, groupName, res);
-    emailManager.sendPasswordEmail(emails, groupName, getEndpointPortGroup(idgroup), password, keyPairUser, keyPairRouter);
+    portUDP = await getEndpointPortGroup(idgroup)
+    emailManager.sendPasswordEmail(emails, groupName, portUDP, password, keyPairUser, keyPairRouter);
     feedback_fetch("Y", res);
 };
 
