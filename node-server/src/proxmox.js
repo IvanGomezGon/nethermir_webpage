@@ -210,7 +210,7 @@ const machineFinishedClonning = (groupName, req, res) => {
 }
 const modifyMachineVLAN = (groupName, vlan, bridge, req, res) => {
     return new Promise(async (resolve, reject) => {
-        logger.info("modifyMachineVLAN")
+        logger.info(`modifyMachineVLAN ${groupName} ${vlan} ${bridge}`)
         await machineFinishedClonning(groupName, req, res);
         logger.info("Machine finished clonning")
         vmID = await getVmId(groupName, req);
