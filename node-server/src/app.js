@@ -87,9 +87,9 @@ app.get("/backend/getNode", function (req, res) {
     checkCookie(req, res)
         .then((user) => {
             if (req.query["id"] != null) {
-                getNode(null, req, res);
+                getNode(null,true, req, res);
             } else {
-                getNode(user, req, res);
+                getNode(user,true, req, res);
             }
         })
         .catch(() => {

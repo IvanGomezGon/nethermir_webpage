@@ -81,11 +81,11 @@ const eliminateRouterOSConfig = async (groupName) => {
         await sleep(5000);
         try {
             await conn.connect();
+            logger.info("Connected to host!");
         } catch (err){
             logger.info(`Error routeros failed to connect${err}`);
             resolve(`Error routeros failed to connect${err}`);
         }
-        logger.info("Connected to host!");
         try {
             data = await conn.write("/interface/list/print", []);
             idRemove = await getIdToRemove(data, `LIST-${groupName}`);
@@ -131,7 +131,7 @@ const eliminateRouterOSConfig = async (groupName) => {
             data = await conn.close();
             resolve("Success");
         } catch (err){
-            logger.info(`Error eliminating router config in execution${err}`);
+            logger.info(`Error eliminating router config in execution ${err}`);
             logger.info(`closing connection routeros...`);
             data = await conn.close();
             reject();

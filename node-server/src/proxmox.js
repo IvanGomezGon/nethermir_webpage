@@ -76,7 +76,7 @@ const getNodes = (req, res) => {
         logger.error("getNodes failed trycatch");
     }
 };
-const getNode = async (groupName, req, res) => {
+const getNode = async (groupName, feedbackFetch, req, res) => {
     return new Promise(async (resolve, reject) => {
         vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[0];
@@ -87,7 +87,9 @@ const getNode = async (groupName, req, res) => {
                     logger.error(`Failed to getNode: ${err}`);
                 } else {
                     data_json = JSON.parse(data).data;
-                    feedback_fetch(JSON.stringify(data_json), res);
+                    if (feedbackFetch){
+                        feedback_fetch(JSON.stringify(data_json), res);
+                    }
                     resolve(data_json)
                 }
             });
@@ -196,7 +198,7 @@ const machineFinishedClonning = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         setInterval(async () => {
             logger.info("Before getNode")
-            nodeInfo = await getNode(groupName, req, res);
+            nodeInfo = await getNode(groupName, false, req, res);
             logger.info("After getNode")
             if(nodeInfo){
                 if (!nodeInfo["lock"]){
