@@ -43,7 +43,7 @@ const stopMachine = (groupName, req, res) => {
     return new Promise(async (resolve, reject) => {
         vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
-        logger.info(`Stopping machine ${req.query["node"]} on server ${serverID}`);
+        logger.info(`Stopping machine ${vmID} on server ${serverID}`);
         try {
         proxmox.qemu.stop(serverID, vmID, (err, data) => {
                 if (err) {
