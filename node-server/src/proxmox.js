@@ -195,9 +195,12 @@ const eliminateMachine = (groupName, req, res) => {
 const machineFinishedClonning = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         setInterval(async () => {
+            logger.info("Before getNode")
             nodeInfo = await getNode(groupName, req, res);
+            logger.info("After getNode")
             if(nodeInfo){
                 if (!nodeInfo["lock"]){
+                    logger.info("No longer locked")
                     resolve()
                 }
             }
@@ -209,6 +212,7 @@ const modifyMachineVLAN = (groupName, vlan, bridge, req, res) => {
     return new Promise(async (resolve, reject) => {
         logger.info("modifyMachineVLAN")
         await machineFinishedClonning(groupName, req, res);
+        logger.info("Machine finished clonning")
         vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Modifiying machine ${vmID} VLAN to ${vlan} on server ${serverID} ${PROXMOX_SERVERS}`);
