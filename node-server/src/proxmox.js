@@ -197,9 +197,12 @@ const eliminateMachine = (groupName, req, res) => {
 const machineFinishedClonning = (groupName, req, res) => {
     return new Promise((resolve, reject) => {
         setInterval(async () => {
+            logger.info("beforeGetNode")
             nodeInfo = await getNode(groupName, false, req, res);
+            logger.info("afterGetNode")
             if(nodeInfo){
                 if (!nodeInfo["lock"]){
+                    logger.info("Not longer locked")
                     resolve()
                 }
             }
