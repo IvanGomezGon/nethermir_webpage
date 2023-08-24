@@ -49,7 +49,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             logger.info(`ip firewall filter added, ${data}`);
             data = await conn.write("/ip/firewall/filter/print", []);
             newRuleId = await getIdToRemove(data, `defconf: accept from ${groupName} to ${groupName}`);
-            dropId = await getIdToRemove(data, `defconf: accept from XX-2022-2-100 to XX-2022-2-100`);
+            dropId = await getIdToRemove(data, `defconf: drop all remaining forward traffic`);
             data = await conn.write("/ip/firewall/filter/move", [`=numbers=${newRuleId}`, `=destination=${dropId}`]);
             logger.info(`ip firewall filter move drop all finished, ${data}`);
             logger.info(`closing connection routeros...`);
