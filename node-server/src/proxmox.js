@@ -212,7 +212,8 @@ const modifyMachineVLAN = (groupName, vlan, bridge, req, res) => {
         vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Modifiying machine ${vmID} VLAN to ${vlan} on server ${serverID} ${PROXMOX_SERVERS}`);
-        data = { net0: `virtio,tag=${vlan}, bridge=${bridge}` };
+        data = { net0: `virtio,bridge=${bridge},tag=${vlan}`};
+        logger.info(`DATA MODIFY VLAN: ${data}`)
         try {
             proxmox.qemu.updateConfig(serverID, vmID, data, (err, data) => {
                 if (err) {
