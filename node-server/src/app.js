@@ -15,6 +15,7 @@ const corsOptions = {
 const { activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine, eliminateMachine } = require(path.resolve(__dirname, "proxmox.js"));
 const { getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject } = require(path.resolve(__dirname, "database.js"));
 const { setCookie, checkCookie, eliminateCookie } = require(path.resolve(__dirname, "cookies.js"));
+const { eliminateRouterOSConfig } = require(path.resolve(__dirname, "routeros.js"));
 const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
 

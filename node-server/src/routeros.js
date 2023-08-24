@@ -138,7 +138,7 @@ const eliminateRouterOSConfig = async (groupName) => {
         }
     });
 };
-generateRouterOSConfig('XX-2022-2-111', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 65439, "ether1",13)
+//generateRouterOSConfig('XX-2022-2-111', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 65439, "ether1",13)
 //eliminateRouterOSConfig("XX-2022-2-100");
 
 module.exports = {
