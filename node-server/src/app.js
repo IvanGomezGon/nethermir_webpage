@@ -13,7 +13,7 @@ const corsOptions = {
 };
 
 const { activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine, eliminateMachine } = require(path.resolve(__dirname, "proxmox.js"));
-const { getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject } = require(path.resolve(__dirname, "database.js"));
+const { getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject, generateMachine } = require(path.resolve(__dirname, "database.js"));
 const { setCookie, checkCookie, eliminateCookie } = require(path.resolve(__dirname, "cookies.js"));
 const { eliminateRouterOSConfig } = require(path.resolve(__dirname, "routeros.js"));
 const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
@@ -46,6 +46,18 @@ app.get("/backend/activateMachine", function (req, res) {
             logger.info("Failed to authenticate");
         });
 });
+
+app.get("/backend/generateMachine", function (req, res) {
+    logger.info("generateMachine");
+    checkCookie(req, res)
+        .then((user) => {
+                generateMachine(user, req, res);
+        })
+        .catch(() => {
+            logger.info("Failed to authenticate");
+        });
+});
+
 app.get("/backend/stopMachine", function (req, res) {
     logger.info("stopMachine");
     checkCookie(req, res)
@@ -109,13 +121,11 @@ app.get("/backend/eliminateGroup", function (req, res) {
     logger.info("eliminateGroup");
     checkCookie(req, res)
         .then(() => {
-            eliminateGroup(req, res);
+            return eliminateGroup(req, res);
         })
         .then((groupName) => {
             eliminateMachine(groupName, req, res)
-        })
-        .then((groupName) => {
-            logger.info("eliminating routerOsConfigs")
+            logger.info(`BEFORE ELIMINATE : ${groupName}`)
             eliminateRouterOSConfig(groupName)
         })
         .catch(() => {

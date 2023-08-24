@@ -147,22 +147,22 @@ const firstTimeLogin = (user, groupData, req, res) => {
         //TODO: CLONING DOESNT WORK STILL
         //cloneRes = "Success";
         if (cloneRes == "Success") {
+            logger.info("Clone success!");
             bridge = process.env.PROXMOX_PUBLIC_BRIDGE
             modifyMachineVLAN(user, groupData.idgroup, bridge, req, res);
-            logger.info("Clone success!");
             portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
             activateGroup(groupData.idgroup);
             generateRes = await generateRouterOSConfig(user, groupData.private_key_router, groupData.public_key_user, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, groupData.idgroup);
             if (generateRes == "Success") {
                 resolve(user);
             } else {
-                eliminateRouterOSConfig(user);
+                eliminateRes = await eliminateRouterOSConfig(user);
                 feedback_fetch("Generating router config failed - Contact Professor", res);
-                reject();
+                resolve()
             }
         } else {
             feedback_fetch("Clonning failed - Contact Professor", res);
-            reject();
+            resolve()
         }
     });
 };
@@ -177,16 +177,20 @@ const authenticate = async (req, res) => {
             groupData = await getGroupData(user);
             auth = await bcrypt.compare(pass, groupData.password_login_hash);
             if (auth) {
-                if (groupData.active != 1) {
-                    firstTimeLogin(user, groupData, req, res).then(resolve).catch(reject);
-                } else {
                     resolve(user);
-                }
             }
         }
     });
 };
 
+const generateMachine = async (user, req, res) => {
+    return new Promise(async (resolve, reject) => {
+        groupData = await getGroupData(user);
+        if (groupData.active == 0){
+            firstTimeLogin(user, groupData, req, res).then(logger.info("yes")).catch(logger.info)
+        }
+    })
+}
 const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, res) => {
     return new Promise((resolve, reject) => {
         logger.info("insertGroup started");
@@ -374,4 +378,5 @@ module.exports = {
     addSubject,
     activateSubject,
     genKeyPairVLAN,
+    generateMachine,
 };

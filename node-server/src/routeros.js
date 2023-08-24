@@ -81,11 +81,17 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
                         return conn.write("/ip/firewall/filter/add", [`=action=accept`, `=chain=forward`, `=comment=defconf: accept from ${groupName} to ${groupName}`, `=in-interface-list=LIST-${groupName}`, `=out-interface-list=LIST-${groupName}`]);
                     })
 
+                    .then((data) => {
+                        logger.info(`ip firewall filter added, ${data}`);
+                        return conn.write("/ip/firewall/filter/print", []);
+                    })
                     //Closing connection
                     .then(async (data) => {
-                        await getIdToRemove(data, `defconf: accept from ${groupName} to ${groupName}`);
-                        dropId = await getIdToRemove(data, `defconf: drop all remaining forward traffic`);
-                        data = await conn.write("/ip/firewall/filter/move", [`=numbers=${newRuleId}`, `=destination=${dropId}`]);
+                        //logger.info(`/ip/firewall/filter/print`)
+                        //newRuleId = await getIdToRemove(data, `defconf: accept from ${groupName} to ${groupName}`);
+                        //dropId = await getIdToRemove(data, `defconf: drop all remaining forward traffic`);
+                        //logger.info(`${newRuleId}, ${dropId}`)
+                        //data = await conn.write("/ip/firewall/filter/move", [`=numbers=${newRuleId}`, `=destination=${dropId}`]);
                         logger.info(`ip firewall filter added, ${data}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
@@ -94,7 +100,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
 
                     //Catching errors in execution
                     .catch((err) => {
-                        logger.info(`Error routeros on execution${err}`);
+                        logger.info(`Error routeros on execution ${err}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
                         resolve(`Error routeros on execution ${err}`);
@@ -103,8 +109,8 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
 
             //Catching errors in connection
             .catch((err) => {
-                logger.info(`Error routeros failed to connect${err}`);
-                resolve(`Error routeros failed to connect${err}`);
+                logger.info(`Error routeros failed to connect ${err}`);
+                resolve(`Error routeros failed to connect ${err}`);
             });
     });
 };
@@ -117,16 +123,18 @@ newRuleId =
 const getIdToRemove = (data, searchValue) => {
     return new Promise((resolve, reject) => {
         for (row of data) {
+            logger.info(`${row["comment"]}, ${searchValue}`)
             if (row["comment"] == searchValue) {
                 resolve(row[".id"]);
             }
         }
-    });
+    })
+
 };
 
 const eliminateRouterOSConfig = async (groupName) => {
     return new Promise(async (resolve, reject) => {
-        logger.info("eliminateRouterOSConfig");
+        logger.info(`eliminateRouterOSConfig ${groupName}`);
         await sleep(5000);
         conn.connect()
             .then(() => {
@@ -134,8 +142,10 @@ const eliminateRouterOSConfig = async (groupName) => {
 
                 //interface/list/remove
                 conn.write("/interface/list/print", [])
-                    .then(async (data) => {
+                    .then( async (data) => {
+                        logger.info("Interface list print")
                         idRemove = await getIdToRemove(data, `LIST-${groupName}`);
+                        logger.info(idRemove)
                         return conn.write("/interface/list/remove", [`=.id=${idRemove}`]);
                     })
 
@@ -144,7 +154,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`interface list name removed, ${data}`);
                         return conn.write("/interface/wireguard/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `WG-${groupName}`);
                         return conn.write("/interface/wireguard/remove", [`=.id=${idRemove}`]);
                     })
@@ -154,7 +164,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`interface wireguard removed, ${data}`);
                         return conn.write("/interface/wireguard/peers/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `WG-${groupName}`);
                         return conn.write("/interface/wireguard/peers/remove", [`=.id=${idRemove}`]);
                     })
@@ -164,7 +174,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`interface wireguard peers removed, ${data}`);
                         return conn.write("/interface/vlan/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `VLAN-${groupName}`);
                         return conn.write("/interface/vlan/remove", [`=.id=${idRemove}`]);
                     })
@@ -174,7 +184,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`interface vlan removed, ${data}`);
                         return conn.write("/ip/vrf/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `VRF-${groupName}`);
                         return conn.write("/ip/vrf/remove", [`=.id=${idRemove}`]);
                     })
@@ -184,7 +194,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`ip vrf removed, ${data}`);
                         return conn.write("/interface/list/member/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `VLAN-${groupName}`);
                         return conn.write("/interface/list/member/remove", [`=.id=${idRemove}`]);
                     })
@@ -194,7 +204,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`interface list member vlan removed, ${data}`);
                         return conn.write("/interface/list/member/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `WG-${groupName}`);
                         return conn.write("/interface/list/member/remove", [`=.id=${idRemove}`]);
                     })
@@ -204,7 +214,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`interface list member wireguard removed, ${data}`);
                         return conn.write("/ip/address/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `VLAN-${groupName}`);
                         return conn.write("/ip/address/remove", [`=.id=${idRemove}`]);
                     })
@@ -214,7 +224,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`ip address vlan removed, ${data}`);
                         return conn.write("/ip/address/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `WG-${groupName}`);
                         return conn.write("/ip/address/remove", [`=.id=${idRemove}`]);
                     })
@@ -224,7 +234,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`ip address wireguard removed, ${data}`);
                         return conn.write("/ip/firewall/filter/print", []);
                     })
-                    .then(async (data) => {
+                    .then( async (data) => {
                         idRemove = await getIdToRemove(data, `defconf: accept from ${groupName} to ${groupName}`);
                         return conn.write("/ip/firewall/filter/remove", [`=.id=${idRemove}`]);
                     })
@@ -242,19 +252,19 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`Error eliminating router config in execution${err}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
-                        reject();
+                        resolve("Error");
                     });
             })
 
             //Catching errors in connection
             .catch((err) => {
                 logger.info(`Error eliminating router config in connection ${err}`);
-                reject();
+                resolve("Error");
             });
     });
 };
 //generateRouterOSConfig('XX-2022-2-111', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 65439, "ether1",13)
-//eliminateRouterOSConfig("XX-2022-2-100");
+//eliminateRouterOSConfig("FX-2022-1-101");
 
 module.exports = {
     generateRouterOSConfig,

@@ -1,5 +1,5 @@
 <template>
-<button class="logout corner">Eliminar taula</button>
+<button class="corner" @click="generateVM()">Generar Màquina Virtual</button>
 <h2>Informació VM</h2>
 <table>
     <tr>
@@ -63,6 +63,11 @@ export default {
                 });
             });
         },
+        generateVM() {
+            fetch(`${process.env.VUE_APP_FETCH_URL}generateMachine`, {
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+            }).then();
+        },
         activateVM(id) {
             fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine`, {
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS
@@ -76,7 +81,7 @@ export default {
             }
         },
         suspendVM() {
-            fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine?`, {
+            fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine`, {
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS
             }).then();
         },
