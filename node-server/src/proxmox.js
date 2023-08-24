@@ -87,7 +87,7 @@ const getNode = async (groupName, req, res) => {
                     logger.error(`Failed to getNode: ${err}`);
                 } else {
                     data_json = JSON.parse(data).data;
-                    //feedback_fetch(JSON.stringify(data_json), res);
+                    feedback_fetch(JSON.stringify(data_json), res);
                     resolve(data_json)
                 }
             });
@@ -205,14 +205,14 @@ const machineFinishedClonning = (groupName, req, res) => {
         }, 2000);
     })
 }
-const modifyMachineVLAN = (groupName, vlan, req, res) => {
+const modifyMachineVLAN = (groupName, vlan, bridge, req, res) => {
     return new Promise(async (resolve, reject) => {
         logger.info("modifyMachineVLAN")
         await machineFinishedClonning(groupName, req, res);
         vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Modifiying machine ${vmID} VLAN to ${vlan} on server ${serverID} ${PROXMOX_SERVERS}`);
-        data = { net0: `virtio,tag=${vlan}` };
+        data = { net0: `virtio,tag=${vlan}, bridge=${bridge}` };
         try {
             proxmox.qemu.updateConfig(serverID, vmID, data, (err, data) => {
                 if (err) {

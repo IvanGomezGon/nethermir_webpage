@@ -147,7 +147,8 @@ const firstTimeLogin = (user, groupData, req, res) => {
         //TODO: CLONING DOESNT WORK STILL
         //cloneRes = "Success";
         if (cloneRes == "Success") {
-            modifyMachineVLAN(user, groupData.idgroup, req, res);
+            bridge = process.env.PROXMOX_PUBLIC_BRIDGE
+            modifyMachineVLAN(user, groupData.idgroup, bridge, req, res);
             logger.info("Clone success!");
             portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
             activateGroup(groupData.idgroup);
