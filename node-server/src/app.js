@@ -115,6 +115,7 @@ app.get("/backend/eliminateGroup", function (req, res) {
             eliminateMachine(groupName, req, res)
         })
         .then((groupName) => {
+            logger.info("eliminating routerOsConfigs")
             eliminateRouterOSConfig(groupName)
         })
         .catch(() => {
