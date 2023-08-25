@@ -123,7 +123,6 @@ newRuleId =
 const getIdToRemove = (data, searchValue) => {
     return new Promise((resolve, reject) => {
         for (row of data) {
-            logger.info(`${row["comment"]}, ${searchValue}`)
             if (row["comment"] == searchValue) {
                 resolve(row[".id"]);
             }
