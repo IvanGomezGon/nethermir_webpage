@@ -17,7 +17,7 @@
         <td>{{ data.vmid }}</td>
         <td>{{ data.name }}</td>
         <td>{{ (data.cpu * 100).toFixed(2) + "%" }}</td>
-        <td>{{ data.status == "stopped" ? "Stopped" : data.cpu < 0.005 ? "Corrent (Pausat)" : "Corrent" }}</td>
+        <td>{{ data.status }}</td>
         <td>{{ data.uptime }}</td>
         <td><button type="button" @click="activateVM()" style="width: 11vw" :disabled="data.status != 'stopped'">Start</button></td>
         <td style="display: flex; justify-content: center; align-items: center">
