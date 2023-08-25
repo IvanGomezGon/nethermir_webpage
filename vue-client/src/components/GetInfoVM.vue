@@ -13,21 +13,21 @@
         <th>Suspendre VM</th>
     </tr>
 
-    <tr class="userTable" :style="'color: ' + getColor(data.status, data.cpu)">
-        <td>{{ data.vmid }}</td>
-        <td>{{ data.name }}</td>
-        <td>{{ (data.cpu * 100).toFixed(2) + "%" }}</td>
-        <td>{{ data.status == "stopped" ? "Stopped" : data.cpu < 0.005 ? "Corrent (Pausat)" : "Corrent" }}</td>
-        <td>{{ data.uptime }}</td>
-        <td><button type="button" @click="activateVM()" style="width: 11vw" :disabled="data.status != 'stopped'">Start</button></td>
+    <tr class="userTable" :style="'color: ' + getColor(statusVM, cpuVM)">
+        <td>{{ idVM }}</td>
+        <td>{{ nameVM }}</td>
+        <td>{{ (cpuVM * 100).toFixed(2) + "%" }}</td>
+        <td>{{ statusVM == "stopped" ? "Stopped" : cpuVM < 0.005 ? "Corrent (Pausat)" : "Corrent" }}</td>
+        <td>{{ uptimeVM }}</td>
+        <td><button type="button" @click="activateVM()" style="width: 11vw" :disabled="statusVM != 'stopped'">Start</button></td>
         <td style="display: flex; justify-content: center; align-items: center">
             <fieldset style="width: 10vw">
                 <legend>Hores:</legend>
                 <input type="number" v-model="hours" min="1" max="6" style="width: 10vw" />
             </fieldset>
-            <button type="button" @click="resumeVM()" style="width: 11vw" :disabled="data.status == 'stopped' || data.cpu > 0.005">Resume</button>
+            <button type="button" @click="resumeVM()" style="width: 11vw" :disabled="statusVM == 'stopped' || cpuVM > 0.005">Resume</button>
         </td>
-        <td><button type="button" @click="suspendVM()" style="width: 11vw" :disabled="data.status == 'stopped' || data.cpu < 0.005">Suspend</button></td>
+        <td><button type="button" @click="suspendVM()" style="width: 11vw" :disabled="statusVM == 'stopped' || cpuVM < 0.005">Suspend</button></td>
     </tr>
 </table>
 </template>
@@ -37,7 +37,11 @@ export default {
     name: "GetInfoVM",
     data: function () {
         return {
-            data: "",
+            idVM: 0,
+            nameVM: 0,
+            cpuVM: 0,
+            statusVM: "stopped", 
+            uptimeVM: 0,
             hours: 4,
         };
     },
@@ -59,13 +63,12 @@ export default {
             });
             p.then((response) => {
                 response.json().then((json) => {
-                    this.data = json;
-                    if (this.data == null) {
-                        this.data.vmid = 0
-                        this.data.name = 0
-                        this.data.cpu = 0
-                        this.data.status = "stopped"
-                        this.data.uptime = 0
+                    if (json != null) {
+                        this.idVM = json.vmid 
+                        this.nameVM = json.name 
+                        this.cpuVM = json.cpu
+                        this.statusVM = json.status 
+                        this.uptimeVM = json.uptime = 0
                     }
                 });
             });
