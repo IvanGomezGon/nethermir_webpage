@@ -87,12 +87,12 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
                     })
                     //Closing connection
                     .then(async (data) => {
-                        //logger.info(`/ip/firewall/filter/print`)
-                        //newRuleId = await getIdToRemove(data, `defconf: accept from ${groupName} to ${groupName}`);
-                        //dropId = await getIdToRemove(data, `defconf: drop all remaining forward traffic`);
-                        //logger.info(`${newRuleId}, ${dropId}`)
-                        //data = await conn.write("/ip/firewall/filter/move", [`=numbers=${newRuleId}`, `=destination=${dropId}`]);
-                        logger.info(`ip firewall filter added, ${data}`);
+                        logger.info(`/ip/firewall/filter/print`)
+                        newRuleId = await getIdToRemove(data, `defconf: accept from ${groupName} to ${groupName}`);
+                        dropId = await getIdToRemove(data, `defconf: drop all remaining forward traffic`);
+                        logger.info(`${newRuleId}, ${dropId}`)
+                        data = await conn.write("/ip/firewall/filter/move", [`=numbers=${newRuleId}`, `=destination=${dropId}`]);
+                        logger.info(`ip firewall filter moved, ${data}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
                         resolve("Success");
