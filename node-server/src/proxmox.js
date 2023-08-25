@@ -97,12 +97,12 @@ const getNode = async (groupName, feedbackFetch, req, res) => {
         }
     });
 };
-const cloneMachine = (group) => {
+const cloneMachine = (group, groupName) => {
     return new Promise((resolve, reject) => {
         logger.info(group);
         vmID = ((group % 3) + 1) * 10000 + group - (group % 100);
         serverID = PROXMOX_SERVERS[group % process.env.PROXMOX_SERVERS_COUNT];
-        newID = { newid: group, name: group, full: 1 };
+        newID = { newid: group, name: groupName, full: 1 };
         logger.info(`Cloning machine ${vmID} on server ${serverID}`);
         try {
             proxmox.qemu.clone(serverID, vmID, newID, (err, data) => {

@@ -143,7 +143,7 @@ const getGroupData = (groupName) => {
 
 const firstTimeLogin = (user, groupData, req, res) => {
     return new Promise(async (resolve, reject) => {
-        cloneRes = await cloneMachine(groupData.idgroup)
+        cloneRes = await cloneMachine(groupData.idgroup, user)
         //TODO: CLONING DOESNT WORK STILL
         //cloneRes = "Success";
         if (cloneRes == "Success") {
