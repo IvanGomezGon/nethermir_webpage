@@ -78,7 +78,7 @@ const getNodes = (req, res) => {
 const getNode = async (groupName, feedbackFetch, req, res) => {
     return new Promise(async (resolve, reject) => {
         vmID = await getVmId(groupName, req);
-        serverID = PROXMOX_SERVERS[0];
+        serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         try {
             proxmox.qemu.getStatusCurrent(serverID, vmID, (err, data) => {
                 if (err) {
