@@ -1,94 +1,109 @@
 <template>
-<div class="header">
-    <img src="../assets/logo_uab.png" class="logo selector" @click="this.$router.push('/')" />
-    <h3 class="header_element title">PANELL DE CONTROL ROOT</h3>
-    <a href="#" :style="{ '--widthVar': cssProxmox }" class="header_element push" id="proxmox" @click="
-        saveStatus = !proxmox;
-        switchTab('ProxmoxInfo');
-        proxmox = saveStatus;
-      ">Proxmox VMs</a>
-    <a href="#" :style="{ '--widthVar': cssGrups }" class="header_element" id="grups" @click="
-        saveStatus = !grups;
-        switchTab('groupsInfo');
-        grups = saveStatus;
-      ">Grups</a>
-    <a href="#" :style="{ '--widthVar': cssUsuaris }" class="header_element" id="usuaris" @click="
-        saveStatus = !usuaris;
-        switchTab('emailsInfo');
-        usuaris = saveStatus;
-      ">Usuaris</a>
-    <a href="#" :style="{ '--widthVar': cssAssignatures }" class="header_element" id="assignatures" @click="
-        saveStatus = !assignatures;
-        switchTab('subjectsInfo');
-        assignatures = saveStatus;
-      ">Assignatures</a>
-    <button class="logout" @click="this.$router.push('/restartDatabase')">Reiniciar base de dades</button>
-    <button class="logout" @click="eliminateCookie()">Sortir</button>
-</div>
+    <nav class="bg-emerald-700">
+        <div class="mx-auto w-3/4">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-8 invert" src="../assets/logo_uab_small.svg" alt="Your Company">
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                            <a href="#" @click="this.$router.push('/controlPannelRoot/dashboard'); current = 0"
+                                :class="current == 0 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'"
+                                aria-current="page">Dashboard</a>
+                            <a href="#" @click="this.$router.push('/controlPannelRoot/proxmox'); current = 1"
+                            :class="current == 1 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Proxmox</a>
+                            <a href="#" @click="this.$router.push('/controlPannelRoot/grups'); current = 2"
+                            :class="current == 2 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Grups</a>
+                            <a href="#" @click="this.$router.push('/controlPannelRoot/usuaris'); current = 3"
+                            :class="current == 3 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Usuaris</a>
+                            <a href="#" @click="this.$router.push('/controlPannelRoot/assignatures'); current = 4"
+                            :class="current == 4 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Assignatures</a>
+
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6">
+
+
+                        <!-- Profile dropdown -->
+                        <div class="relative ml-3">
+                            <div>
+                                <button type="button"
+                                    class=" float-right focus:outline-none text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Tancar
+                                    sessió</button>
+                                <button type="button" @click="$emit('deleteDB')"
+                                    class="focus:outline-none text-white bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                                    Eliminar
+                                    base de dades
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <!-- Mobile menu button -->
+                    <button type="button"
+                        class="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="absolute -inset-0.5"></span>
+                        <span class="sr-only">Open main menu</span>
+                        <!-- Menu open: "hidden", Menu closed: "block" -->
+                        <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
+                        <!-- Menu open: "block", Menu closed: "hidden" -->
+                        <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div class="md:hidden" id="mobile-menu">
+            <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                <a href="#" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
+                    aria-current="page">Dashboard</a>
+                <a href="#"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
+                <a href="#"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
+                <a href="#"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
+                <a href="#"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Reports</a>
+                <a href="#"
+                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Sign
+                    out</a>
+
+            </div>
+        </div>
+    </nav>
+
 </template>
 
 <script>
 export default {
     name: "HeaderRoot",
-    props: ["modelValue"],
     data: function () {
         return {
-            proxmox: false,
-            grups: false,
-            usuaris: false,
-            assignatures: false,
+            current: 0,
         };
     },
-    computed: {
-        cssProxmox() {
-            if (this.proxmox) {
-                return "100%";
-            } else {
-                return 0;
-            }
-        },
-        cssGrups() {
-            if (this.grups) {
-                return "100%";
-            } else {
-                return 0;
-            }
-        },
-        cssUsuaris() {
-            if (this.usuaris) {
-                return "100%";
-            } else {
-                return 0;
-            }
-        },
-        cssAssignatures() {
-            if (this.assignatures) {
-                return "100%";
-            } else {
-                return 0;
-            }
-        },
-    },
-    methods: {
-        switchTab(tab) {
-            this.proxmox = false;
-            this.grups = false;
-            this.usuaris = false;
-            this.assignatures = false;
-            this.$emit("update:modelValue", tab == this.modelValue ? "" : tab);
-        },
-        eliminateCookie() {
-            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateCookie`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-            }).then();
-            this.$router.push("/");
-        },
-    },
+
+
 };
 </script>
 
-<style>
-a.header_element::after {
-    width: var(--widthVar);
-}
-</style>
+<style></style>

@@ -1,4 +1,5 @@
 <template>
+    <!-- Comment
 <button class="corner" @click="generateVM()">Generar Màquina Virtual</button>
 <h2>Informació VM</h2>
 <table>
@@ -30,6 +31,7 @@
         <td><button type="button" @click="suspendVM()" style="width: 11vw" :disabled="statusVM == 'stopped' || cpuVM < 0.005">Suspend</button></td>
     </tr>
 </table>
+-->
 </template>
 
 <script>

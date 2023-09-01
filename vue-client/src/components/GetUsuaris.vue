@@ -1,23 +1,26 @@
 <template>
-    <SubHeader :titleName="'Base de dades - Grups'"></SubHeader>
+    <SubHeader :titleName="'Base de dades - Usuaris'"></SubHeader>
     <main class="pt-10 bg-white dark:bg-gray-900 h-[calc(100vh-148px)]">
         <div class="xl:w-3/4 md:w-full sm:w-full w-full mx-auto">
-            <TableGroups></TableGroups>
+            <TableEmails></TableEmails>
         </div>
     </main>
 </template>
 
 <script>
-import TableGroups from "@/components/TableGroups.vue";
+import TableEmails from "@/components/TableEmails.vue";
 import SubHeader from "@/components/SubHeader.vue";
 
 export default {
-    name: "GetGroups",
+    name: "GetEmails",
     components: {
-        TableGroups,
+        TableEmails,
         SubHeader,
     },
 };
+
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
 
 <style scoped></style>

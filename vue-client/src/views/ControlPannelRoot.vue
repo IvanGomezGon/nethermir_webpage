@@ -1,47 +1,28 @@
 <template>
-<div v-if="render">
-    <div class="flex-container">
-        <div class="header">
-            <HeaderRoot v-model="active" />
+    <div v-if="render">
+        <div :class="showModalWarning ? 'blur h-screen ' : 'h-screen'">
+            <HeaderRoot @deleteDB="showModalWarning = true;">
+            </HeaderRoot>
+            <router-view></router-view>
+            
         </div>
-
-        <div class="inner-element rootControl" v-if="proxmoxInfo">
-            <GetProxmoxVMs />
-        </div>
-
-        <div class="inner-element rootControl" v-if="groupsInfo" style="height: auto">
-            <GetGroups />
-        </div>
-
-        <div class="inner-element rootControl" v-if="emailsInfo" style="height: auto">
-            <GetEmails />
-        </div>
-        <div class="inner-element rootControl" v-if="subjectsInfo" style="height: auto">
-            <GetSubjects />
-        </div>
+        <ModalWarning v-if="showModalWarning" @goBack="showModalWarning = false;" @resetDB ="showModalWarning = false;">
+        </ModalWarning>
     </div>
-</div>
+
 </template>
 
 <script>
 // @ is an alias to /src
 import HeaderRoot from "@/components/HeaderRoot.vue";
-import GetProxmoxVMs from "@/components/GetProxmoxVMs.vue";
-import GetGroups from "@/components/GetGroups.vue";
-import GetEmails from "@/components/GetEmails.vue";
-import GetSubjects from "@/components/GetSubjects.vue";
-
+import ModalWarning from "@/components/ModalWarning.vue";
 export default {
     name: "ControlPannelRoot",
     data: () => {
         return {
             active: "",
-            proxmoxInfo: false,
-            groupsInfo: false,
-            emailsInfo: false,
-            subjectsInfo: false,
-            areYouSure: false,
             render: false,
+            showModalWarning: false,
         };
     },
     // TODO: Change this for Router Navigation guards
@@ -59,36 +40,9 @@ export default {
             });
         });
     },
-    watch: {
-        active() {
-            this.proxmoxInfo = false;
-            this.groupsInfo = false;
-            this.emailsInfo = false;
-            this.subjectsInfo = false;
-            this.areYouSure = false;
-            if (this.active == "ProxmoxInfo") {
-                this.proxmoxInfo = true;
-            }
-            if (this.active == "groupsInfo") {
-                this.groupsInfo = true;
-            }
-            if (this.active == "emailsInfo") {
-                this.emailsInfo = true;
-            }
-            if (this.active == "subjectsInfo") {
-                this.subjectsInfo = true;
-            }
-            if (this.active == "areYouSure") {
-                this.areYouSure = true;
-            }
-        },
-    },
     components: {
         HeaderRoot,
-        GetProxmoxVMs,
-        GetGroups,
-        GetEmails,
-        GetSubjects,
+        ModalWarning,
     },
 };
 </script>
