@@ -38,7 +38,7 @@
 -->
     <div class="flex justify-center items-center overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <thead class="text-xs text-lighter_grey uppercase bg-gray-50 dark:bg-lighter_grey dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
                         Virtual Machine id
@@ -65,8 +65,8 @@
             </thead>
             <tbody>
                 <tr v-for="vm in data"
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    class="bg-white border-b dark:bg-light_grey dark:border-lighter_grey hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-grey whitespace-nowrap dark:text-white">
                         {{ vm.vmid }}
                     </th>
                     <td class="px-6 py-4">
@@ -83,12 +83,12 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="stopActivate(vm.status, vm.vmid)"
-                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{ vm.status == "stopped" ?
+                            class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">{{ vm.status == "stopped" ?
                                 "Encendre" : "Parar" }}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="resumeSuspend(vm.cpu, vm.vmid)"
-                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{ vm.cpu < 0.005
+                            class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">{{ vm.cpu < 0.005
                                 ? "Resumir" : "Pausar" }}</a>
                     </td>
                 </tr>

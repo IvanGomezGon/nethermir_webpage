@@ -1,69 +1,30 @@
 <template>
-    <!-- Comment
-<div class="flex-container" v-if="register">
-    <div class="inner-element" id="register" style="width:auto">
-        <br>
-        <img src="../assets/logo_uab.png" class="selector" style="height: 100px;">
-        <h3>NETHERMIR Registre</h3>
-        {{ feedback }}<br>
-        <p v-if="errors.length" style="text-align:left; margin-left: 40px; color: #d93025">
-            <b>Si us plau, corregeix els següents error(s):</b>
-            <p v-for="error in errors">{{ error }}</p>
-        </p>
-        <div v-if="!registered">
-            <div class="register_options">
-
-
-                <fieldset id="assignatura">
-                    <legend> Assignatura: </legend>
-                    <select v-model="assignatura">
-                        
-                    </select> <br>
-                </fieldset>
-                <br>
-                <fieldset id="num">
-                    <legend> Número d'integrants: </legend>
-                    <select v-model="numIntegrants" @change="this.errors=[];">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select> <br>
-                </fieldset>
-            </div><br>
-            <br>
-            <button type="button" @click="checkRegister()" style="width: 426.5px;"> Crear grup</button><br><br>
-        </div>
-        <router-link to="/">Ja tens un compte? Inicia sessió!</router-link><br><br>
-    </div>
-</div>
--->
-    <section class="bg-[url('./columnes.svg')]">
+    <section class="bg-[url('./columnes.svg')] bg-cover h-screen">
         <div class="absolute top-6 left-6">
             <img class="h-10 mr-2" src="../assets/logo_uab.png" alt="logo">
         </div>
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <div class="w-full bg-white rounded-lg shadow  md:mt-0 sm:max-w-md xl:p-0 ">
+            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-light_grey dark:border-lighter_grey">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-grey md:text-2xl dark:text-white">
                         Registre de grup
                     </h1>
                     <form>
                         <div class="grid gap-6 mb-4 md:grid-cols-2">
 
                             <div>
-                                <label for="countries"
-                                    class="block  text-sm font-medium text-gray-900 dark:text-white">Curs</label>
+                                <div for="countries"
+                                    class="block  text-sm font-medium text-grey dark:text-white">Curs</div>
                                 <select id="countries"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    class="bg-gray-50 border border-gray-300 text-grey text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-lighter_grey dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500">
                                     <option v-for="year in years()" :value="year"> {{ year }}</option>
                                 </select>
                             </div>
                             <div>
-                                <label for="countries"
-                                    class="block  text-sm font-medium text-gray-900 dark:text-white">Assignatura</label>
+                                <div for="countries"
+                                    class="block  text-sm font-medium text-grey dark:text-white">Assignatura</div>
                                 <select id="countries"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    class="bg-gray-50 border border-gray-300 text-grey text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-lighter_grey dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500">
                                     <option v-for="subject in subjects()" :value="subject">{{ subject }}</option>
                                 </select>
                             </div>
@@ -73,10 +34,10 @@
                         <div class="space-y-2 md:space-y-2">
 
                             <div>
-                                <label for="countries" class="block  text-sm font-medium text-gray-900 dark:text-white">Num
-                                    d'integrants</label>
+                                <div for="countries" class="block  text-sm font-medium text-grey dark:text-white">Num
+                                    d'integrants</div>
                                 <select id="countries" v-model="numIntegrants"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    class="bg-gray-50 border border-gray-300 text-grey text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-lighter_grey dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -84,11 +45,11 @@
                                 </select>
                             </div>
 
-                            <label v-if="numIntegrants"
-                                class="block  text-sm font-medium text-gray-900 dark:text-white">Adreces de correu</label>
+                            <div v-if="numIntegrants"
+                                class="block  text-sm font-medium text-grey dark:text-white">Adreces de correu</div>
                             <div v-for="index in parseInt(numIntegrants)" :key="index">
-                                <input type="email" id="email"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                <input type="email" id="email" v-model="emails[index-1]"
+                                    class="outline-0 bg-gray-50 border border-gray-300 text-grey text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-lighter_grey dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
                                     :placeholder="'usuari' + index + '@uab.cat'" required>
                             </div>
 

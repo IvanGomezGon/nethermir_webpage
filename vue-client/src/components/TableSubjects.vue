@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center items-center overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <thead class="text-xs text-lighter_grey uppercase bg-gray-50 dark:bg-lighter_grey dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
                         Assignatura id
@@ -22,21 +22,21 @@
             </thead>
             <tbody>
                 <tr v-for="subject in data"
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    class="bg-white border-b dark:bg-light_grey dark:border-lighter_grey hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-grey whitespace-nowrap dark:text-white">
                         {{ subject.idsubject < 10 ? "0" + subject.idsubject : subject.idsubject }}
                     </th>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 dark:text-white">
                         {{ subject.subject_name }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 dark:text-white">
                         {{ subject.active ? "Cert" : "Fals" }}
                     </td>
-                    <td class="px-6 py-4 text-right">
+                    <td class="px-6 py-4 text-right dark:text-white">
                         <a href="#" @click="activateSubject(subject.idsubject)"
                             class="font-medium text-green-600 hover:underline dark:text-green-600">{{ subject.active ? "Desactivar" : "Activar" }}</a>
                     </td>
-                    <td class="px-6 py-4 text-right">
+                    <td class="px-6 py-4 text-right dark:text-white">
                         <a href="#" @click="eliminateSubject(subject.idsubject)"
                             class="font-medium text-green-600 hover:underline dark:text-green-600">Eliminar</a>
                     </td>

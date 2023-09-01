@@ -8,18 +8,18 @@
                     </div>
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                            <!-- Current: "bg-grey text-white", Default: "text-gray-300 hover:bg-lighter_grey hover:text-white" -->
                             <a href="#" @click="this.$router.push('/controlPannelRoot/dashboard'); current = 0"
-                                :class="current == 0 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'"
+                                :class="current == 0 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'"
                                 aria-current="page">Dashboard</a>
                             <a href="#" @click="this.$router.push('/controlPannelRoot/proxmox'); current = 1"
-                            :class="current == 1 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Proxmox</a>
+                            :class="current == 1 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Proxmox</a>
                             <a href="#" @click="this.$router.push('/controlPannelRoot/grups'); current = 2"
-                            :class="current == 2 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Grups</a>
+                            :class="current == 2 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Grups</a>
                             <a href="#" @click="this.$router.push('/controlPannelRoot/usuaris'); current = 3"
-                            :class="current == 3 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Usuaris</a>
+                            :class="current == 3 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Usuaris</a>
                             <a href="#" @click="this.$router.push('/controlPannelRoot/assignatures'); current = 4"
-                            :class="current == 4 ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Assignatures</a>
+                            :class="current == 4 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Assignatures</a>
 
 
 
@@ -49,7 +49,7 @@
                 <div class="-mr-2 flex md:hidden">
                     <!-- Mobile menu button -->
                     <button type="button"
-                        class="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        class="relative inline-flex items-center justify-center rounded-md bg-light_grey p-2 text-gray-400 hover:bg-lighter_grey hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-light_grey"
                         aria-controls="mobile-menu" aria-expanded="false">
                         <span class="absolute -inset-0.5"></span>
                         <span class="sr-only">Open main menu</span>
@@ -72,19 +72,19 @@
         <!-- Mobile menu, show/hide based on menu state. -->
         <div class="md:hidden" id="mobile-menu">
             <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                <a href="#" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
+                <!-- Current: "bg-grey text-white", Default: "text-gray-300 hover:bg-lighter_grey hover:text-white" -->
+                <a href="#" class="bg-grey text-white block rounded-md px-3 py-2 text-base font-medium"
                     aria-current="page">Dashboard</a>
                 <a href="#"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
+                    class="text-gray-300 hover:bg-lighter_grey hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
                 <a href="#"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
+                    class="text-gray-300 hover:bg-lighter_grey hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
                 <a href="#"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
+                    class="text-gray-300 hover:bg-lighter_grey hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
                 <a href="#"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Reports</a>
+                    class="text-gray-300 hover:bg-lighter_grey hover:text-white block rounded-md px-3 py-2 text-base font-medium">Reports</a>
                 <a href="#"
-                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Sign
+                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-lighter_grey hover:text-white">Sign
                     out</a>
 
             </div>

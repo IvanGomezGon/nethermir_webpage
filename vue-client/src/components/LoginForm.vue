@@ -4,25 +4,25 @@
             <img class="h-10 mr-2" src="../assets/logo_uab.png" alt="logo">
         </div>
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 ">
-            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-light_grey dark:border-lighter_grey">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-grey md:text-2xl dark:text-white">
                         Inici de sessió
                     </h1>
                     <form class="space-y-4 md:space-y-6" action="#">
                         <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Usuari</label>
+                            <div for="email" class="block mb-2 text-sm font-medium text-grey dark:text-white">Usuari</div>
 
 
-                                <input type="text" id="website-admin" v-model="usuari"
-                                    class="rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                <input type="text" v-model="usuari"
+                                    class="rounded-lg bg-gray-50 border border-gray-300 text-grey focus:ring-emerald-500 focus:border-emerald-500 block flex-1 min-w-0 w-full text-sm p-2.5  dark:bg-lighter_grey dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:ring-emerald-500 dark:focus:border-emerald-500 outline-0"
                                     placeholder="FX-2022-1-100" required="">
 
                         </div>
                         <div>
-                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contrasenya</label>
+                            <div for="password" class="block mb-2 text-sm font-medium text-grey dark:text-white">Contrasenya</div>
                             <div class="flex">
-                                <input :type="passwordType ? 'password' : 'text'" name="password" id="password" v-model="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                                <input :type="passwordType ? 'password' : 'text'" name="password" id="password" v-model="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-grey sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-lighter_grey dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 outline-0" required="">
                   
 
                             </div>
@@ -37,7 +37,7 @@
                                         class="w-4 h-4 border border-gray-300 rounded bg-gray-50">
                                 </div>
                                 <div class="ml-3 text-sm">
-                                    <label for="remember" class="text-gray-500">Mostrar contrasenya</label>
+                                    <div for="remember" class="text-gray-500">Mostrar contrasenya</div>
                                 </div>
                             </div>
                         </div>
@@ -55,6 +55,7 @@
             </div>
         </div>
     </section>
+    
 </template>
 
   

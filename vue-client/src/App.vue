@@ -1,6 +1,6 @@
 <template>
 <DarkModeSwitch />
-<router-view />
+<router-view :style="isDark? 'input:-webkit-autofill:active {}' : ''"/>
 </template>
 <script>
 // @ is an alias to /src
@@ -12,3 +12,25 @@ export default {
     },
 };
 </script>
+
+<script setup>
+import { useDark } from '@vueuse/core'
+
+const isDark = useDark();
+const getColor = () => { return isDark.value ? '#ffffff' : '#000000' };
+</script>
+
+<style>
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+input:-webkit-autofill:visited,
+input:-webkit-autofill:target{
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: v-bind(getColor());
+    transition: background-color 5000s ease-in-out 0s;
+
+}
+
+</style>
