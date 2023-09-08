@@ -1,7 +1,7 @@
 <template>
-    <div class="flex justify-center items-center relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="flex items-center relative overflow-x-auto shadow-md rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-lighter_grey uppercase bg-gray-50 dark:bg-lighter_grey dark:text-gray-400">
+            <thead class="text-xs text-grey-400 uppercase bg-gray-50 dark:bg-grey-400 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
                         Usuari id
@@ -20,8 +20,8 @@
             </thead>
             <tbody>
                 <tr v-for="email in data"
-                    class="bg-white border-b dark:bg-light_grey dark:border-lighter_grey hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-grey whitespace-nowrap dark:text-white">
+                    class="bg-white border-b dark:bg-grey-600 -700 dark:border-grey-400 hover:bg-gray-50 dark:hover:bg-grey-500">
+                    <th scope="row" class="px-6 py-4 font-medium text-grey-700 whitespace-nowrap dark:text-white">
                         {{ email.email_id }}
                     </th>
                     <td class="px-6 py-4">
@@ -53,7 +53,7 @@ export default {
     mounted: function () {
         this.getData();
         this.interval = setInterval(() => {
-            //this.getData();
+            this.getData();
         }, 2000);
     },
     destroyed() {

@@ -28,6 +28,7 @@ const checkCookie = (req, res) => {
                     logger.info("Error verifiying token");
                     reject();
                 }
+                logger.info("checkCookie resolved");
                 resolve(payload.user);
             });
         } catch (err) {

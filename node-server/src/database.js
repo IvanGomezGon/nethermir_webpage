@@ -81,6 +81,7 @@ const eliminateEmail = (req, res) => {
     id = req.query["id"];
     sql = `DELETE FROM nethermir.emails WHERE email_id=(?)`;
     queryToDB(sql, [id]).then((x) => {
+        
         feedback_fetch("Y", res);
     });
 };
@@ -174,10 +175,17 @@ const authenticate = async (req, res) => {
             resolve("root");
         } else {
             logger.info("Authenticate before query");
-            groupData = await getGroupData(user);
-            auth = await bcrypt.compare(pass, groupData.password_login_hash);
-            if (auth) {
+            try {
+                groupData = await getGroupData(user);
+                logger.info(groupData);
+                auth = await bcrypt.compare(pass, groupData.password_login_hash);
+                logger.info(auth);
+                if (auth) {
                     resolve(user);
+                }
+            } catch {
+                feedback_fetch("Error", res)
+                reject()
             }
         }
     });
@@ -186,7 +194,7 @@ const authenticate = async (req, res) => {
 const generateMachine = async (user, req, res) => {
     return new Promise(async (resolve, reject) => {
         groupData = await getGroupData(user);
-        if (groupData.active == 0){
+        if (groupData.active == 0) {
             firstTimeLogin(user, groupData, req, res).then(logger.info("yes")).catch(logger.info)
         }
     })
@@ -273,7 +281,7 @@ function generatePassword() {
             retVal += charset.charAt(Math.floor(Math.random() * n));
         }
         bcrypt.hash(retVal, 10, (err, hash) => {
-            if (err){
+            if (err) {
                 logger.error(`Error hashing ${err}`)
             }
             resolve([retVal, hash]);

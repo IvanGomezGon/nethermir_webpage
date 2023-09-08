@@ -1,7 +1,7 @@
 <template>
     <SubHeader :titleName="'Base de dades - Usuaris'"></SubHeader>
-    <main class="pt-10 bg-white dark:bg-grey h-[calc(100vh-148px)]">
-        <div class="xl:w-3/4 md:w-full sm:w-full w-full mx-auto">
+    <main class="pt-10 bg-slate-200 white dark:bg-grey-700 h-[calc(100vh-148px)] ">
+        <div class="xl:w-3/4 md:w-full sm:w-full w-full mx-auto px-8 xl:px-0">
             <TableEmails></TableEmails>
         </div>
     </main>

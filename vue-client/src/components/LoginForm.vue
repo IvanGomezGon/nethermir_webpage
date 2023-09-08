@@ -3,27 +3,52 @@
         <div class="absolute top-6 left-6">
             <img class="h-10 mr-2" src="../assets/logo_uab.png" alt="logo">
         </div>
-        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 ">
-            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-light_grey dark:border-lighter_grey">
+        <div class="absolute top-4 left-[270px]">
+            <img class="h-14 mr-2" src="../assets/logo_enginyeria.png" alt="logo">
+        </div>
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0 ">
+            <div
+                class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-grey-600 -700 dark:border-grey-400">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold leading-tight tracking-tight text-grey md:text-2xl dark:text-white">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-grey-700 md:text-2xl dark:text-white">
                         Inici de sessió
                     </h1>
+
+
+                    <h2 v-if="errors.length" class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Si us plau, corregeix els següents errors:</h2>
+                    <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+                        <li v-for="error in errors" class="flex items-center">
+                            <svg class="w-3.5 h-3.5 mr-2 text-red-500 dark:text-red-500 flex-shrink-0" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+                            </svg>
+                            {{ error }}
+                        </li>
+                    </ul>
+
+                    
+
                     <form class="space-y-4 md:space-y-6" action="#">
                         <div>
-                            <div for="email" class="block mb-2 text-sm font-medium text-grey dark:text-white">Usuari</div>
+                            <div for="email" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">Usuari
+                            </div>
 
 
-                                <input type="text" v-model="usuari"
-                                    class="rounded-lg bg-gray-50 border border-gray-300 text-grey focus:ring-emerald-500 focus:border-emerald-500 block flex-1 min-w-0 w-full text-sm p-2.5  dark:bg-lighter_grey dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:ring-emerald-500 dark:focus:border-emerald-500 outline-0"
-                                    placeholder="FX-2022-1-100" required="">
+                            <input type="text" v-model="usuari"
+                                class="rounded-lg bg-gray-50 border border-gray-300 text-grey-700 focus:ring-emerald-500 focus:border-emerald-500 block flex-1 min-w-0 w-full text-sm p-2.5  dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:ring-emerald-500 dark:focus:border-emerald-500 outline-0"
+                                placeholder="FX-2022-1-100" required="">
 
                         </div>
                         <div>
-                            <div for="password" class="block mb-2 text-sm font-medium text-grey dark:text-white">Contrasenya</div>
+                            <div for="password" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">
+                                Contrasenya</div>
                             <div class="flex">
-                                <input :type="passwordType ? 'password' : 'text'" name="password" id="password" v-model="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-grey sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-lighter_grey dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 outline-0" required="">
-                  
+                                <input :type="passwordType ? 'password' : 'text'" name="password" id="password"
+                                    v-model="password" placeholder="••••••••"
+                                    class="bg-gray-50 border border-gray-300 text-grey-700 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 outline-0"
+                                    required="">
+
 
                             </div>
 
@@ -55,7 +80,6 @@
             </div>
         </div>
     </section>
-    
 </template>
 
   
@@ -100,7 +124,7 @@ export default {
                         this.$router.push('/controlPannelUser')
                     } else {
                         this.feedback = ""
-                        this.errors.push(y)
+                        this.errors.push(`Contrasenya incorrecte. Pots trobar-la al teu compte d'email usuari@uab.cat`)
                     }
                 })
             })

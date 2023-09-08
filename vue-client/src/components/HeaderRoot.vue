@@ -1,57 +1,77 @@
 <template>
     <nav class="bg-emerald-700">
-        <div class="mx-auto w-3/4">
+        <div class="mx-auto w-full xl:w-3/4">
             <div class="flex h-16 items-center justify-between">
-                <div class="flex items-center">
+                <div class="flex items-center ml-8 xl:ml-0">
                     <div class="flex-shrink-0">
-                        <img class="h-8 invert" src="../assets/logo_uab_small.svg" alt="Your Company">
+                        <img class="h-8 invert" src="../assets/logo_uab_small.svg" alt="UAB Logo" @click="logOut()">
                     </div>
+
                     <div class="hidden md:block">
-                        <div class="ml-10 flex items-baseline space-x-4">
-                            <!-- Current: "bg-grey text-white", Default: "text-gray-300 hover:bg-lighter_grey hover:text-white" -->
-                            <a href="#" @click="this.$router.push('/controlPannelRoot/dashboard'); current = 0"
-                                :class="current == 0 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'"
-                                aria-current="page">Dashboard</a>
-                            <a href="#" @click="this.$router.push('/controlPannelRoot/proxmox'); current = 1"
-                            :class="current == 1 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Proxmox</a>
-                            <a href="#" @click="this.$router.push('/controlPannelRoot/grups'); current = 2"
-                            :class="current == 2 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Grups</a>
-                            <a href="#" @click="this.$router.push('/controlPannelRoot/usuaris'); current = 3"
-                            :class="current == 3 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Usuaris</a>
-                            <a href="#" @click="this.$router.push('/controlPannelRoot/assignatures'); current = 4"
-                            :class="current == 4 ? 'bg-grey text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-300 hover:bg-lighter_grey hover:text-white rounded-md px-3 py-2 text-sm font-medium'">Assignatures</a>
-
-
-
+                        <div class="ml-10 flex items-baseline xl:space-x-4 lg:space-x-2  space-x-0">
+                            <div v-for="(path, index) in paths">
+                                <a href="#" @click="this.$router.push(`/controlPannelRoot/${path}`); current = index"
+                                    :class="current == index ? 'bg-grey-700 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-200 hover:bg-gray-700 active:bg-gray-700 active:hover:bg-gray-800 hover:text-white active:text-white rounded-md px-3 py-2 text-sm font-medium'">{{
+                                        path
+                                    }}</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="hidden md:block">
-                    <div class="ml-4 flex items-center md:ml-6">
-
-
+                <div class="hidden md:block mr-20 xl:mr-0">
+                    <div class="ml-4 flex items-center">
                         <!-- Profile dropdown -->
-                        <div class="relative ml-3">
+                        <div class="relative  ">
                             <div>
-                                <button type="button"
-                                    class=" float-right focus:outline-none text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Tancar
-                                    sessió</button>
+                                <button type="button" @click="logOut()"
+                                    class=" float-right text-white bg-red-600 hover:bg-red-700 active:bg-red-700 hover:active:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 ">
+                                    <div class="flex space-x-2 items-center justify-between">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="hidden md:block" width="16"
+                                            height="16" viewBox="0 0 24 24" stroke-width="3" stroke="#ffffff" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path
+                                                d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+                                            <path d="M9 12h12l-3 -3" />
+                                            <path d="M18 15l3 -3" />
+                                        </svg>
+                                        <div class="lmd:block hidden">
+                                            <p class=" lg:hidden block"> Sortir</p>
+                                        </div>
+                                        <p class=" lg:block hidden"> Tancar sessió</p>
+                                    </div>
+                                </button>
                                 <button type="button" @click="$emit('deleteDB')"
-                                    class="focus:outline-none text-white bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                                    Eliminar
-                                    base de dades
+                                    class="text-white bg-red-600 hover:bg-red-700 active:bg-red-700 hover:active:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 ">
+                                    <div class="flex space-x-2 items-center justify-between">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="hidden md:block" width="16"
+                                            height="16" viewBox="0 0 24 24" stroke-width="3" stroke="#ffffff" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path
+                                                d="M4 6c0 1.657 3.582 3 8 3s8 -1.343 8 -3s-3.582 -3 -8 -3s-8 1.343 -8 3" />
+                                            <path d="M4 6v6c0 1.657 3.582 3 8 3c.537 0 1.062 -.02 1.57 -.058" />
+                                            <path d="M20 13.5v-7.5" />
+                                            <path d="M4 12v6c0 1.657 3.582 3 8 3c.384 0 .762 -.01 1.132 -.03" />
+                                            <path d="M22 22l-5 -5" />
+                                            <path d="M17 22l5 -5" />
+                                        </svg>
+                                        <div class="mmd:block hidden">
+                                            <p class=" lg:hidden block"> Eliminar DB</p>
+                                        </div>
+                                        <p class=" lg:block hidden "> Eliminar base de dades</p>
+
+                                    </div>
                                 </button>
                             </div>
 
                         </div>
                     </div>
                 </div>
-                <div class="-mr-2 flex md:hidden">
+                <div class="mr-[72px] flex md:hidden" @click="mobileDropdown = !mobileDropdown">
                     <!-- Mobile menu button -->
                     <button type="button"
-                        class="relative inline-flex items-center justify-center rounded-md bg-light_grey p-2 text-gray-400 hover:bg-lighter_grey hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-light_grey"
-                        aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="absolute -inset-0.5"></span>
+                        class="text-white hover:bg-gray-600 active:bg-gray-600 active:hover:bg-gray-700 rounded-lg text-sm p-2.5 w-10 h-10 inline-flex items-center justify-center">
                         <span class="sr-only">Open main menu</span>
                         <!-- Menu open: "hidden", Menu closed: "block" -->
                         <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -70,39 +90,59 @@
         </div>
 
         <!-- Mobile menu, show/hide based on menu state. -->
-        <div class="md:hidden" id="mobile-menu">
-            <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-                <!-- Current: "bg-grey text-white", Default: "text-gray-300 hover:bg-lighter_grey hover:text-white" -->
-                <a href="#" class="bg-grey text-white block rounded-md px-3 py-2 text-base font-medium"
-                    aria-current="page">Dashboard</a>
+        <div :class="'md:hidden transition-max-height duration-500 ease-in-out ' + (mobileDropdown ? 'h-[320px]' : 'h-2 overflow-hidden ')"
+            id="mobile-menu">
+            <div class="space-y-1 px-8 pb-3 pt-2 sm:px-3">
+                <div v-for="(path, index) in paths">
+                    <a href="#" @click="this.$router.push(`/controlPannelRoot/${path}`); current = index"
+                        :class="(current == index ? 'bg-grey-700 ' : '') + 'text-gray-200 hover:bg-gray-700 active:bg-gray-700 active:hover:bg-gray-800 hover:text-white active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
+                            path }}</a>
+                </div>
                 <a href="#"
-                    class="text-gray-300 hover:bg-lighter_grey hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
+                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-grey-400 hover:text-white">Eliminar
+                    base de dades</a>
                 <a href="#"
-                    class="text-gray-300 hover:bg-lighter_grey hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
-                <a href="#"
-                    class="text-gray-300 hover:bg-lighter_grey hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
-                <a href="#"
-                    class="text-gray-300 hover:bg-lighter_grey hover:text-white block rounded-md px-3 py-2 text-base font-medium">Reports</a>
-                <a href="#"
-                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-lighter_grey hover:text-white">Sign
-                    out</a>
+                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-grey-400 hover:text-white">Tancar
+                    sessió</a>
 
             </div>
         </div>
     </nav>
-
 </template>
 
 <script>
+import { useRoute } from 'vue-router';
+
 export default {
     name: "HeaderRoot",
     data: function () {
         return {
-            current: 0,
-        };
+            current: -1,
+            mobileDropdown: 0,
+            route: '',
+            paths: ['Dashboard', 'Proxmox', 'Grups', 'Usuaris', 'Assignatures'],
+        }
     },
+    created: function () {
+        this.route = useRoute()
+        if (this.route.path == `/controlPannelRoot`) {
+            this.current = 0
+        }
+        this.paths.forEach((path, i) => {
+            if (this.route.path == `/controlPannelRoot/${path}`) {
+                this.current = i
+            }
+        })
 
-
+    },
+    methods: {
+        logOut() {
+            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateCookie`, {
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+            }).then();
+            this.$router.push("/");
+        },
+    },
 };
 </script>
 

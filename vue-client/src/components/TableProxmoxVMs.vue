@@ -1,44 +1,7 @@
 <template>
-    <!-- Comment
-<button class="logout corner">Eliminar taula</button>
-<h2>Informació Proxmox VMs</h2>
-<button type="button" @click="server = 0" :disabled="server == 0">Nethermir1</button>
-<button type="button" @click="server = 1" :disabled="server == 1">Nethermir2</button>
-<button type="button" @click="server = 2" :disabled="server == 2">Nethermir3</button><br /><br />
-<table>
-    <colgroup>
-        <col style="width: 70px" />
-        <col span="6" />
-    </colgroup>
-    <tr>
-        <th>VM id</th>
-        <th>Nom</th>
-        <th>CPU</th>
-        <th>Estat</th>
-        <th>Uptime</th>
-        <th>Encendre / Parar</th>
-        <th>Resumir / Suspendre</th>
-    </tr>
-
-    <tr v-for="vm in data" :style="'color: ' + getColor(vm.status, vm.cpu, vm.template)">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-            <button type="button" :disabled="vm.template == 1 || vm.name == 'nethermir-mgmt'" @click=""></button>
-        </td>
-
-        <td>
-            <button type="button" :disabled="vm.status == 'stopped' || vm.template == 1 || vm.name == 'nethermir-mgmt'" @click=""></button>
-        </td>
-    </tr>
-</table>
--->
-    <div class="flex justify-center items-center overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="flex items-center overflow-x-auto shadow-md rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-lighter_grey uppercase bg-gray-50 dark:bg-lighter_grey dark:text-gray-400">
+            <thead class="text-xs text-grey-400 uppercase bg-gray-100 dark:bg-grey-400 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
                         Virtual Machine id
@@ -64,21 +27,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="vm in data"
-                    class="bg-white border-b dark:bg-light_grey dark:border-lighter_grey hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-grey whitespace-nowrap dark:text-white">
+                <tr v-for="vm in data" 
+                    :class="getColor(vm.status, vm.cpu, vm.template) + ' bg-white border-b dark:bg-grey-600 -700 dark:border-grey-400 hover:bg-gray-50 dark:hover:bg-grey-500'">
+                    <th scope="row" :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.vmid }}
                     </th>
-                    <td class="px-6 py-4">
+                    <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.name }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.template == 1 ? "-" : (vm.cpu * 100).toFixed(2) + "%" }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu < 0.005
                             ? "Corrent (Pausat)" : "Corrent" }} </td>
-                    <td class="px-6 py-4">
+                    <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.template == 1 ? "-" : vm.uptime }}
                     </td>
                     <td class="px-6 py-4 text-right">
@@ -87,8 +50,8 @@
                                 "Encendre" : "Parar" }}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <a href="#" @click="resumeSuspend(vm.cpu, vm.vmid)"
-                            class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">{{ vm.cpu < 0.005
+                        <a href="#" @click="resumeSuspend(vm.cpu, vm.vmid)" 
+                            :class="vm.status == 'stopped' ? 'font-medium text-emerald-800 pointer-events-none	': 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{ vm.cpu < 0.005
                                 ? "Resumir" : "Pausar" }}</a>
                     </td>
                 </tr>
@@ -100,16 +63,16 @@
     <script>
         export default {
         name: "TableProxmoxVMs",
+        props: {server: Number},
         data: function () {
             return {
                 data: "",
-                server: 0,
             };
         },
         mounted: function () {
             this.getData();
             this.interval = setInterval(() => {
-                //this.getData();
+                this.getData();
             }, 2000);
         },
         destroyed() {
@@ -130,7 +93,7 @@
                 });
             },
             getColor(status, cpu, template) {
-                return template == 1 ? "dimgrey" : status == "stopped" ? "red" : cpu < 0.005 ? "orange" : "green";
+                return template == 1 ? 'text-gray-600' : status == 'stopped' ? 'text-red-600' : cpu < 0.005 ? 'text-yellow-500' : 'text-green-600';
             },
             stopActivate(status, id) {
                 if (status == "running") {

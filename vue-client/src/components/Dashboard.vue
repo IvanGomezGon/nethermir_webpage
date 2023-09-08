@@ -1,17 +1,19 @@
 <template>
-    <header class="bg-white border-b-2 border-gray-300">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold tracking-tight text-grey ">Dashboard</h1>
+    <SubHeader :titleName="'Dashboard'"></SubHeader>
+    <main class="pt-10 bg-slate-200 dark:bg-grey-700 h-[calc(100vh-148px)]">
+        <div class="xl:w-3/4 md:w-full sm:w-full w-full mx-auto px-8 xl:px-0">
+            <TableGroups></TableGroups>
         </div>
-    </header>
-    <main class="bg-gray-200 h-[calc(100vh-148px)] w-screen 	">
-        <div class="	">
-    </div>
-</main></template>
+    </main>
+</template>
 
 <script>
+import SubHeader from "@/components/SubHeader.vue";
 export default {
-
+    name: "Dashboard",
+    components: {
+        SubHeader,
+    },
 };
 </script>
 

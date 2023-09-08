@@ -148,6 +148,7 @@ app.get("/backend/eliminateEmail", function (req, res) {
             eliminateEmail(req, res);
         })
         .catch(() => {
+            
             logger.info("Failed to eliminateEmail");
         });
 });
