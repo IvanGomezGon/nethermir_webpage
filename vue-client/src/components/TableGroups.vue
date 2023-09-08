@@ -32,18 +32,18 @@
                     <th scope="row" class="px-6 py-4 font-medium text-grey-700 whitespace-nowrap dark:text-white">
                         {{ group.name }}
                     </th>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ ((group.idgroup - (group.idgroup % 100)) / 100 < 10 ? "0" : "") + (group.idgroup -
                             (group.idgroup % 100)) / 100 }} </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ (group.idgroup % 100 < 10 ? "0" : "") + (group.idgroup % 100) }} </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ group.idgroup }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ group.vlan_id + 65434 }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ group.active == '0' ? 'Cert' : 'Fals' }}
                     </td>
                     <td class="px-6 py-4 text-right">

@@ -24,10 +24,10 @@
                     <th scope="row" class="px-6 py-4 font-medium text-grey-700 whitespace-nowrap dark:text-white">
                         {{ email.email_id }}
                     </th>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ email.email }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ email.group_name }}
                     </td>
 

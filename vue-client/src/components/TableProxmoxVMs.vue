@@ -93,7 +93,7 @@
                 });
             },
             getColor(status, cpu, template) {
-                return template == 1 ? 'text-gray-600' : status == 'stopped' ? 'text-red-600' : cpu < 0.005 ? 'text-yellow-500' : 'text-green-600';
+                return template == 1 ? 'text-gray-400' : status == 'stopped' ? 'text-red-600' : cpu < 0.005 ? 'text-yellow-500' : 'text-green-600';
             },
             stopActivate(status, id) {
                 if (status == "running") {
