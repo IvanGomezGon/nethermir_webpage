@@ -75,7 +75,7 @@
                 this.getData();
             }, 2000);
         },
-        destroyed() {
+        beforeUnmount() {
             clearInterval(this.interval)
         },
         methods: {

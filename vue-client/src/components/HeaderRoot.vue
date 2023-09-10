@@ -68,7 +68,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mr-[72px] flex md:hidden" @click="mobileDropdown = !mobileDropdown">
+                <div class="mr-[72px] flex md:hidden" @click="toggleMobile()">
                     <!-- Mobile menu button -->
                     <button type="button"
                         class="text-white hover:bg-gray-600 active:bg-gray-600 active:hover:bg-gray-700 rounded-lg text-sm p-2.5 w-10 h-10 inline-flex items-center justify-center">
@@ -93,7 +93,7 @@
         <div :class="'md:hidden transition-max-height duration-500 ease-in-out ' + (mobileDropdown ? 'h-[320px]' : 'h-2 overflow-hidden ')"
             id="mobile-menu">
             <div class="space-y-1 px-8 pb-3 pt-2 sm:px-3">
-                <div v-for="(path, index) in paths">
+                <div v-for="(path, index) in paths" v-if="mobileDrowdownFinished" class="overflow-hidden">
                     <a href="#" @click="this.$router.push(`/controlPannelRoot/${path}`); current = index"
                         :class="(current == index ? 'bg-grey-700 ' : '') + 'text-gray-200 hover:bg-gray-700 active:bg-gray-700 active:hover:bg-gray-800 hover:text-white active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
                             path }}</a>
@@ -119,6 +119,7 @@ export default {
         return {
             current: -1,
             mobileDropdown: 0,
+            mobileDrowdownFinished: 0,
             route: '',
             paths: ['Dashboard', 'Proxmox', 'Grups', 'Usuaris', 'Assignatures'],
         }
@@ -142,6 +143,10 @@ export default {
             }).then();
             this.$router.push("/");
         },
+        toggleMobile() {
+            this.mobileDropdown = !this.mobileDropdown; 
+            setTimeout(() => {console.log("hi"); this.mobileDrowdownFinished = !this.mobileDrowdownFinished}, 50)
+        }
     },
 };
 </script>

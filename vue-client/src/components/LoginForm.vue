@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <button type="button" @click="checkLogin()"
-                            class="w-full text-white bg-primary-600 hover:bg-primary-700  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Iniciar
+                            class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 hover:active:bg-emerald-800 border border-emerald-800 font-medium rounded-lg text-sm block w-full p-2.5 text-white">Iniciar
                             sessió</button>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                             No tens un compte encara?

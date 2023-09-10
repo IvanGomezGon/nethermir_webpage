@@ -1,5 +1,6 @@
 <template>
-    <div class="flex items-center overflow-x-auto shadow-md rounded-lg">
+    <noVirtualMachineUser v-if="idVM==0"></noVirtualMachineUser>
+    <div v-if="idVM!=0" class="flex items-center overflow-x-auto shadow-md rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-grey-400 uppercase bg-gray-100 dark:bg-grey-400 dark:text-gray-400">
                 <tr>
@@ -54,7 +55,7 @@
                                 </select>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <a href="#" @click="resumeSuspend(cpuVM, idVM)"
+                        <a href="#" @click="resumeVM()"
                             :class="statusVM != 'stopped' ? 'font-medium text-emerald-800 pointer-events-none	' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{
                                 cpuVM < 0.005 ? `Encendre ${hours} hores` : "Pausar" }}</a>
                     </td>
@@ -67,6 +68,7 @@
 
 <script>
 import SubHeader from "@/components/SubHeader.vue";
+import noVirtualMachineUser from "@/components/noVirtualMachineUser.vue";
 export default {
     name: "GetInfoVM",
     data: function () {
@@ -86,7 +88,7 @@ export default {
             this.getData();
         }, 2000);
     },
-    destroyed() {
+    beforeUnmount() {
         clearInterval(this.interval)
     },
     methods: {
@@ -109,16 +111,6 @@ export default {
                 });
             });
         },
-        generateVM() {
-            fetch(`${process.env.VUE_APP_FETCH_URL}generateMachine`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-            }).then();
-        },
-        activateVM(id) {
-            fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-            }).then();
-        },
         resumeVM() {
             if (this.hours > 0 && this.hours < 7) {
                 fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine?hours=${this.hours}`, {
@@ -137,6 +129,7 @@ export default {
     },
     components: {
         SubHeader,
+        noVirtualMachineUser,
     },
 };
 </script>

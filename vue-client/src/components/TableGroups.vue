@@ -71,7 +71,8 @@ export default {
             this.getData();
         }, 2000);
     },
-    destroyed() {
+    beforeUnmount() {
+        console.log("beforeUnmount")
         clearInterval(this.interval)
     },
     methods: {
