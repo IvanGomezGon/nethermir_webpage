@@ -5,7 +5,7 @@ const JSZip = require("jszip");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var logger = require(path.resolve(__dirname, "logger.js"));
 
-const sendEmail = (sendTo, txt, subject, attachements = [{}]) => {
+const sendEmail = (sendTo, txt, subject, attachements = null) => {
     logger.info("SendEmail started");
     return new Promise((resolve, reject) => {
         const transporter = nodeMailer.createTransport({
