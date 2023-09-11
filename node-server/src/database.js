@@ -70,6 +70,21 @@ const eliminateGroupDatabaseQuery = (id) => {
     });
 };
 
+const getEmailsFromGroupName = (groupName, req) => {
+    return new Promise((resolve, reject) => {
+        if (groupName == null){
+            vmID = req.query["id"]
+        }else{
+            vmID = groupName.split("-").pop()
+        }
+        sql = `SELECT email FROM nethermir.emails WHERE SUBSTRING(group_name, -3)=(?)`;
+        logger.info(`vmID: ${vmID}`)
+        queryToDB(sql, [vmID]).then((data) => {
+            resolve(data)
+        });
+
+    })
+}
 const getEmails = (res) => {
     sql = `SELECT * FROM nethermir.emails`;
     queryToDB(sql).then((x) => {
@@ -81,7 +96,7 @@ const eliminateEmail = (req, res) => {
     id = req.query["id"];
     sql = `DELETE FROM nethermir.emails WHERE email_id=(?)`;
     queryToDB(sql, [id]).then((x) => {
-        
+
         feedback_fetch("Y", res);
     });
 };
@@ -387,4 +402,5 @@ module.exports = {
     activateSubject,
     genKeyPairVLAN,
     generateMachine,
+    getEmailsFromGroupName,
 };

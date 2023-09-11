@@ -5,7 +5,7 @@ const JSZip = require("jszip");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var logger = require(path.resolve(__dirname, "logger.js"));
 
-const sendEmail = (sendTo, txt, attachements = [{}]) => {
+const sendEmail = (sendTo, txt, subject, attachements = [{}]) => {
     logger.info("SendEmail started");
     return new Promise((resolve, reject) => {
         const transporter = nodeMailer.createTransport({
@@ -16,7 +16,7 @@ const sendEmail = (sendTo, txt, attachements = [{}]) => {
         mailOptions = {
             from: process.env.SMTP_ORIGIN,
             to: sendTo,
-            subject: "Config wireguard",
+            subject: subject,
             html: txt,
             attachments: attachements,
         }
@@ -28,12 +28,9 @@ const sendEmail = (sendTo, txt, attachements = [{}]) => {
     });
 };
 
-const sendWarningMail = (user) => {
-    //TODO: EMAILS CHANGES, EMAIL TEXT
-    emails = ["ivangg02@gmail.com", "ivangg1202@gmail.com"];
-    emailText = `Bon dia, la vostra VM serà apagada en 30 minuts
-                `;
-    emails.forEach((email) => sendEmail(email, emailText));
+const sendWarningMail = (emails) => {
+    emailText = `Hola, la vostra VM serà apagada en 30 minuts`;
+    emails.forEach((email) => sendEmail(email.email, emailText, "Notificació apagament Màquina Virtual"));
 };
 const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyPairUser, keyPairRouter) => {
     logger.info(`sendPasswordEmail ${groupName} ${password}`);
@@ -75,7 +72,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
         logger.info(`.zip created, sending emails...`);
         for (const email of emails) {
             logger.info(`Email ${email}`);
-            await sendEmail(email, emailText, attachements);
+            await sendEmail(email, emailText, "Config wireguard", attachements);
         }
         logger.info("Sending finished, unlinking");
         fs.unlink(`/tmp/${groupName}.zip`, (err) => {

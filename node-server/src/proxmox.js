@@ -16,7 +16,7 @@ const getVmId = (groupName, req) => {
     });
 };
 
-const activateMachine = async (groupName, req, res) => {
+const activateMachine = async (groupName, emails, req, res) => {
     if (req.query["hours"] < 1) {
         feedback_fetch("N", res);
         return 0;
@@ -31,13 +31,10 @@ const activateMachine = async (groupName, req, res) => {
     } catch {
         logger.error("Activate Machine failed trycatch");
     }
-
+    sendWarningMail(emails);
     setTimeout(function () {
-        sendWarningMail(req.query["user"]);
+        sendWarningMail(emails);
     }, req.query["hours"] * 3600000 - 1800000);
-    setTimeout(function () {
-        sendWarningMail(req.query["user"]);
-    }, 1800000);
 };
 const stopMachine = (groupName, req, res) => {
     return new Promise(async (resolve, reject) => {
