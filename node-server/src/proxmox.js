@@ -31,7 +31,6 @@ const activateMachine = async (groupName, emails, req, res) => {
     } catch {
         logger.error("Activate Machine failed trycatch");
     }
-    sendWarningMail(emails);
     setTimeout(function () {
         sendWarningMail(emails);
     }, req.query["hours"] * 3600000 - 1800000);
@@ -59,7 +58,8 @@ const stopMachine = (groupName, req, res) => {
 };
 const getNodes = (req, res) => {
     try {
-        proxmox.getQemu(PROXMOX_SERVERS[req.query["server"]], (err, data) => {
+        data = { full: 1 };
+        proxmox.getQemu(PROXMOX_SERVERS[req.query["server"]], data, (err, data) => {
             if (err) {
                 logger.error(`Failed to getNodes: ${err}`);
             } else {
