@@ -1,9 +1,12 @@
 <template>
     <section class="bg-[url('./columnes.svg')] bg-cover h-screen">
-        <div class="absolute top-6 left-6">
+        <div class="absolute top-6 left-6 hidden sm:block">
             <img class="h-10 mr-2" src="../assets/logo_uab.png" alt="logo">
         </div>
-        <div class="absolute top-4 left-[270px]">
+        <div class="flex-shrink-0 block sm:hidden absolute top-2 left-2">
+            <img class="h-[71px]  mr-2 invert" src="../assets/logo_uab_small.svg" alt="UAB Logo">
+        </div>
+        <div class="absolute top-4 left-[170px] sm:left-[270px]">
             <img class="h-14 mr-2" src="../assets/logo_enginyeria.png" alt="logo">
         </div>
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0 ">
@@ -15,7 +18,8 @@
                     </h1>
 
 
-                    <h2 v-if="errors.length" class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Si us plau, corregeix els següents errors:</h2>
+                    <h2 v-if="errors.length" class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Si us plau,
+                        corregeix els següents errors:</h2>
                     <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
                         <li v-for="error in errors" class="flex items-center">
                             <svg class="w-3.5 h-3.5 mr-2 text-red-500 dark:text-red-500 flex-shrink-0" aria-hidden="true"
@@ -27,7 +31,7 @@
                         </li>
                     </ul>
 
-                    
+
 
                     <form class="space-y-4 md:space-y-6" action="#">
                         <div>

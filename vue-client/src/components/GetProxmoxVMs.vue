@@ -1,6 +1,6 @@
 <template>
     <SubHeader :titleName="'Proxmox Màquines virtuals'"></SubHeader>
-    <main class="pt-10 bg-slate-200 dark:bg-grey-700 h-[calc(100vh-150px)] ">
+    <main class="pt-10 bg-slate-200 dark:bg-grey-700 min-h-[calc(100vh-150px)] pb-8">
         <div class="xl:w-3/4 md:w-full sm:w-full w-full mx-auto px-8 xl:px-0">
             <ServersProxmoxVMs @changeServer="(n) => server = n"></ServersProxmoxVMs>
             <TableProxmoxVMs :server="server"></TableProxmoxVMs>

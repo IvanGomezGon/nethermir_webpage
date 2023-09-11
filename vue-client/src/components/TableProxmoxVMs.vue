@@ -28,30 +28,30 @@
             </thead>
             <tbody>
                 <tr v-for="vm in data" 
-                    :class="getColor(vm.status, vm.cpu, vm.template) + ' bg-white border-b dark:bg-grey-600 -700 dark:border-grey-400 hover:bg-gray-50 dark:hover:bg-grey-500'">
-                    <th scope="row" :class="'px-6 py-4 font-medium whitespace-nowrap'">
+                    :class="getColor(vm.status, vm.cpu, vm.template) + ' bg-white border-b dark:bg-grey-600 dark:border-grey-400 hover:bg-gray-50 dark:hover:bg-grey-500'">
+                    <th scope="row" :class="'px-6 py-4 font-medium whitespace-nowrap '">
                         {{ vm.vmid }}
                     </th>
-                    <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
+                    <td :class="'px-6 py-4 font-medium whitespace-nowrap '">
                         {{ vm.name }}
                     </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.template == 1 ? "-" : (vm.cpu * 100).toFixed(2) + "%" }}
                     </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
-                        {{ vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu < 0.005
+                        {{ vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu < 0.05
                             ? "Corrent (Pausat)" : "Corrent" }} </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.template == 1 ? "-" : vm.uptime }}
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="stopActivate(vm.status, vm.vmid)"
-                            class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">{{ vm.status == "stopped" ?
+                            :class="vm.template == 1 ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' :'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{ vm.status == "stopped" ?
                                 "Encendre" : "Parar" }}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="resumeSuspend(vm.cpu, vm.vmid)" 
-                            :class="vm.status == 'stopped' ? 'font-medium text-emerald-800 pointer-events-none	': 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{ vm.cpu < 0.005
+                            :class="vm.status == 'stopped' || vm.template == 1 ? 'font-medium dark:text-emerald-800 pointer-events-none	text-gray-400': 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{ vm.cpu < 0.05
                                 ? "Resumir" : "Pausar" }}</a>
                     </td>
                 </tr>
@@ -93,7 +93,7 @@
                 });
             },
             getColor(status, cpu, template) {
-                return template == 1 ? 'dark:text-gray-400 text-gray-600' : status == 'stopped' ? 'text-red-600' : cpu < 0.005 ? 'text-yellow-500' : 'text-green-600';
+                return template == 1 ? 'dark:text-gray-400 text-gray-500' : status == 'stopped' ? 'text-red-600' : cpu < 0.05 ? 'text-yellow-500' : 'text-green-600';
             },
             stopActivate(status, id) {
                 if (status == "running") {
@@ -103,7 +103,7 @@
                 }
             },
             resumeSuspend(cpu, id) {
-                if (cpu < 0.005) {
+                if (cpu < 0.05) {
                     this.resumeVM(id);
                 } else {
                     this.suspendVM(id);

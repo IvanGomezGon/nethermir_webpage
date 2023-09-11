@@ -1,6 +1,7 @@
 <template>
     <noVirtualMachineUser v-if="idVM==0"></noVirtualMachineUser>
-    <div v-if="idVM!=0" class="flex items-center overflow-x-auto shadow-md rounded-lg">
+    <WaitingClone v-if="clonning"></WaitingClone>
+    <div v-if="idVM!=0 && !clonning" class="flex items-center overflow-x-auto shadow-md rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-grey-400 uppercase bg-gray-100 dark:bg-grey-400 dark:text-gray-400">
                 <tr>
@@ -23,7 +24,10 @@
                         Hores
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Resumir / Suspendre</span>
+                        <span class="sr-only">Resumir</span>
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Suspendre</span>
                     </th>
                 </tr>
             </thead>
@@ -40,7 +44,7 @@
                         {{ template == 1 ? "-" : (cpuVM * 100).toFixed(2) + "%" }}
                     </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
-                        {{ template == 1 ? "Template" : statusVM == "stopped" ? "Stopped" : cpuVM < 0.005
+                        {{ template == 1 ? "Template" : statusVM == "stopped" ? "Stopped" : cpuVM < 0.05
                             ? "Corrent (Pausat)" : "Corrent" }} </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ template == 1 ? "-" : uptimeVM }}
@@ -55,9 +59,14 @@
                                 </select>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <a href="#" @click="resumeVM()"
-                            :class="statusVM != 'stopped' ? 'font-medium text-emerald-800 pointer-events-none	' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{
-                                cpuVM < 0.005 ? `Encendre ${hours} hores` : "Pausar" }}</a>
+                        <a href="#" @click="resumeVM(cpuVM, idVM)"
+                            :class="cpuVM > 0.05 ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{
+                            `Encendre ${hours + (hours ==1 ? ' hora' : ' hores')}`}}</a>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="#" @click="suspendVM()"
+                        :class="cpuVM < 0.05 ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400': 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{
+                            "Pausar" }}</a>
                     </td>
                 </tr>
 
@@ -69,6 +78,7 @@
 <script>
 import SubHeader from "@/components/SubHeader.vue";
 import noVirtualMachineUser from "@/components/noVirtualMachineUser.vue";
+import WaitingClone from "@/components/WaitingClone.vue";
 export default {
     name: "GetInfoVM",
     data: function () {
@@ -80,6 +90,7 @@ export default {
             uptimeVM: 0,
             hours: 1,
             template: 0,
+            clonning: 0,
         };
     },
     mounted: function () {
@@ -88,7 +99,7 @@ export default {
             this.getData();
         }, 2000);
     },
-    beforeUnmount() {
+    destroyed() {
         clearInterval(this.interval)
     },
     methods: {
@@ -107,10 +118,12 @@ export default {
                         this.statusVM = json.status
                         this.uptimeVM = json.uptime = 0
                         this.template = json.template
+                        this.clonning = json.lock
                     }
                 });
             });
         },
+
         resumeVM() {
             if (this.hours > 0 && this.hours < 7) {
                 fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine?hours=${this.hours}`, {
@@ -123,13 +136,14 @@ export default {
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS
             }).then();
         },
-        getColor(status, cpu) {
-            return status == "stopped" ? "red" : cpu < 0.005 ? "orange" : "green";
-        },
+        getColor(status, cpu, template) {
+                return template == 1 ? 'dark:text-gray-400 text-gray-600' : status == 'stopped' ? 'text-red-600' : cpu < 0.05 ? 'text-yellow-500' : 'text-green-600';
+            },
     },
     components: {
         SubHeader,
         noVirtualMachineUser,
+        WaitingClone,
     },
 };
 </script>

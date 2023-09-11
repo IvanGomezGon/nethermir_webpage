@@ -8,7 +8,7 @@ import GetUsuaris from '../components/GetUsuaris'
 import GetSubjects from '../components/GetSubjects'
 import GetGroups from '../components/GetGroups'
 import ControlPannelUser from '../views/ControlPannelUser.vue'
-
+import notFound404 from '../views/notFound404.vue'
 const routes = [
   {
     path: '/',
@@ -66,7 +66,11 @@ const routes = [
     name: 'ControlPannelUser',
     component: ControlPannelUser
   },
-
+  {
+    path: '/:catchAll(.*)',
+    name: 'notFOund',
+    component: notFound404
+  },
 ]
 
 const router = createRouter({
