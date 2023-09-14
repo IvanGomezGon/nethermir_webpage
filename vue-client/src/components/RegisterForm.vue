@@ -198,8 +198,7 @@ export default {
                         this.feedback = "Registre completat! S'ha enviat un email al teu correu amb les credencials per iniciar sessió"
                         this.registered = true
                     } else {
-                        console.log("no")
-                        this.feedback = "Registre completat! S'ha enviat un email al teu correu amb les credencials per iniciar sessió"
+                        this.feedback = ""
                         this.errors.push(y)
                     }
                 })

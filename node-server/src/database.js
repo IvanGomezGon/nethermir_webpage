@@ -302,6 +302,8 @@ const registerGroup = async (req, res) => {
         feedback_fetch(checkRes, res);
         return 0;
     }
+    logger.info("a Iniciated");
+
     idGroup = await generateGroup(req.query["user"]);
     groupName = req.query["user"] + "-" + idGroup;
     [password, paswordHash] = await generatePassword();
