@@ -119,6 +119,7 @@ export default {
                 }).then(resolve);
             });
             p.then((response) => {
+                if (response == "null") {this.idVM = -1; return}
                 response.json().then((json) => {
                     console.log(Object.keys(json).length)
                     if (Object.keys(json).length != 0) {
