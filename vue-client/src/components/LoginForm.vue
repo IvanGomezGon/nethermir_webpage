@@ -120,8 +120,9 @@ export default {
 
             fetch(`${process.env.VUE_APP_FETCH_URL}login?user=${this.usuari}&pass=${this.password}`, {
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-            }).then(x => {
-                x.text().then(y => {
+            }).then(data => {
+                if (data == null) {return}
+                data.text().then(y => {
                     if (y == "root") {
                         this.$router.push('/controlPannelRoot')
                     } else if (y == 'user') {

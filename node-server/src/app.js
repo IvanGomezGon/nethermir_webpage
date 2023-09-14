@@ -12,11 +12,11 @@ const corsOptions = {
     exposedHeaders: ["set-cookie"],
 };
 
-const { activateMachine, stopMachine, getNodes, getNode, resumeMachine, suspendMachine, eliminateMachine } = require(path.resolve(__dirname, "proxmox.js"));
-const { getEmailsFromGroupName, getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject, generateMachine } = require(path.resolve(__dirname, "database.js"));
+const { getActiveVM, activateMachine, stopMachine, getStatusAllVMs, getStatusVM, resumeMachine, suspendMachine, eliminateMachine } = require(path.resolve(__dirname, "proxmox.js"));
+const { getStartingTimeVM, getRenovationHoursVM, changeRenovationHoursVM, getEmailsFromGroupName, getGroups, getEmails, eliminateGroup, eliminateEmail, getSubjects, eliminateSubject, authenticate, registerGroup, restartDatabase, addSubject, activateSubject, generateMachine } = require(path.resolve(__dirname, "database.js"));
 const { setCookie, checkCookie, eliminateCookie } = require(path.resolve(__dirname, "cookies.js"));
 const { eliminateRouterOSConfig } = require(path.resolve(__dirname, "routeros.js"));
-const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
+const { feedback_fetch } = require(path.resolve(__dirname, "globalFunctions.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
 
 const app = express();
@@ -32,47 +32,57 @@ app.get("/backend/checkCookie", function (req, res) {
         .then((groupName) => feedback_fetch(groupName, res))
         .catch(() => logger.info("checkCookie failed"));
 });
-app.get("/backend/activateMachine", function (req, res) {
-    logger.info("activateMachine");
-    checkCookie(req, res)
-        .then(async (groupName) => {
-            if (req.query["id"] != null) {
-                emails = await getEmailsFromGroupName(null, req)
-                activateMachine(null, emails, req, res);
-            } else {
-                emails = await getEmailsFromGroupName(groupName, req)
-                activateMachine(groupName, emails, req, res);
+app.get("/backend/activateMachine", async function (req, res) {
+    try {
+        logger.info("activateMachine started");
+        groupName = await checkCookie(req, res)
+        group = req.query["id"] != null ? group = req.query["id"] : group = groupName.split("-").pop()
+        active = await getActiveVM(group);
+        logger.info(`active: ${active}`)
+        await changeRenovationHoursVM(group, active, req.query["hours"]);
+        renovationHours = await getRenovationHoursVM(group)
+        logger.info(`active: ${renovationHours}`)
+        await activateMachine(group);
+        emails = await getEmailsFromGroupName(group, req.query["id"]);
+        setTimeout(async function () {
+            if (await getRenovationHoursVM(group) == renovationHours) {
+                sendWarningMail(emails);
+                setTimeout(async function () {
+                    if (await getRenovationHoursVM(group) == renovationHours) {
+                        stopMachine(group, req, res)
+                    }
+                }, 1800000)
             }
-        })
-        .catch((x) => {
-            logger.info(`${x}`);
-        });
+        }, req.query["hours"] * 3600000 - 1800000);
+    } catch (error) {
+        logger.error(`Failed activatingMachine ${error}`)
+    }
 });
 
-app.get("/backend/generateMachine", function (req, res) {
+app.get("/backend/generateMachine", async function (req, res) {
     logger.info("generateMachine");
-    checkCookie(req, res)
-        .then((groupName) => {
-                generateMachine(groupName, req, res);
-        })
-        .catch(() => {
-            logger.info("Failed to authenticate");
-        });
+    try {
+        groupName = await checkCookie(req, res)
+        generateMachine(groupName).then(feedback => feedback_fetch(feedback, res))
+    } catch (error) {
+        logger.error(`Failed generatingMachine ${error}`)
+    }
 });
 
-app.get("/backend/stopMachine", function (req, res) {
+app.get("/backend/stopMachine", async function (req, res) {
     logger.info("stopMachine");
-    checkCookie(req, res)
-        .then((groupName) => {
-            if (req.query["id"] != null) {
-                stopMachine(null, req, res);
-            } else {
-                stopMachine(groupName, req, res);
-            }
-        })
-        .catch(() => {
-            logger.info("Failed to stop machine");
-        });
+    try {
+        groupName = await checkCookie(req, res)
+
+        if (req.query["id"] != null) {
+            stopMachine(req.query["id"], req, res);
+        } else {
+            stopMachine(groupName.split("-").pop(), req, res);
+        }
+    } catch (error) {
+        logger.error(`Failed stopingMachine ${error}`)
+    }
+
 });
 app.get("/backend/login", function (req, res) {
     logger.info("login");
@@ -88,32 +98,46 @@ app.get("/backend/register", function (req, res) {
     logger.info("register");
     registerGroup(req, res);
 });
-app.get("/backend/getNodes", function (req, res) {
+app.get("/backend/getStatusAllVMs", function (req, res) {
     checkCookie(req, res)
         .then(() => {
-            getNodes(req, res);
+            getStatusAllVMs(req.query["server"]).then(status => feedback_fetch(status, res))
         })
         .catch(() => {
-            logger.info("Failed to getNodes");
+            logger.info("Failed to getStatusAllVMs");
         });
 });
-app.get("/backend/getNode", function (req, res) {
-    checkCookie(req, res)
-        .then((groupName) => {
-            if (req.query["id"] != null) {
-                getNode(null,true, req, res);
-            } else {
-                getNode(groupName,true, req, res);
-            }
-        })
-        .catch(() => {
-            logger.info("Failed to getNode");
-        });
+app.get("/backend/getStatusVM", async function (req, res) {
+    try {
+        groupName = await checkCookie(req, res)
+        if (req.query["id"] != null) {
+            getStatusVM(req.query["id"]).then(status => feedback_fetch(JSON.stringify(status), res))
+        } else {
+            getStatusVM(groupName.split("-").pop()).then(status => feedback_fetch(JSON.stringify(status), res))
+        }
+    } catch (error) {
+        logger.error(`Failed gettingStatusVM ${error}`)
+    }
 });
+
+app.get("/backend/getStartingTimeVM", async function (req, res) {
+    try {
+        groupName = await checkCookie(req, res)
+        if (req.query["id"] != null) {
+            getStartingTimeVM(req.query["id"]).then(startingTime => feedback_fetch(startingTime, res))
+        } else {
+            getStartingTimeVM(groupName.split("-").pop()).then(startingTime => feedback_fetch(startingTime, res))
+        }
+    } catch (error) {
+        logger.error(`Failed gettingStartingTimeVM ${error}`)
+    }
+
+});
+
 app.get("/backend/getGroups", function (req, res) {
     checkCookie(req, res)
         .then(() => {
-            getGroups(res);
+            getGroups(res).then(groups => feedback_fetch(groups, res))
         })
         .catch(() => {
             logger.info("Failed to getGroups");
@@ -122,11 +146,11 @@ app.get("/backend/getGroups", function (req, res) {
 app.get("/backend/eliminateGroup", function (req, res) {
     logger.info("eliminateGroup");
     checkCookie(req, res)
-        .then(() => {
-            return eliminateGroup(req, res);
+        .then(async () => {
+            return await eliminateGroup(req.query["id"]);
         })
         .then((groupName) => {
-            eliminateMachine(groupName, req, res)
+            eliminateMachine(vmID)
             logger.info(`BEFORE ELIMINATE : ${groupName}`)
             eliminateRouterOSConfig(groupName)
         })
@@ -137,31 +161,36 @@ app.get("/backend/eliminateGroup", function (req, res) {
 app.get("/backend/getEmails", function (req, res) {
     checkCookie(req, res)
         .then(() => {
-            getEmails(res);
+            getEmails(res).then(emails => feedback_fetch(emails, res))
         })
         .catch(() => {
-            logger.info("Failed to getEmails");
+            logger.info("Failed to getGroups");
         });
 });
 app.get("/backend/eliminateEmail", function (req, res) {
     logger.info("eliminateEmail");
     checkCookie(req, res)
         .then(() => {
-            eliminateEmail(req, res);
+            eliminateEmail(req.query["id"], res).then(feedback_fetch("", res))
         })
         .catch(() => {
-            
             logger.info("Failed to eliminateEmail");
         });
 });
-app.get("/backend/getSubjects", function (req, res) {
-    getSubjects(res);
+app.get("/backend/getSubjects", async function (req, res) {
+    try {
+        subjects = await getSubjects(res);
+        feedback_fetch(subjects, res)
+    } catch (error) {
+        logger.error(`Failed gettingSubjects ${error}`)
+    }
+
 });
 app.get("/backend/addSubject", function (req, res) {
     logger.info("addSubject");
     checkCookie(req, res)
         .then(() => {
-            addSubject(req, res);
+            addSubject(req.query["id"]).then(feedback_fetch("", res))
         })
         .catch(() => {
             logger.info("Failed to addSubject");
@@ -171,7 +200,7 @@ app.get("/backend/eliminateSubject", function (req, res) {
     logger.info("eliminateSubject");
     checkCookie(req, res)
         .then(() => {
-            eliminateSubject(req, res);
+            eliminateSubject(req.query["id"]).then(feedback_fetch("", res))
         })
         .catch(() => {
             logger.info("Failed to eliminateSubject");
@@ -181,69 +210,66 @@ app.get("/backend/activateSubject", function (req, res) {
     logger.info("activateSubject");
     checkCookie(req, res)
         .then(() => {
-            activateSubject(req, res);
+            activateSubject(req.query["id"]).then(feedback_fetch("", res))
         })
         .catch(() => {
             logger.info("Failed to activateSubject");
         });
 });
-app.get("/backend/restartDatabase", function (req, res) {
+app.get("/backend/restartDatabase", async function (req, res) {
     logger.info("restartDatabase");
-    checkCookie(req, res)
-        .then((groupName) => {
-            if (groupName == "root") {
-                restartDatabase().then(feedback_fetch("Y", res));
-            }
-        })
-        .catch(() => {
-            logger.info("Failed to restartDatabase");
-        });
+    try {
+        groupName = await checkCookie(req, res)
+        if (groupName == "root") {
+            restartDatabase().then(feedback_fetch("", res));
+        }
+    } catch (error) {
+        logger.error(`Failed restartingDatabase ${error}`)
+    }
 });
-app.get("/backend/resumeMachine", function (req, res) {
+app.get("/backend/resumeMachine", async function (req, res) {
     logger.info("resumeMachine");
-    checkCookie(req, res)
-        .then((groupName) => {
-            if (req.query["id"] != null) {
-                resumeMachine(null, req, res);
-            } else {
-                resumeMachine(groupName, req, res);
-            }
-        })
-        .catch(() => {
-            logger.info("Failed to resumeMachine");
-        });
+    try {
+        groupName = await checkCookie(req, res)
+        if (req.query["id"] != null) {
+            resumeMachine(req.query["id"]);
+        } else {
+            resumeMachine(groupName.split("-").pop());
+        }
+    } catch (error) {
+        logger.error(`Failed resumingMachine ${error}`)
+    }
 });
 
-app.get("/backend/suspendMachine", function (req, res) {
+app.get("/backend/suspendMachine", async function (req, res) {
     logger.info("suspendMachine");
-    checkCookie(req, res)
-        .then((groupName) => {
-            if (req.query["id"] != null) {
-                suspendMachine(null, req, res);
-            } else {
-                suspendMachine(groupName, req, res);
-            }
-        })
-        .catch(() => {
-            logger.info("Failed to resumeMachine");
-        });
+    try {
+        groupName = await checkCookie(req, res)
+        if (req.query["id"] != null) {
+            suspendMachine(req.query["id"]);
+        } else {
+            suspendMachine(groupName.split("-").pop());
+        }
+    } catch (error) {
+        logger.error(`Failed suspendingMachine ${error}`)
+    }
 });
 app.get("/backend/eliminateCookie", function (req, res) {
     logger.info("EliminateCookie");
     eliminateCookie(req, res);
 });
-app.get("/backend/eliminateMachine", function (req, res) {
+app.get("/backend/eliminateMachine", async function (req, res) {
     logger.info("EliminateMachine");
-    checkCookie(req, res)
-        .then((groupName) => {
-            if (req.query["id"] != null) {
-                eliminateMachine(null, req, res);
-            } else {
-                eliminateMachine(groupName, req, res);
-            }
-        })
-        .catch(() => {
-            logger.info("Failed to EliminateMachine");
-        });
+    try {
+        groupName = await checkCookie(req, res)
+
+        if (req.query["id"] != null) {
+            eliminateMachine(req.query["id"]);
+        } else {
+            eliminateMachine(groupName.split("-").pop());
+        }
+    } catch (error) {
+        logger.error(`Failed eliminathingMachine ${error}`)
+    }
 });
 app.listen(port, () => logger.info(`App listening on port ${port}!`));

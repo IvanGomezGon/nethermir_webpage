@@ -4,40 +4,24 @@ const proxmox = require("proxmox")(process.env.PROXMOX_USER, process.env.PROXMOX
 const PROXMOX_SERVERS = process.env.PROXMOX_SERVERS_NAMES.split(" ");
 const { sendWarningMail } = require(path.resolve(__dirname, "emails.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
-const { feedback_fetch } = require(path.resolve(__dirname, "globalFunctions.js"));
 const { sleep } = require(path.resolve(__dirname, "globalFunctions.js"));
-const getVmId = (groupName, req) => {
-    return new Promise((resolve, reject) => {
-        if (groupName == null) {
-            resolve(req.query["id"]);
-        } else {
-            resolve(groupName.split("-").pop());
-        }
-    });
-};
 
-const activateMachine = async (groupName, emails, req, res) => {
-    if (req.query["hours"] < 1) {
-        feedback_fetch("N", res);
-        return 0;
-    }
-    vmID = await getVmId(groupName, req);
-    serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
-    logger.info(`Activating machine ${vmID} on server ${serverID}`);
-    try {
-        proxmox.qemu.start(serverID, vmID, (err, data) => {
-            feedback_fetch("Y", res);
-        });
-    } catch {
-        logger.error("Activate Machine failed trycatch");
-    }
-    setTimeout(function () {
-        sendWarningMail(emails);
-    }, req.query["hours"] * 3600000 - 1800000);
+const activateMachine = async (vmID) => {
+    return new Promise((resolve, reject) => {
+        serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
+        logger.info(`Activating machine ${vmID} on server ${serverID}`);
+        try {
+            proxmox.qemu.start(serverID, vmID, (err, data) => {
+                resolve();
+            });
+        } catch {
+            logger.error("Activate Machine failed trycatch");
+            reject();
+        }
+    })
 };
-const stopMachine = (groupName, req, res) => {
+const stopMachine = (vmID) => {
     return new Promise(async (resolve, reject) => {
-        vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Stopping machine ${vmID} on server ${serverID}`);
         try {
@@ -53,44 +37,52 @@ const stopMachine = (groupName, req, res) => {
             });
         } catch {
             logger.error("stopMachine failed trycatch");
+            reject()
         }
     });
 };
-const getNodes = (req, res) => {
-    try {
-        data = { full: 1 };
-        proxmox.getQemu(PROXMOX_SERVERS[req.query["server"]], data, (err, data) => {
-            if (err) {
-                logger.error(`Failed to getNodes: ${err}`);
-            } else {
-                data_json = JSON.parse(data).data;
-                data_json.sort((a, b) => a["vmid"] - b["vmid"]);
-                feedback_fetch(JSON.stringify(data_json), res);
-            }
-        });
-    } catch (error) {
-        logger.error("getNodes failed trycatch");
-    }
+const getStatusAllVMs = (proxmoxServer) => {
+    return new Promise((resolve, reject) => {
+        try {
+            data = { full: 1 };
+            proxmox.getQemu(PROXMOX_SERVERS[proxmoxServer], data, (err, data) => {
+                if (err) {
+                    logger.error(`Failed to getStatusAllVMs: ${err}`);
+                } else {
+                    data_json = JSON.parse(data).data;
+                    data_json.sort((a, b) => a["vmid"] - b["vmid"]);
+                    resolve(JSON.stringify(data_json));
+                }
+            });
+        } catch (error) {
+            logger.error("getStatusAllVMs failed trycatch");
+            reject()
+        }
+    })
+
 };
-const getNode = async (groupName, feedbackFetch, req, res) => {
+const getActiveVM = (vmID) => {
+    return new Promise (async (resolve, reject) => {
+        statusVM = await getStatusVM(vmID);
+        resolve(statusVM.status != "stopped")
+    })
+
+}
+const getStatusVM = (vmID) => {
     return new Promise(async (resolve, reject) => {
-        vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         try {
             proxmox.qemu.getStatusCurrent(serverID, vmID, (err, data) => {
                 if (err) {
-                    logger.info(`Failed to getNode: ${err}`);
-                    logger.error(`Failed to getNode: ${err}`);
+                    logger.info(`Failed to getStatusVM: ${err}`);
+                    logger.error(`Failed to getStatusVM: ${err}`);
                 } else {
                     data_json = JSON.parse(data).data;
-                    if (feedbackFetch) {
-                        feedback_fetch(JSON.stringify(data_json), res);
-                    }
                     resolve(data_json);
                 }
             });
         } catch {
-            logger.error("getNode failed trycatch");
+            logger.error("getStatusVM failed trycatch");
         }
     });
 };
@@ -119,9 +111,8 @@ const cloneMachine = (group, groupName) => {
     });
 };
 
-const resumeMachine = (groupName, req, res) => {
+const resumeMachine = (vmID) => {
     return new Promise(async (resolve, reject) => {
-        vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Resuming machine ${vmID} on server ${serverID}`);
         try {
@@ -142,9 +133,8 @@ const resumeMachine = (groupName, req, res) => {
     });
 };
 
-const suspendMachine = (groupName, req, res) => {
+const suspendMachine = (vmID) => {
     return new Promise(async (resolve, reject) => {
-        vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Suspending machine ${vmID} on server ${serverID}`);
         try {
@@ -165,11 +155,10 @@ const suspendMachine = (groupName, req, res) => {
     });
 };
 
-const eliminateMachine = (groupName, req, res) => {
+const eliminateMachine = (vmID) => {
     return new Promise(async (resolve, reject) => {
-        await stopMachine(groupName, req, res);
+        await stopMachine(vmID);
         await sleep(3000);
-        vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Eliminating machine ${vmID} on server ${serverID}`);
         try {
@@ -189,28 +178,25 @@ const eliminateMachine = (groupName, req, res) => {
         }
     });
 };
-const machineFinishedClonning = (groupName, req, res) => {
+const machineFinishedClonning = (vmID) => {
     return new Promise((resolve, reject) => {
         interval = setInterval(async () => {
-            logger.info("beforeGetNode");
-            nodeInfo = await getNode(groupName, false, req, res);
-            logger.info("afterGetNode");
+            nodeInfo = await getStatusVM(vmID);
             if (nodeInfo) {
                 if (!nodeInfo["lock"]) {
                     logger.info("Not longer locked");
                     resolve(interval);
                 }
             }
-        }, 2000);
+        }, 5000);
     });
 };
-const modifyMachineVLAN = (groupName, vlan, bridge, req, res) => {
+const modifyMachineVLAN = (vmID, vlan, bridge) => {
     return new Promise(async (resolve, reject) => {
         logger.info(`modifyMachineVLAN ${groupName} ${vlan} ${bridge}`);
-        interval = await machineFinishedClonning(groupName, req, res);
+        interval = await machineFinishedClonning(vmID);
         clearInterval(interval);
         logger.info("Machine finished clonning");
-        vmID = await getVmId(groupName, req);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Modifiying machine ${vmID} VLAN to ${vlan} on server ${serverID} ${PROXMOX_SERVERS}`);
         data = { net0: `virtio,bridge=${bridge},tag=${vlan}` };
@@ -236,8 +222,9 @@ const modifyMachineVLAN = (groupName, vlan, bridge, req, res) => {
 module.exports = {
     activateMachine,
     stopMachine,
-    getNodes,
-    getNode,
+    getStatusAllVMs,
+    getStatusVM,
+    getActiveVM,
     cloneMachine,
     resumeMachine,
     suspendMachine,

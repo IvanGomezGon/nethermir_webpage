@@ -28,20 +28,18 @@ const checkCookie = (req, res) => {
                     logger.info("Error verifiying token");
                     reject();
                 }
-                logger.info("checkCookie resolved");
                 resolve(payload.user);
             });
         } catch (err) {
             logger.info("no cookie");
             res.clearCookie("token");
-            feedback_fetch("failed-login", res);
             reject();
         }
     });
 };
 const eliminateCookie = (req, res) => {
     res.clearCookie("token");
-    feedback_fetch("y", res);
+    feedback_fetch("", res);
 };
 
 module.exports = {

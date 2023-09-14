@@ -1,4 +1,5 @@
 const feedback_fetch = (text, res) => {
+    text = text == null ? '{}' : text
     res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
     res.write(text);
     res.end();

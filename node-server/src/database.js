@@ -30,23 +30,15 @@ const queryToDB = (sql, params) => {
     });
 };
 
-const getGroups = (res) => {
-    sql = `SELECT * FROM nethermir.groups`;
-    queryToDB(sql).then((x) => {
-        feedback_fetch(JSON.stringify(x), res);
-    });
-};
+//GROUPS 
 
-const eliminateGroup = async (req, res) => {
-    return new Promise(async (resolve, reject) => {
-        id = req.query["id"];
-        groupName = await getGroupName(id);
-        if (groupName == "Failed") {
-            logger.error("GroupName not found");
-            reject();
-        }
-        eliminateGroupDatabaseQuery(id).then(resolve(groupName));
-    });
+const getGroups = () => {
+    return new Promise((resolve, reject) => {
+        sql = `SELECT * FROM nethermir.groups`;
+        queryToDB(sql).then((x) => {
+            resolve(JSON.stringify(x));
+        });
+    })
 };
 
 const getGroupName = (id) => {
@@ -59,88 +51,6 @@ const getGroupName = (id) => {
                 resolve("Failed");
             }
         });
-    });
-};
-const eliminateGroupDatabaseQuery = (id) => {
-    return new Promise((resolve, reject) => {
-        sql = `DELETE FROM nethermir.groups WHERE idgroup=(?)`;
-        queryToDB(sql, [id]).then((x) => {
-            resolve("Success");
-        });
-    });
-};
-
-const getEmailsFromGroupName = (groupName, req) => {
-    return new Promise((resolve, reject) => {
-        if (groupName == null){
-            vmID = req.query["id"]
-        }else{
-            vmID = groupName.split("-").pop()
-        }
-        sql = `SELECT email FROM nethermir.emails WHERE SUBSTRING(group_name, -3)=(?)`;
-        logger.info(`vmID: ${vmID}`)
-        queryToDB(sql, [vmID]).then((data) => {
-            resolve(data)
-        });
-
-    })
-}
-const getEmails = (res) => {
-    sql = `SELECT * FROM nethermir.emails`;
-    queryToDB(sql).then((x) => {
-        feedback_fetch(JSON.stringify(x), res);
-    });
-};
-
-const eliminateEmail = (req, res) => {
-    id = req.query["id"];
-    sql = `DELETE FROM nethermir.emails WHERE email_id=(?)`;
-    queryToDB(sql, [id]).then((x) => {
-
-        feedback_fetch("Y", res);
-    });
-};
-
-const getSubjects = (res) => {
-    sql = `SELECT * FROM nethermir.subjects`;
-    queryToDB(sql).then((x) => {
-        feedback_fetch(JSON.stringify(x), res);
-    });
-};
-
-const addSubject = async (req, res) => {
-    logger.info(`addSubject ${req.query}`);
-    id = req.query["id"];
-    sql = `INSERT INTO nethermir.subjects (idsubject, subject_name) VALUES (?, ?)`;
-    // id.slice(0,-(id.split('-').pop().length + 1)) This monstrocity gets everything before last dash == subject_name
-    // Ex: 2022-1-FX-1 -> 2022-1-FX        2023-2-STDW-10 -> 2023-2-STDW
-    await queryToDB(sql, [id.split("-").pop(), id.slice(0, -(id.split("-").pop().length + 1))]).catch((x) => logger.info(x));
-    feedback_fetch("Y", res);
-};
-const eliminateSubject = (req, res) => {
-    logger.info("eliminateSubject");
-    id = req.query["id"];
-    sql = `DELETE FROM nethermir.subjects WHERE idsubject=(?)`;
-    queryToDB(sql, [parseInt(id)]).then((x) => {
-        logger.info(x);
-        feedback_fetch("Y", res);
-    });
-};
-const activateSubject = (req, res) => {
-    logger.info(`activateSubject ${req.query}`);
-    id = req.query["id"];
-    sql = `UPDATE nethermir.subjects SET active=(active+1)%2 WHERE idsubject=(?)`;
-    queryToDB(sql, [id]).then((x) => {
-        logger.info(x);
-        feedback_fetch("Y", res);
-    });
-};
-
-const activateGroup = (id) => {
-    logger.info("activateGroup");
-    sql = `UPDATE nethermir.groups SET active=(active+1)%2 WHERE idgroup=(?)`;
-    queryToDB(sql, [id]).then((x) => {
-        logger.info(x);
     });
 };
 
@@ -157,8 +67,164 @@ const getGroupData = (groupName) => {
     });
 };
 
+const getEndpointPortGroup = (idGroup) => {
+    return new Promise(async (resolve, reject) => {
+        sql = `SELECT vlan_id FROM nethermir.groups WHERE idgroup = (?)`;
+        data = await queryToDB(sql, [idGroup]);
+        endpointPort = parseInt(data[0]["vlan_id"]) + parseInt(process.env.PORT_UDP_FIRST_ID);
+        resolve(endpointPort);
+    });
+};
+
+const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser) => {
+    return new Promise((resolve, reject) => {
+        logger.info("insertGroup started");
+        logger.info(`${idGroup}, ${groupName}, ${password_login_hash}, ${privateKeyRouter}, ${publicKeyUser}`)
+        sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user) VALUES (?, ?, ?, ?, ?)`;
+        queryToDB(sql, [idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser])
+            .then(resolve)
+    });
+};
+
+const eliminateGroup = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        groupName = await getGroupName(id);
+        if (groupName == "Failed") {
+            logger.error("GroupName not found");
+            reject();
+        }
+        eliminateGroupDatabaseQuery(id).then(resolve(groupName));
+    });
+};
+
+const activateGroup = (id) => {
+    return new Promise((resolve, reject) => {
+        logger.info("activateGroup");
+        sql = `UPDATE nethermir.groups SET active=(active+1)%2 WHERE idgroup=(?)`;
+        queryToDB(sql, [id]).then((x) => {
+            logger.info(x);
+        });
+    })
+
+};
+
+const eliminateGroupDatabaseQuery = (id) => {
+    return new Promise((resolve, reject) => {
+        sql = `DELETE FROM nethermir.groups WHERE idgroup=(?)`;
+        queryToDB(sql, [id]).then((x) => {
+            resolve("Success");
+        });
+    });
+};
+
+//GROUP VM 
+const getStartingTimeVM = (idGroup) => {
+    return new Promise(async (resolve, reject) => {
+        sql = `SELECT starting_time FROM nethermir.groups WHERE idgroup = (?)`;
+        data = await queryToDB(sql, [idGroup]);
+        startingTime = data[0]["starting_time"]
+        resolve(startingTime);
+    })
+}
+const getRenovationHoursVM = (idGroup) => {
+    return new Promise(async (resolve, reject) => {
+        sql = `SELECT renovated_hours FROM nethermir.groups WHERE idgroup = (?)`;
+        data = await queryToDB(sql, [idGroup]);
+        renovationHours = data[0]["renovated_hours"]
+        resolve(renovationHours);
+    })
+}
+
+const changeRenovationHoursVM = (idGroup, active, hours) => {
+    return new Promise((resolve, reject) => {
+        if (active == false){
+            sql = `UPDATE nethermir.groups SET renovated_hours = (?), starting_time = now() WHERE idgroup = (?)`;
+        }else{
+            sql = `UPDATE nethermir.groups SET renovated_hours=renovated_hours + (?) WHERE idgroup = (?)`; 
+        }
+        queryToDB(sql, [hours, idGroup]).then((x) => {
+            logger.info(`changedRenovationHours`);
+            resolve()
+        });
+    })
+}
+//EMAILS
+const getEmailsFromGroupName = (groupName, id) => {
+    return new Promise((resolve, reject) => {
+        if (groupName == null){
+            vmID = id
+        }else{
+            vmID = groupName.split("-").pop()
+        }
+        sql = `SELECT email FROM nethermir.emails WHERE SUBSTRING(group_name, -3)=(?)`;
+        logger.info(`vmID: ${vmID}`)
+        queryToDB(sql, [vmID]).then((data) => {
+            resolve(data)
+        });
+
+    })
+}
+const getEmails = () => {
+    return new Promise((resolve, reject) => {
+        sql = `SELECT * FROM nethermir.emails`;
+        queryToDB(sql).then((x) => {
+            resolve(JSON.stringify(x));
+        });
+    })
+};
+const eliminateEmail = (id) => {
+    return new Promise((resolve, reject) => {
+        sql = `DELETE FROM nethermir.emails WHERE email_id=(?)`;
+        queryToDB(sql, [id]).then((x) => {
+            resolve();
+        });
+    })
+};
+
+
+//SUBJECTS
+const getSubjects = () => {
+    return new Promise((resolve, reject) => {
+        sql = `SELECT * FROM nethermir.subjects`;
+        queryToDB(sql).then((x) => {
+            resolve(JSON.stringify(x));
+        });
+    })
+};
+
+const addSubject = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        logger.info(`addSubject ${id}`);
+        sql = `INSERT INTO nethermir.subjects (idsubject, subject_name) VALUES (?, ?)`;
+        // id.slice(0,-(id.split('-').pop().length + 1)) This monstrocity gets everything before last dash == subject_name
+        // Ex: 2022-1-FX-1 -> 2022-1-FX        2023-2-STDW-10 -> 2023-2-STDW
+        await queryToDB(sql, [id.split("-").pop(), id.slice(0, -(id.split("-").pop().length + 1))]).catch((x) => logger.info(x));
+        resolve();
+    })
+};
+const eliminateSubject = (id) => {
+    return new Promise((resolve, reject) => {
+        logger.info("eliminateSubject");
+        sql = `DELETE FROM nethermir.subjects WHERE idsubject=(?)`;
+        queryToDB(sql, [parseInt(id)]).then((x) => {
+            logger.info(x);
+            resolve();
+        });
+    })
+};
+const activateSubject = (id) => {
+    return new Promise((resolve, reject) => {
+        logger.info(`activateSubject ${id}`);
+        sql = `UPDATE nethermir.subjects SET active=(active+1)%2 WHERE idsubject=(?)`;
+        queryToDB(sql, [id]).then((x) => {
+            resolve();
+        });
+    })
+};
+
 const firstTimeLogin = (user, groupData, req, res) => {
     return new Promise(async (resolve, reject) => {
+        logger.info("First time logging")
         cloneRes = await cloneMachine(groupData.idgroup, user)
         //TODO: CLONING DOESNT WORK STILL
         //cloneRes = "Success";
@@ -173,15 +239,14 @@ const firstTimeLogin = (user, groupData, req, res) => {
                 resolve(user);
             } else {
                 eliminateRes = await eliminateRouterOSConfig(user);
-                feedback_fetch("Generating router config failed - Contact Professor", res);
-                resolve()
+                resolve("Generating router config failed - Contact Professor")
             }
         } else {
-            feedback_fetch("Clonning failed - Contact Professor", res);
-            resolve()
+            resolve("Clonning failed - Contact Professor")
         }
     });
 };
+
 const authenticate = async (req, res) => {
     return new Promise(async (resolve, reject) => {
         user = req.query["user"];
@@ -210,34 +275,13 @@ const generateMachine = async (user, req, res) => {
     return new Promise(async (resolve, reject) => {
         groupData = await getGroupData(user);
         if (groupData.active == 0) {
-            firstTimeLogin(user, groupData, req, res).then(logger.info("yes")).catch(logger.info)
+            firstTimeLogin(user, groupData, req, res).then(resolve).catch(logger.error)
         }
     })
 }
-const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, res) => {
-    return new Promise((resolve, reject) => {
-        logger.info("insertGroup started");
-        logger.info(`${idGroup}, ${groupName}, ${password_login_hash}, ${privateKeyRouter}, ${publicKeyUser}`)
-        sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user) VALUES (?, ?, ?, ?, ?)`;
-        queryToDB(sql, [idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser])
-            .then(resolve)
-            .catch((err) => {
-                feedback_fetch(`Insert Group failed sql${err}`, res);
-                resolve();
-            });
-    });
-};
 
-const getEndpointPortGroup = (idGroup) => {
-    return new Promise(async (resolve, reject) => {
-        sql = `SELECT vlan_id FROM nethermir.groups WHERE idgroup = (?)`;
-        data = await queryToDB(sql, [idGroup]);
-        endpointPort = parseInt(data[0]["vlan_id"]) + parseInt(process.env.PORT_UDP_FIRST_ID);
-        resolve(endpointPort);
-    });
-};
 
-const insertEmails = (emails, groupName, res) => {
+const insertEmails = (emails, groupName) => {
     return new Promise((resolve, reject) => {
         let promises = [];
         sql = `INSERT INTO nethermir.emails (email, group_name) VALUES (?, ?) `;
@@ -245,29 +289,31 @@ const insertEmails = (emails, groupName, res) => {
             promises.push(
                 queryToDB(sql, [email, groupName])
                     .then(logger.info("Email Registrat"))
-                    .catch((x) => feedback_fetch("Error mySQL nethermir.groups: " + x, res))
             )
         );
         Promise.all(promises).then(resolve);
     });
 };
-const registerGroup = async (req, res) => {
-    logger.info("Register Iniciated");
-    emails = req.query["email"].split("xv3dz1g");
-    checkRes = await checkEmails(emails, res);
-    if (checkRes != "Correct") {
-        feedback_fetch(checkRes, res);
-        return 0;
-    }
-    idGroup = await generateGroup(req.query["user"]);
-    groupName = req.query["user"] + "-" + idGroup;
-    [password, paswordHash] = await generatePassword();
-    [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
-    await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub, res);
-    await insertEmails(emails, groupName, res);
-    portUDP = await getEndpointPortGroup(idgroup)
-    emailManager.sendPasswordEmail(emails, groupName, portUDP, password, keyPairUser, keyPairRouter);
-    feedback_fetch("Y", res);
+const registerGroup = (req) => {
+    return new Promise(async (resolve, reject) => {
+        logger.info("Register Iniciated");
+        emails = req.query["email"].split("xv3dz1g");
+        checkRes = await checkEmails(emails, res);
+        if (checkRes != "Correct") {
+            resolve(checkRes);
+            return 0;
+        }
+        idGroup = await generateGroup(req.query["user"]);
+        groupName = req.query["user"] + "-" + idGroup;
+        [password, paswordHash] = await generatePassword();
+        [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
+        await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub, res);
+        await insertEmails(emails, groupName, res);
+        portUDP = await getEndpointPortGroup(idgroup)
+        emailManager.sendPasswordEmail(emails, groupName, portUDP, password, keyPairUser, keyPairRouter);
+        resolve();
+    })
+
 };
 
 function generateGroup(user) {
@@ -340,6 +386,8 @@ const restartDatabase = async () => {
             private_key_router VARCHAR(60) NULL,
             active TINYINT NULL DEFAULT 0,
             vlan_id INT NOT NULL AUTO_INCREMENT,
+            renovated_hours INT NOT NULL DEFAULT 0,
+            starting_time TIME NULL,
             PRIMARY KEY (vlan_id),
             UNIQUE INDEX idgroup_UNIQUE (idgroup ASC) VISIBLE,
             UNIQUE INDEX name_UNIQUE (name ASC) VISIBLE,
@@ -403,4 +451,8 @@ module.exports = {
     genKeyPairVLAN,
     generateMachine,
     getEmailsFromGroupName,
+    getStartingTimeVM,
+    getRenovationHoursVM,
+    changeRenovationHoursVM,
+
 };

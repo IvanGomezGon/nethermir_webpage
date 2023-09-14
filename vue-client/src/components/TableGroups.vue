@@ -22,6 +22,12 @@
                         Està actiu?
                     </th>
                     <th scope="col" class="px-6 py-3">
+                        Hora d'inici
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Hora final
+                    </th>
+                    <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Edit</span>
                     </th>
                 </tr>
@@ -45,6 +51,12 @@
                     </td>
                     <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ group.active == '0' ? 'Cert' : 'Fals' }}
+                    </td>
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
+                        {{ group.starting_time }}
+                    </td>
+                    <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
+                        {{ getFinishHour(group.starting_time, group.renovated_hours) }}
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="eliminateGroup(group.idgroup)"
@@ -76,6 +88,17 @@ export default {
         clearInterval(this.interval)
     },
     methods: {
+        getFinishHour(startHour, hours){
+            if (startHour){
+                let finishHour = (parseInt(startHour.slice(0,2)) + hours) % 24 + startHour.slice(2)
+                if (finishHour.length == 6){
+                    finishHour = '00' + finishHour
+                } else if (finishHour.length == 7){
+                    finishHour = '0' + finishHour
+                }
+                return finishHour
+            }
+        },
         getData() {
             let p = new Promise((resolve, reject) => {
                 fetch(`${process.env.VUE_APP_FETCH_URL}getGroups`, {
@@ -95,6 +118,7 @@ export default {
             }).then();
         },
     },
+
 };
 </script>
 

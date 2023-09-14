@@ -81,7 +81,7 @@
         methods: {
             getData() {
                 let p = new Promise((resolve, reject) => {
-                    fetch(`${process.env.VUE_APP_FETCH_URL}getNodes?server=${this.server}`, {
+                    fetch(`${process.env.VUE_APP_FETCH_URL}getStatusAllVMs?server=${this.server}`, {
                         credentials: process.env.VUE_APP_FETCH_CREDENTIALS
                     }).then(resolve);
                 });

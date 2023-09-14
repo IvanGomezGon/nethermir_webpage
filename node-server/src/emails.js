@@ -64,7 +64,6 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
     const zip = new JSZip();
     zip.file(`${groupName}.conf`, wireguardTxt);
     const content = await zip.generateAsync({ type: "nodebuffer" });
-    logger.info(`Content: ${content}`);
     fs.writeFile(`/tmp/${groupName}.zip`, content, async (err) => {
         if (err) {
             logger.error(`Error creating zip ${err}`);

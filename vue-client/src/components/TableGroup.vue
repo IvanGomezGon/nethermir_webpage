@@ -1,7 +1,7 @@
 <template>
-    <noVirtualMachineUser v-if="idVM == 0"></noVirtualMachineUser>
+    <noVirtualMachineUser v-if="idVM == -1"></noVirtualMachineUser>
     <WaitingClone v-if="clonning"></WaitingClone>
-    <div v-if="idVM != 0 && !clonning" class="flex items-center overflow-x-auto shadow-md rounded-lg">
+    <div v-if="idVM > 0 && !clonning" class="flex items-center overflow-x-auto shadow-md rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-grey-400 uppercase bg-gray-100 dark:bg-grey-400 dark:text-gray-400">
                 <tr>
@@ -31,7 +31,7 @@
                     </th>
                     <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Parar</span>
-                    </th>   
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -47,8 +47,8 @@
                         {{ template == 1 ? "-" : (cpuVM * 100).toFixed(2) + "%" }}
                     </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
-                        {{ template == 1 ? "Template" : statusVM == "stopped" ? "Stopped" : cpuVM < 0.05
-                            ? "Corrent (Pausat)" : "Corrent" }} </td>
+                        {{ template == 1 ? "Template" : statusVM == "stopped" ? "Stopped" : statusVM == "paused" ? "Corrent (Pausat)" : "Corrent" }}
+                    </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ template == 1 ? "-" : uptimeVM }}
                     </td>
@@ -62,19 +62,19 @@
                         </select>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <a href="#" @click="resumeVM(cpuVM, idVM)"
-                            :class="cpuVM > 0.05 ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{
-                                `Encendre ${hours + (hours == 1 ? ' hora' : ' hores')}` }}</a>
+                        <a href="#" @click="activateVM(cpuVM, idVM)"
+                            class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">
+                            {{ `${statusVM != "stopped" ? "Extendre" : "Encendre"} ${hours + (hours == 1 ? ' hora' : ' hores')}`}}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <a href="#" @click="suspendVM()"
-                            :class="cpuVM < 0.05 ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{
-                                "Pausar" }}</a>
+                        <a href="#" @click="suspendResumeVM()"
+                            :class="statusVM == 'paused' ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">
+                            {{ "Pausar" }}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="stopVM()"
-                            :class="statusVM == 'stopped' ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{
-                                "Parar" }}</a>
+                            :class="statusVM == 'stopped' ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">
+                            {{ "Parar" }}</a>
                     </td>
                 </tr>
 
@@ -105,6 +105,7 @@ export default {
         this.getData();
         this.interval = setInterval(() => {
             this.getData();
+
         }, 2000);
     },
     destroyed() {
@@ -113,42 +114,47 @@ export default {
     methods: {
         getData() {
             let p = new Promise((resolve, reject) => {
-                fetch(`${process.env.VUE_APP_FETCH_URL}getNode`, {
+                fetch(`${process.env.VUE_APP_FETCH_URL}getStatusVM`, {
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS
                 }).then(resolve);
             });
             p.then((response) => {
                 response.json().then((json) => {
-                    if (json != null) {
+                    console.log(Object.keys(json).length)
+                    if (Object.keys(json).length != 0) {
                         this.idVM = json.vmid
                         this.nameVM = json.name
                         this.cpuVM = json.cpu
-                        this.statusVM = json.status
+                        this.statusVM = json.qmpstatus
                         this.uptimeVM = json.uptime = 0
                         this.template = json.template
                         this.clonning = json.lock
+                    } else {
+                        this.idVM = -1;
                     }
                 });
             });
         },
 
-        resumeVM() {
+        activateVM() {
             if (this.hours > 0 && this.hours < 7) {
-                if (this.statusVM == "stopped") {
-                    fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine?hours=${this.hours}`, {
-                        credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-                    }).then();
-                } else {
-                    fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine?hours=${this.hours}`, {
-                        credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-                    }).then();
-                }
+                fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine?hours=${this.hours}`, {
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                }).then();
+
             }
         },
-        suspendVM() {
-            fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-            }).then();
+        suspendResumeVM() {
+            if (this, statusVM == "paused") {
+                fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine?hours=${this.hours}`, {
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                }).then();
+            } else {
+                fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine`, {
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                }).then();
+            }
+
         },
         stopVM() {
             fetch(`${process.env.VUE_APP_FETCH_URL}stopMachine`, {
@@ -156,7 +162,7 @@ export default {
             }).then();
         },
         getColor(status, cpu, template) {
-            return template == 1 ? 'dark:text-gray-400 text-gray-600' : status == 'stopped' ? 'text-red-600' : cpu < 0.05 ? 'text-yellow-500' : 'text-green-600';
+            return template == 1 ? 'dark:text-gray-400 text-gray-600' : status == 'stopped' ? 'text-red-600' : status == 'paused' ? 'text-yellow-500' : 'text-green-600';
         },
     },
     components: {
