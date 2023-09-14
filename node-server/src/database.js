@@ -294,27 +294,23 @@ const insertEmails = (emails, groupName) => {
         Promise.all(promises).then(resolve);
     });
 };
-const registerGroup = (req) => {
-    return new Promise(async (resolve, reject) => {
-        logger.info("Register Iniciated");
-        emails = req.query["email"].split("xv3dz1g");
-        checkRes = await checkEmails(emails, res);
-        if (checkRes != "Correct") {
-            resolve(checkRes);
-            return 0;
-        }
-        idGroup = await generateGroup(req.query["user"]);
-        groupName = req.query["user"] + "-" + idGroup;
-        [password, paswordHash] = await generatePassword();
-        [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
-        await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub, res);
-        await insertEmails(emails, groupName, res);
-        portUDP = await getEndpointPortGroup(idgroup)
-        emailManager.sendPasswordEmail(emails, groupName, portUDP, password, keyPairUser, keyPairRouter);
-        resolve();
-    })
-
-};
+const registerGroup = async (req, res) => {
+    logger.info("Register Iniciated");
+    emails = req.query["email"].split("xv3dz1g");
+    checkRes = await checkEmails(emails, res);
+    if (checkRes != "Correct") {
+        feedback_fetch(checkRes, res);
+        return 0;
+    }
+    idGroup = await generateGroup(req.query["user"]);
+    groupName = req.query["user"] + "-" + idGroup;
+    [password, paswordHash] = await generatePassword();
+    [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
+    await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub);
+    await insertEmails(emails, groupName);
+    portUDP = await getEndpointPortGroup(idgroup)
+    emailManager.sendPasswordEmail(emails, groupName, portUDP, password, keyPairUser, keyPairRouter);
+    feedback_fetch("Y", res);}
 
 function generateGroup(user) {
     return new Promise(async (resolve, reject) => {
