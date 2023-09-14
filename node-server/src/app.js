@@ -96,7 +96,7 @@ app.get("/backend/login", function (req, res) {
 });
 app.get("/backend/register", function (req, res) {
     logger.info("register");
-    registerGroup(req, res);
+    registerGroup(req).then(feedback => feedback_fetch(feedback, res));
 });
 app.get("/backend/getStatusAllVMs", function (req, res) {
     checkCookie(req, res)
