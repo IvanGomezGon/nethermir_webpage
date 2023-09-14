@@ -119,9 +119,8 @@ export default {
                 }).then(resolve);
             });
             p.then((response) => {
-                if (response == "null") {this.idVM = -1; return}
                 response.json().then((json) => {
-                    console.log(Object.keys(json).length)
+                    if (json == null) {this.idVM =-1; return}
                     if (Object.keys(json).length != 0) {
                         this.idVM = json.vmid
                         this.nameVM = json.name
