@@ -12,7 +12,7 @@ The project follows the next structure:
         - **proxmox.js**: Proxmox managment
         - **routeros.js**: Routeros managment
 
-How do we communicate to the frontend? -> ```feedback_fetch(text, res)```
+How do we communicate to the frontend? -> ```feedbackFetch(text, res)```
 - **vue-client**: Frontend, compile and execute by ```vue serve```
     - **public**: There are two files here, ```favicon.ico``` and ``` index.html```. We will only modify favicon.ico if we want to update it, no more changes should be made if not needed (ex. applying bootstrap)
         - favicon.ico

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const path = require("path");
 var logger = require(path.resolve(__dirname, "logger.js"));
-const {feedback_fetch} = require(path.resolve(__dirname, "globalFunctions.js"));
+const {feedbackFetch} = require(path.resolve(__dirname, "globalFunctions.js"));
 
 const setCookie = (type, res) => {
     const token = jwt.sign({ user: type }, process.env.COOKIE_PASSWORD, {
@@ -13,9 +13,9 @@ const setCookie = (type, res) => {
     });
     logger.info(`Setting cookie ${token}`);
     if (type != "root") {
-        feedback_fetch("user", res);
+        feedbackFetch("user", res);
     } else {
-        feedback_fetch(type, res);
+        feedbackFetch(type, res);
     }
 };
 
@@ -37,9 +37,9 @@ const checkCookie = (req, res) => {
         }
     });
 };
-const eliminateCookie = (req, res) => {
+const eliminateCookie = (res) => {
     res.clearCookie("token");
-    feedback_fetch("", res);
+    feedbackFetch("", res);
 };
 
 module.exports = {

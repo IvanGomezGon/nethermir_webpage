@@ -3,11 +3,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 var mysql = require("mysql2");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
-const { cloneMachine, modifyMachineVLAN } = require(path.resolve(__dirname, "proxmox.js"));
-const emailManager = require(path.resolve(__dirname, "emails.js"));
-const { generateRouterOSConfig, eliminateRouterOSConfig } = require(path.resolve(__dirname, "routeros.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
-const { feedback_fetch } = require(path.resolve(__dirname, "globalFunctions.js"));
 
 var con = mysql.createConnection({
     host: process.env.SQL_HOST,
@@ -91,9 +87,9 @@ const eliminateGroup = async (id) => {
         groupName = await getGroupName(id);
         if (groupName == "Failed") {
             logger.error("GroupName not found");
-            reject();
+            reject("GroupName not found");
         }
-        eliminateGroupDatabaseQuery(id).then(resolve(groupName));
+        eliminateGroupDatabaseQuery(id).then(resolve());
     });
 };
 
@@ -130,17 +126,21 @@ const getRenovationHoursVM = (idGroup) => {
     return new Promise(async (resolve, reject) => {
         sql = `SELECT renovated_hours FROM nethermir.groups WHERE idgroup = (?)`;
         data = await queryToDB(sql, [idGroup]);
+        if (data == null){
+            reject(`Couldn't find link VirtualMachine - Group Database`)
+        }
         renovationHours = data[0]["renovated_hours"]
+        logger.info(`Renovation hours: ${renovationHours}`)
         resolve(renovationHours);
     })
 }
 
 const changeRenovationHoursVM = (idGroup, active, hours) => {
     return new Promise((resolve, reject) => {
-        if (active == false){
+        if (active == false) {
             sql = `UPDATE nethermir.groups SET renovated_hours = (?), starting_time = now() WHERE idgroup = (?)`;
-        }else{
-            sql = `UPDATE nethermir.groups SET renovated_hours=renovated_hours + (?) WHERE idgroup = (?)`; 
+        } else {
+            sql = `UPDATE nethermir.groups SET renovated_hours=renovated_hours + (?) WHERE idgroup = (?)`;
         }
         queryToDB(sql, [hours, idGroup]).then((x) => {
             logger.info(`changedRenovationHours`);
@@ -151,9 +151,9 @@ const changeRenovationHoursVM = (idGroup, active, hours) => {
 //EMAILS
 const getEmailsFromGroupName = (groupName, id) => {
     return new Promise((resolve, reject) => {
-        if (groupName == null){
+        if (groupName == null) {
             vmID = id
-        }else{
+        } else {
             vmID = groupName.split("-").pop()
         }
         sql = `SELECT email FROM nethermir.emails WHERE SUBSTRING(group_name, -3)=(?)`;
@@ -222,63 +222,26 @@ const activateSubject = (id) => {
     })
 };
 
-const firstTimeLogin = (user, groupData, req, res) => {
+const authenticate = async (user, password) => {
     return new Promise(async (resolve, reject) => {
-        logger.info("First time logging")
-        cloneRes = await cloneMachine(groupData.idgroup, user)
-        //TODO: CLONING DOESNT WORK STILL
-        //cloneRes = "Success";
-        if (cloneRes == "Success") {
-            logger.info("Clone success!");
-            bridge = process.env.PROXMOX_PUBLIC_BRIDGE
-            modifyMachineVLAN(user, groupData.idgroup, bridge, req, res);
-            portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
-            activateGroup(groupData.idgroup);
-            generateRes = await generateRouterOSConfig(user, groupData.private_key_router, groupData.public_key_user, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, groupData.idgroup);
-            if (generateRes == "Success") {
-                resolve(user);
-            } else {
-                eliminateRes = await eliminateRouterOSConfig(user);
-                resolve("Generating router config failed - Contact Professor")
-            }
-        } else {
-            resolve("Clonning failed - Contact Professor")
-        }
-    });
-};
-
-const authenticate = async (req, res) => {
-    return new Promise(async (resolve, reject) => {
-        user = req.query["user"];
-        pass = req.query["pass"];
-        if (user.startsWith(process.env.ROOT_USER) && pass == process.env.ROOT_PASS) {
+        if (user.startsWith(process.env.ROOT_USER) && password == process.env.ROOT_PASS) {
             resolve("root");
         } else {
             logger.info("Authenticate before query");
             try {
                 groupData = await getGroupData(user);
                 logger.info(groupData);
-                auth = await bcrypt.compare(pass, groupData.password_login_hash);
+                auth = await bcrypt.compare(password, groupData.password_login_hash);
                 logger.info(auth);
                 if (auth) {
                     resolve(user);
                 }
             } catch {
-                feedback_fetch("Error", res)
                 reject()
             }
         }
     });
 };
-
-const generateMachine = async (user, req, res) => {
-    return new Promise(async (resolve, reject) => {
-        groupData = await getGroupData(user);
-        if (groupData.active == 0) {
-            firstTimeLogin(user, groupData, req, res).then(resolve).catch(logger.error)
-        }
-    })
-}
 
 
 const insertEmails = (emails, groupName) => {
@@ -294,25 +257,24 @@ const insertEmails = (emails, groupName) => {
         Promise.all(promises).then(resolve);
     });
 };
-const registerGroup = async (req, res) => {
-    logger.info("Register Iniciated");
-    emails = req.query["email"].split("xv3dz1g");
-    checkRes = await checkEmails(emails, res);
-    if (checkRes != "Correct") {
-        feedback_fetch(checkRes, res);
-        return 0;
-    }
-    logger.info("a Iniciated");
-
-    idGroup = await generateGroup(req.query["user"]);
-    groupName = req.query["user"] + "-" + idGroup;
-    [password, paswordHash] = await generatePassword();
-    [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
-    await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub);
-    await insertEmails(emails, groupName);
-    portUDP = await getEndpointPortGroup(idgroup)
-    emailManager.sendPasswordEmail(emails, groupName, portUDP, password, keyPairUser, keyPairRouter);
-    feedback_fetch("Y", res);}
+const registerGroup = (groupName, emails) => {
+    return new Promise(async (resolve, reject) => {
+        logger.info("Register Iniciated");
+        emails = emails.split(",");
+        checkRes = await checkEmails(emails);
+        if (checkRes != "Correct") {
+            reject(checkRes);
+        }
+        idGroup = await generateGroup(groupName);
+        groupName = groupName + "-" + idGroup;
+        [password, paswordHash] = await generatePassword();
+        [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
+        await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub);
+        await insertEmails(emails, groupName);
+        portUDP = await getEndpointPortGroup(idgroup)
+        resolve([emails, groupName, portUDP, password, keyPairUser, keyPairRouter]);
+    })
+}
 
 function generateGroup(user) {
     return new Promise(async (resolve, reject) => {
@@ -447,10 +409,10 @@ module.exports = {
     addSubject,
     activateSubject,
     genKeyPairVLAN,
-    generateMachine,
     getEmailsFromGroupName,
     getStartingTimeVM,
     getRenovationHoursVM,
     changeRenovationHoursVM,
-
+    getGroupData,
+    activateGroup,
 };

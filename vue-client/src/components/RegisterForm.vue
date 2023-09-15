@@ -186,14 +186,14 @@ export default {
         register() {
             console.log("Starting")
             this.feedback = "Processant registre..."
-            let emailsString = this.emails.join('xv3dz1g')
+            let emailsString = this.emails.join(',')
             let p = new Promise((resolve, reject) => {
                 console.log("Fetching")
                 fetch(`${process.env.VUE_APP_FETCH_URL}register?user=${this.assignatura + '-' + this.curs}&email=${emailsString}`).then(resolve)
             })
             p.then(x => {
                 x.text().then(y => {
-                    if (y == "Y") {
+                    if (y == "success") {
                         console.log("yes")
                         this.feedback = "Registre completat! S'ha enviat un email al teu correu amb les credencials per iniciar sessió"
                         this.registered = true

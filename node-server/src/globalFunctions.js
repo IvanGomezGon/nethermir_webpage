@@ -1,4 +1,4 @@
-const feedback_fetch = (text, res) => {
+const feedbackFetch = (text, res) => {
     text = text == null ? '{}' : text
     res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
     res.write(text);
@@ -12,6 +12,6 @@ const sleep = (ms)  => {
 }
 
 module.exports = {
-    feedback_fetch,
+    feedbackFetch,
     sleep,
 };

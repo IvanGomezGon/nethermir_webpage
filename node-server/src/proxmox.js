@@ -2,7 +2,6 @@ const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const proxmox = require("proxmox")(process.env.PROXMOX_USER, process.env.PROXMOX_PASSWORD, process.env.PROXMOX_IP_ADDRESS);
 const PROXMOX_SERVERS = process.env.PROXMOX_SERVERS_NAMES.split(" ");
-const { sendWarningMail } = require(path.resolve(__dirname, "emails.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
 const { sleep } = require(path.resolve(__dirname, "globalFunctions.js"));
 
@@ -31,7 +30,7 @@ const stopMachine = (vmID) => {
                     resolve("Failed");
                 }
                 if (data) {
-                    logger.info(`Sucess to stop machine: ${data}`);
+                    logger.info(`Sucess to stop machine ${vmID}: ${data}`);
                     resolve("Success");
                 }
             });
@@ -97,16 +96,16 @@ const cloneMachine = (group, groupName) => {
             proxmox.qemu.clone(serverID, vmID, newID, (err, data) => {
                 if (err) {
                     logger.error(`Failed to clone machine: ${err}`);
-                    resolve("Failed");
+                    reject(`Failed to clone machine, contact professor: ${err}`);
                 }
                 if (data) {
-                    logger.info(`Sucess to clone machine: ${data}`);
+                    logger.info(`Sucess to clone machine: ${vmID}: ${data}`);
                     resolve("Success");
                 }
             });
-        } catch {
-            logger.error("cloneMachine failed trycatch");
-            resolve("Failed");
+        } catch (error){
+            logger.error(`Failed to clone machine, contact professor: ${error}`);
+            reject(`Failed to clone machine, contact professor: ${error}`);
         }
     });
 };
@@ -122,7 +121,7 @@ const resumeMachine = (vmID) => {
                     resolve("Failed");
                 }
                 if (data) {
-                    logger.info(`Sucess to resume machine: ${data}`);
+                    logger.info(`Sucess to resume machine: ${vmID}: ${data}`);
                     resolve("Success");
                 }
             });
@@ -144,7 +143,7 @@ const suspendMachine = (vmID) => {
                     resolve("Failed");
                 }
                 if (data) {
-                    logger.info(`Sucess to suspend machine: ${data}`);
+                    logger.info(`Sucess to suspend machine: ${vmID}: ${data}`);
                     resolve("Success");
                 }
             });
@@ -168,7 +167,7 @@ const eliminateMachine = (vmID) => {
                     reject();
                 }
                 if (data) {
-                    logger.info(`Sucess to eliminate machine: ${data}`);
+                    logger.info(`Sucess to eliminate machine: ${vmID}: ${data}`);
                     resolve(groupName);
                 }
             });
@@ -200,7 +199,6 @@ const modifyMachineVLAN = (vmID, vlan, bridge) => {
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
         logger.info(`Modifiying machine ${vmID} VLAN to ${vlan} on server ${serverID} ${PROXMOX_SERVERS}`);
         data = { net0: `virtio,bridge=${bridge},tag=${vlan}` };
-        logger.info(`DATA MODIFY VLAN: ${data}`);
         try {
             proxmox.qemu.updateConfig(serverID, vmID, data, (err, data) => {
                 if (err) {
@@ -208,7 +206,7 @@ const modifyMachineVLAN = (vmID, vlan, bridge) => {
                     resolve("Failed");
                 }
                 if (data) {
-                    logger.info(`Sucess to modify VLAN machine: ${data}`);
+                    logger.info(`Sucess to modify VLAN machine ${vmID}: ${data}`);
                     resolve("Success");
                 }
             });
