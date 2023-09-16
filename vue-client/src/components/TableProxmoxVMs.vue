@@ -79,17 +79,13 @@
             clearInterval(this.interval)
         },
         methods: {
-            getData() {
-                let p = new Promise((resolve, reject) => {
-                    fetch(`${process.env.VUE_APP_FETCH_URL}getStatusAllVMs?server=${this.server}`, {
-                        credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-                    }).then(resolve);
-                });
-                p.then((response) => {
-                    response.json().then((json) => {
-                        console.log(json);
-                        this.data = json;
-                    });
+            async getData() {
+                let response = await fetch(`${process.env.VUE_APP_FETCH_URL}statusAllVMs?server=${this.server}`, {
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                })
+                response.json().then((json) => {
+                    console.log(json);
+                    this.data = json;
                 });
             },
             getColor(status, cpu, template) {
@@ -110,24 +106,47 @@
                 }
             },
             activateVM(id) {
-                fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine?id=${id}&hours=4`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({vmID: id, hours: 4}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
             },
             stopVM(id) {
-                fetch(`${process.env.VUE_APP_FETCH_URL}stopMachine?id=${id}`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                fetch(`${process.env.VUE_APP_FETCH_URL}stopMachine`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({vmID: id}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
             },
             resumeVM(id) {
-                console.log("yay");
-                fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine?id=${id}`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({vmID: id}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
             },
             suspendVM(id) {
-                fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine?id=${id}`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({vmID: id}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
             },
         },

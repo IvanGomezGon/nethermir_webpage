@@ -145,7 +145,7 @@ export default {
         },
         toggleMobile() {
             this.mobileDropdown = !this.mobileDropdown; 
-            setTimeout(() => {console.log("hi"); this.mobileDrowdownFinished = !this.mobileDrowdownFinished}, 50)
+            setTimeout(() => {this.mobileDrowdownFinished = !this.mobileDrowdownFinished}, 50)
         }
     },
 };

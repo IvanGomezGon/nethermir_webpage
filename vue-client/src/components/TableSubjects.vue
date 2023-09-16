@@ -65,25 +65,30 @@ export default {
         clearInterval(this.interval)
     },
     methods: {
-        getData() {
-            let p = new Promise((resolve, reject) => {
-                fetch(`${process.env.VUE_APP_FETCH_URL}getSubjects`).then(resolve);
-            });
-            p.then((response) => {
-                response.json().then((json) => {
-                    console.log(json);
-                    this.data = json;
-                });
+        async getData() {
+            let response = await fetch(`${process.env.VUE_APP_FETCH_URL}subjects`)
+            response.json().then((json) => {
+                console.log(json);
+                this.data = json;
             });
         },
-        eliminateSubject(id) {
-            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateSubject?id=${id}`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+
+        eliminateSubject(subjectID) {
+            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateSubject?subjectID=${subjectID}`, {
+                method: 'DELETE',
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },
-        activateSubject(id) {
-            fetch(`${process.env.VUE_APP_FETCH_URL}activateSubject?id=${id}`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+        
+        activateSubject(subjectID) {
+            fetch(`${process.env.VUE_APP_FETCH_URL}activateSubject`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({subjectID: subjectID}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },
     },

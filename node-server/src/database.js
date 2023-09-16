@@ -124,14 +124,18 @@ const getStartingTimeVM = (idGroup) => {
 }
 const getRenovationHoursVM = (idGroup) => {
     return new Promise(async (resolve, reject) => {
-        sql = `SELECT renovated_hours FROM nethermir.groups WHERE idgroup = (?)`;
-        data = await queryToDB(sql, [idGroup]);
-        if (data == null){
-            reject(`Couldn't find link VirtualMachine - Group Database`)
+        try {
+            sql = `SELECT renovated_hours FROM nethermir.groups WHERE idgroup = (?)`;
+            data = await queryToDB(sql, [idGroup]);
+            if (data == null) {
+                reject(`Couldn't find link VirtualMachine - Group Database`)
+            }
+            renovationHours = data[0]["renovated_hours"]
+            logger.info(`Renovation hours: ${renovationHours}`)
+            resolve(renovationHours);
+        } catch (error) {
+            reject(error)
         }
-        renovationHours = data[0]["renovated_hours"]
-        logger.info(`Renovation hours: ${renovationHours}`)
-        resolve(renovationHours);
     })
 }
 
@@ -192,13 +196,11 @@ const getSubjects = () => {
     })
 };
 
-const addSubject = async (id) => {
+const addSubject = async (subjectName, subjectID) => {
     return new Promise(async (resolve, reject) => {
-        logger.info(`addSubject ${id}`);
+        logger.info(`addSubject ${subjectID}`);
         sql = `INSERT INTO nethermir.subjects (idsubject, subject_name) VALUES (?, ?)`;
-        // id.slice(0,-(id.split('-').pop().length + 1)) This monstrocity gets everything before last dash == subject_name
-        // Ex: 2022-1-FX-1 -> 2022-1-FX        2023-2-STDW-10 -> 2023-2-STDW
-        await queryToDB(sql, [id.split("-").pop(), id.slice(0, -(id.split("-").pop().length + 1))]).catch((x) => logger.info(x));
+        await queryToDB(sql, [subjectID, subjectName]).catch((x) => logger.info(x));
         resolve();
     })
 };
@@ -260,6 +262,7 @@ const insertEmails = (emails, groupName) => {
 const registerGroup = (groupName, emails) => {
     return new Promise(async (resolve, reject) => {
         logger.info("Register Iniciated");
+        logger.info(`emails: ${emails}`)
         emails = emails.split(",");
         checkRes = await checkEmails(emails);
         if (checkRes != "Correct") {
@@ -272,7 +275,7 @@ const registerGroup = (groupName, emails) => {
         await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub);
         await insertEmails(emails, groupName);
         portUDP = await getEndpointPortGroup(idgroup)
-        resolve([emails, groupName, portUDP, password, keyPairUser, keyPairRouter]);
+        resolve([groupName, emails, portUDP, password, keyPairUser, keyPairRouter]);
     })
 }
 

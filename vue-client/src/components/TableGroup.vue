@@ -84,7 +84,6 @@
 </template>
 
 <script>
-import SubHeader from "@/components/SubHeader.vue";
 import noVirtualMachineUser from "@/components/noVirtualMachineUser.vue";
 import WaitingClone from "@/components/WaitingClone.vue";
 export default {
@@ -112,61 +111,80 @@ export default {
         clearInterval(this.interval)
     },
     methods: {
-        getData() {
-            let p = new Promise((resolve, reject) => {
-                fetch(`${process.env.VUE_APP_FETCH_URL}getStatusVM`, {
+        async getData() {    
+            let response = await fetch(`${process.env.VUE_APP_FETCH_URL}statusVM`, {
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-                }).then(resolve);
-            });
-            p.then((response) => {
-                response.json().then((json) => {
-                    if (json == null) {this.idVM =-1; return}
-                    if (Object.keys(json).length != 0) {
-                        this.idVM = json.vmid
-                        this.nameVM = json.name
-                        this.cpuVM = json.cpu
-                        this.statusVM = json.qmpstatus
-                        this.uptimeVM = json.uptime = 0
-                        this.template = json.template
-                        this.clonning = json.lock
-                    } else {
-                        this.idVM = -1;
-                    }
-                });
+                })                
+            response.json().then((json) => {
+                if (json == null) {this.idVM =-1; return}
+                if (Object.keys(json).length != 0) {
+                    this.idVM = json.vmid
+                    this.nameVM = json.name
+                    this.cpuVM = json.cpu
+                    this.statusVM = json.qmpstatus
+                    this.uptimeVM = json.uptime = 0
+                    this.template = json.template
+                    this.clonning = json.lock
+                } else {
+                    this.idVM = -1;
+                }
             });
         },
 
         activateVM() {
             if (this.hours > 0 && this.hours < 7) {
-                fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine?hours=${this.hours}`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({hours: this.hours}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
-
             }
         },
         suspendResumeVM() {
-            if (this, statusVM == "paused") {
-                fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine?hours=${this.hours}`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+            if (this.statusVM == "paused") {
+                fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({hours: this.hours}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
             } else {
                 fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Content-Length': '0',
+                    },
+                    body: JSON.stringify({}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
             }
-
         },
         stopVM() {
             fetch(`${process.env.VUE_APP_FETCH_URL}stopMachine`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-            }).then();
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Content-Length': '0',
+                    },
+                    body: JSON.stringify({}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+                }).then();
         },
         getColor(status, cpu, template) {
             return template == 1 ? 'dark:text-gray-400 text-gray-600' : status == 'stopped' ? 'text-red-600' : status == 'paused' ? 'text-yellow-500' : 'text-green-600';
         },
     },
     components: {
-        SubHeader,
         noVirtualMachineUser,
         WaitingClone,
     },

@@ -41,7 +41,8 @@ export default {
     methods:{
         restartDatabase() {
             fetch(`${process.env.VUE_APP_FETCH_URL}restartDatabase`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+                method: 'DELETE',
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
             this.$router.push("/ControlPannelRoot");
         },

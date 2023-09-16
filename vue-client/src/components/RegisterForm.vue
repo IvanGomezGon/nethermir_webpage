@@ -150,14 +150,10 @@ export default {
             return retYears
         },
 
-        getData() {
-            let p = new Promise((resolve, reject) => {
-                fetch(`${process.env.VUE_APP_FETCH_URL}getSubjects`).then(resolve)
-            })
-            p.then(response => {
-                response.json().then(json => {
-                    this.data = json
-                })
+        async getData() {
+            let response = await fetch(`${process.env.VUE_APP_FETCH_URL}subjects`)
+            response.json().then(json => {
+                this.data = json
             })
         },
         checkRegister() {
@@ -183,27 +179,29 @@ export default {
                 this.register()
             }
         },
-        register() {
+        async register() {
             console.log("Starting")
             this.feedback = "Processant registre..."
             let emailsString = this.emails.join(',')
-            let p = new Promise((resolve, reject) => {
-                console.log("Fetching")
-                fetch(`${process.env.VUE_APP_FETCH_URL}register?user=${this.assignatura + '-' + this.curs}&email=${emailsString}`).then(resolve)
-            })
-            p.then(x => {
-                x.text().then(y => {
-                    if (y == "success") {
-                        console.log("yes")
-                        this.feedback = "Registre completat! S'ha enviat un email al teu correu amb les credencials per iniciar sessió"
-                        this.registered = true
-                    } else {
-                        this.feedback = ""
-                        this.errors.push(y)
-                    }
-                })
-            })
-
+            let response = await fetch(`${process.env.VUE_APP_FETCH_URL}register`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({user: this.assignatura + "-" + this.curs, emails: emailsString}),
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+            })     
+            response.text().then(text => {
+                if (text == "success") {
+                    console.log("yes")
+                    this.feedback = "Registre completat! S'ha enviat un email al teu correu amb les credencials per iniciar sessió"
+                    this.registered = true
+                } else {
+                    this.feedback = ""
+                    this.errors.push(text)
+                }
+            })          
         }
     },
 }

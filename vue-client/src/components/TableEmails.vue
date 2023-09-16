@@ -12,7 +12,6 @@
                     <th scope="col" class="px-6 py-3">
                         Nom del grup
                     </th>
-
                     <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Edit</span>
                     </th>
@@ -60,21 +59,18 @@ export default {
         clearInterval(this.interval)
     },
     methods: {
-        getData() {
-            let p = new Promise((resolve, reject) => {
-                fetch(`${process.env.VUE_APP_FETCH_URL}getEmails`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-                }).then(resolve);
-            });
-            p.then((response) => {
-                response.json().then((json) => {
-                    console.log(json);
-                    this.data = json;
-                });
+        async getData() {
+            let response = await fetch(`${process.env.VUE_APP_FETCH_URL}emails`, {
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+            })
+            response.json().then((json) => {
+                console.log(json);
+                this.data = json;
             });
         },
         eliminateEmail(id) {
-            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateEmail?id=${id}`, {
+            fetch(`${process.env.VUE_APP_FETCH_URL}email?emailID=${id}`, {
+                method: 'DELETE',
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },

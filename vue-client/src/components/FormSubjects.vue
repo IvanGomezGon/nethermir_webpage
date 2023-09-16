@@ -60,8 +60,14 @@ export default {
     },
     methods: {
         addSubject() {
-            fetch(`${process.env.VUE_APP_FETCH_URL}addSubject?id=${this.assignatura + "-" + this.curs + "-" + this.vmTemplateID}`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+            fetch(`${process.env.VUE_APP_FETCH_URL}subject`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({subjectName: this.assignatura + "-" + this.curs, subjectID: this.vmTemplateID}),
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },
     },

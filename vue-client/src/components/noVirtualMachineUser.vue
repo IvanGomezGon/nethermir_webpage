@@ -16,10 +16,18 @@
 export default {
     methods: {
         generateVM() {
-            fetch(`${process.env.VUE_APP_FETCH_URL}generateMachine`, {
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+            fetch(`${process.env.VUE_APP_FETCH_URL}machine`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Content-Length': '0'
+                },
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+                body: null
             }).then();
         },
+        
     }
 }
 </script>

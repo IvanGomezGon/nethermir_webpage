@@ -63,7 +63,6 @@
                             class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">Eliminar</a>
                     </td>
                 </tr>
-
             </tbody>
         </table>
     </div>
@@ -99,26 +98,22 @@ export default {
                 return finishHour
             }
         },
-        getData() {
-            let p = new Promise((resolve, reject) => {
-                fetch(`${process.env.VUE_APP_FETCH_URL}getGroups`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-                }).then(resolve);
-            });
-            p.then((response) => {
-                response.json().then((json) => {
-                    console.log(json);
-                    this.data = json;
-                });
+        async getData() {
+            let response = await fetch(`${process.env.VUE_APP_FETCH_URL}groups`, {
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+            })
+            response.json().then((json) => {
+                console.log(json);
+                this.data = json;
             });
         },
         eliminateGroup(id) {
-            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateGroup?id=${id}`, {
+            fetch(`${process.env.VUE_APP_FETCH_URL}group?groupID=${id}`, {
+                method: 'DELETE',
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },
     },
-
 };
 </script>
 

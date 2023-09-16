@@ -115,24 +115,23 @@ export default {
                 this.login()
             }
         },
-        login() {
+        async login() {
             this.feedback = "Processant inici de sessió..."
-
-            fetch(`${process.env.VUE_APP_FETCH_URL}login?user=${this.usuari}&pass=${this.password}`, {
+            let response = await fetch(`${process.env.VUE_APP_FETCH_URL}login?user=${this.usuari}&password=${this.password}`, {
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-            }).then(data => {
-                if (data == null) {return}
-                data.text().then(y => {
-                    if (y == "root") {
-                        this.$router.push('/controlPannelRoot')
-                    } else if (y == 'user') {
-                        this.$router.push('/controlPannelUser')
-                    } else {
-                        this.feedback = ""
-                        this.errors.push(`Contrasenya incorrecte. Pots trobar-la al teu compte d'email usuari@uab.cat`)
-                    }
-                })
             })
+            if (response == null) {return}
+            response.text().then(y => {
+                if (y == "root") {
+                    this.$router.push('/controlPannelRoot')
+                } else if (y == 'user') {
+                    this.$router.push('/controlPannelUser')
+                } else {
+                    this.feedback = ""
+                    this.errors.push(`Contrasenya incorrecte. Pots trobar-la al teu compte d'email usuari@uab.cat`)
+                }
+            })
+           
         }
     }
 }
