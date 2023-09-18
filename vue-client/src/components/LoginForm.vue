@@ -39,7 +39,7 @@
                             </div>
 
 
-                            <input type="text" v-model="usuari"
+                            <input type="text" v-model="usuari" @keyup.enter="checkLogin()"
                                 class="rounded-lg bg-gray-50 border border-gray-300 text-grey-700 focus:ring-emerald-500 focus:border-emerald-500 block flex-1 min-w-0 w-full text-sm p-2.5  dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:ring-emerald-500 dark:focus:border-emerald-500 outline-0"
                                 placeholder="FX-2022-1-100" required="">
 
@@ -48,7 +48,7 @@
                             <div for="password" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">
                                 Contrasenya</div>
                             <div class="flex">
-                                <input :type="passwordType ? 'password' : 'text'" name="password" id="password"
+                                <input :type="passwordType ? 'password' : 'text'" name="password" id="password" @keyup.enter="checkLogin()"
                                     v-model="password" placeholder="••••••••"
                                     class="bg-gray-50 border border-gray-300 text-grey-700 sm:text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 outline-0"
                                     required="">

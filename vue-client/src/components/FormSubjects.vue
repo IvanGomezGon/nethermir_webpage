@@ -1,10 +1,10 @@
 <template>
-    <section class="">
-        <div class="pb-8  ">
+    <section class="pb-8">
+        <div class="">
             <h2 class="mb-4 text-xl font-bold text-grey-700 dark:text-white">Afegir una nova assignatura</h2>
 
-            <div class="grid gap-4 sm:grid-cols-5 sm:gap-6">
-                <div class="w-full">
+            <div class="grid gap-4 sm:grid-cols-5 sm:gap-6 absolute">
+                <div class="w-full" >
                     <div for="curs" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">Curs</div>
                     <input type="text" name="curs" id="curs" v-model="curs"
                         class="outline-0 bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark: dark:focus:border-primary-500"
@@ -26,22 +26,14 @@
                 </div>
                 <div class="text-center">
                     <div for="addAsignatura" class="block mb-2 text-sm font-medium text-opacity-0">
-                        <h1 class="text-opacity-0">.</h1>
+                        <h1 class="text-opacity-0"> ㅤ </h1>
                     </div>
                     <button type="button" @click="addSubject()"
-                        class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 hover:active:bg-emerald-800 border border-emerald-800 font-medium rounded-lg text-sm block w-full p-2.5 text-white">
+                        class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 hover:active:bg-emerald-800 font-medium rounded-lg text-sm block px-5 p-2.5 text-white">
                         Afegir assignatura
                     </button>
                 </div>
-                <div class="text-center">
-                    <div for="addAsignatura" class="block mb-2 text-sm font-medium text-opacity-0">
-                        <h1 class="text-opacity-0">.</h1>
-                    </div>
-                    <button type="button" @click="addSubject()"
-                        class="bg-red-600 hover:bg-red-700 active:bg-red-700 hover:active:bg-red-800 border border-red-800 font-medium rounded-lg text-sm  w-full p-2.5 text-white">
-                        Eliminar taula
-                    </button>
-                </div>
+
             </div>
 
         </div>

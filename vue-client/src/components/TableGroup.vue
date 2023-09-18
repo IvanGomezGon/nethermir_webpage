@@ -32,6 +32,9 @@
                     <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Parar</span>
                     </th>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Select</span>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -64,7 +67,7 @@
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="activateVM(cpuVM, idVM)"
                             class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">
-                            {{ `${statusVM != "stopped" ? "Extendre" : "Encendre"} ${hours + (hours == 1 ? ' hora' : ' hores')}`}}</a>
+                            {{ `${statusVM != "stopped" ? "Extendre" : "Encendre"} ${hours + (hours == 1 ? ' hora' : 'hores')}`}}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="suspendResumeVM()"
@@ -76,6 +79,22 @@
                             :class="statusVM == 'stopped' ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">
                             {{ "Parar" }}</a>
                     </td>
+                    <td class="px-6 py-4 text-right">
+                        HOLA
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input id="remember" aria-describedby="remember" type="checkbox"
+                                        @click="passwordType = (passwordType + 1) % 2"
+                                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50">
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <div for="remember" class="text-gray-500">Mostrar contrasenya</div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
                 </tr>
 
             </tbody>
@@ -111,12 +130,12 @@ export default {
         clearInterval(this.interval)
     },
     methods: {
-        async getData() {    
+        async getData() {
             let response = await fetch(`${process.env.VUE_APP_FETCH_URL}statusVM`, {
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS
-                })                
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS
+            })
             response.json().then((json) => {
-                if (json == null) {this.idVM =-1; return}
+                if (json == null) { this.idVM = -1; return }
                 if (Object.keys(json).length != 0) {
                     this.idVM = json.vmid
                     this.nameVM = json.name
@@ -139,7 +158,7 @@ export default {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({hours: this.hours}),
+                    body: JSON.stringify({ hours: this.hours }),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
             }
@@ -152,7 +171,7 @@ export default {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({hours: this.hours}),
+                    body: JSON.stringify({ hours: this.hours }),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
                 }).then();
             } else {
@@ -170,15 +189,15 @@ export default {
         },
         stopVM() {
             fetch(`${process.env.VUE_APP_FETCH_URL}stopMachine`, {
-                    method: 'PUT',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Content-Length': '0',
-                    },
-                    body: JSON.stringify({}),
-                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-                }).then();
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Content-Length': '0',
+                },
+                body: JSON.stringify({}),
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+            }).then();
         },
         getColor(status, cpu, template) {
             return template == 1 ? 'dark:text-gray-400 text-gray-600' : status == 'stopped' ? 'text-red-600' : status == 'paused' ? 'text-yellow-500' : 'text-green-600';

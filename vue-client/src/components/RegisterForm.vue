@@ -66,7 +66,7 @@
                             <div v-if="numIntegrants" class="block  text-sm font-medium text-grey-700 dark:text-white">
                                 Adreces de correu</div>
                             <div v-for="index in parseInt(numIntegrants)" :key="index">
-                                <input type="email" id="email" v-model="emails[index - 1]"
+                                <input type="email" id="email" v-model="emails[index - 1]" @keyup.enter="checkRegister()"
                                     class="outline-0 bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
                                     :placeholder="'usuari' + index + '@uab.cat'" required>
                             </div>
