@@ -29,7 +29,10 @@ const sendEmail = (sendTo, txt, subject, attachements = null) => {
 };
 
 const sendWarningMail = (emails) => {
-    emailText = `Hola, la vostra VM serà apagada en 30 minuts`;
+    emailText = `Atenció, la concessió de temps de la vostra màquina virtual a Nethermir caduca en 30 minuts. <br>
+                Si voleu continuar treballant amb la màquina virtual heu d'entrar a l'entorn de gestió, https://nethermir.uab.cat/, i estendre la vostra reserva de temps. <br>
+                En canvi, si heu acabat de treballar amb la màquina virtual, podeu ignorar aquest missatge i la màquina s'aturarà automàticament passat el temps. <br>
+                Salutacions, Nethermir`;
     emails.forEach((email) => sendEmail(email.email, emailText, "Notificació apagament Màquina Virtual"));
 };
 const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyPairUser, keyPairRouter) => {
@@ -40,6 +43,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
                 Adjunt a aquest correu trobareu: <br>
                     1. El manual per conectar-vos a la vostra màquina Nethermir a través de la VPN <br>
                     2. Les credencials d'accès a la VPN <br><br>
+                Salutacions, Nethermir
                 `;
     wireguardTxtPath = `/tmp/${groupName}.zip`;
     wireguardTxt = `
