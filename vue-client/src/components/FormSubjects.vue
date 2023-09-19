@@ -3,7 +3,7 @@
         <div class="">
             <h2 class="mb-4 text-xl font-bold text-grey-700 dark:text-white">Afegir una nova assignatura</h2>
 
-            <div class="grid gap-4 sm:grid-cols-5 sm:gap-6 absolute">
+            <div class="grid gap-4 sm:grid-cols-5 sm:gap-6">
                 <div class="w-full" >
                     <div for="curs" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">Curs</div>
                     <input type="text" name="curs" id="curs" v-model="curs"

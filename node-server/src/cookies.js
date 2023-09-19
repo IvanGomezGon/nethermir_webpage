@@ -4,6 +4,7 @@ var logger = require(path.resolve(__dirname, "logger.js"));
 const {feedbackFetch} = require(path.resolve(__dirname, "globalFunctions.js"));
 
 const setCookie = (type, res) => {
+    console.log("TYPE: ", type)
     const token = jwt.sign({ user: type }, process.env.COOKIE_PASSWORD, {
         expiresIn: "1h",
     });
@@ -19,7 +20,7 @@ const setCookie = (type, res) => {
     }
 };
 
-const checkCookie = (req, res) => {
+const getUserCookie = (req, res) => {
     return new Promise((resolve, reject) => {
         const token = req.cookies.token;
         try {
@@ -37,6 +38,20 @@ const checkCookie = (req, res) => {
         }
     });
 };
+
+const checkIsRootCookie = async (req, res) => {
+    try {
+        user = await getUserCookie(req, res);
+        if (user=="root"){
+            resolve()
+        }else{
+            reject()
+        }
+    } catch (error) {
+        reject()
+    }
+
+}
 const eliminateCookie = (res) => {
     res.clearCookie("token");
     feedbackFetch("", res);
@@ -44,6 +59,7 @@ const eliminateCookie = (res) => {
 
 module.exports = {
     setCookie,
-    checkCookie,
+    getUserCookie,
     eliminateCookie,
+    checkIsRootCookie,
 };

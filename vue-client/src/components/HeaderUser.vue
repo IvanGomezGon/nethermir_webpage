@@ -47,7 +47,8 @@ export default {
     },
     methods: {
         logOut() {
-            fetch(`${process.env.VUE_APP_FETCH_URL}eliminateCookie`, {
+            fetch(`${process.env.VUE_APP_FETCH_URL}cookie`, {
+                method: 'DELETE',
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
             this.$router.push("/");

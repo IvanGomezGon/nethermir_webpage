@@ -27,24 +27,21 @@ app.use(express.json());
 // ALL BACKEND CALLS FROM FRONTEND
 
 app.get("/backend/checkCookie", function (req, res) {
-    logger.info("cookieManager.checkCookie");
     cookieManager.checkCookie(req, res)
         .then((groupName) => feedbackFetch(groupName, res))
         .catch(() => logger.info("cookieManager.checkCookie failed"));
 });
 
 app.put("/backend/activateMachine", async function (req, res) {
-    logger.info("activateMachine started");
     try {
         const vmID = req.body["vmID"]
         const hours = req.body["hours"]
-        groupName = await cookieManager.checkCookie(req, res)
-        group = vmID != null ? group = vmID : group = groupName.split("-").pop()
+        groupName = await cookieManager.getUserCookie(req, res)
+        logger.info(`activateMachine: ${groupName}`)
+        group = (vmID != null ? vmID : groupName.split("-").pop())
         active = await proxmoxManager.getActiveVM(group);
-        logger.info(`active: ${active}`)
         await databaseManager.changeRenovationHoursVM(group, active, hours);
         renovationHours = await databaseManager.getRenovationHoursVM(group)
-        logger.info(`active: ${renovationHours}`)
         await proxmoxManager.activateMachine(group);
         emails = await databaseManager.getEmailsFromGroupName(group, vmID);
         setTimeout(async function () {
@@ -63,9 +60,9 @@ app.put("/backend/activateMachine", async function (req, res) {
 });
 
 app.post("/backend/machine", async function (req, res) {
-    logger.info("generateMachine");
     try {
-        groupName = await cookieManager.checkCookie(req, res);
+        groupName = await cookieManager.getUserCookie(req, res);
+        logger.info(`Generating VM: ${groupName}`)
         groupData = await databaseManager.getGroupData(groupName);
         if (groupData.active != 0) {
             feedbackFetch("Group Virtual Machine already created")
@@ -89,10 +86,10 @@ app.post("/backend/machine", async function (req, res) {
 });
 
 app.put("/backend/stopMachine", async function (req, res) {
-    logger.info("stopMachine");
     try {
         const vmID = req.body["vmID"]
-        groupName = await cookieManager.checkCookie(req, res)
+        logger.info(`Stopping machine: ${vmID}`)
+        groupName = await cookieManager.getUserCookie(req, res)
         if (vmID != null) {
             proxmoxManager.stopMachine(vmID, req, res);
         } else {
@@ -104,10 +101,10 @@ app.put("/backend/stopMachine", async function (req, res) {
 });
 
 app.get("/backend/login", async function (req, res) {
-    logger.info("login");
     try{
         user = req.query["user"]
         const password = req.query["password"]
+        logger.info(`Logging: ${user}`)
         user = await databaseManager.authenticate(user, password)
         cookieManager.setCookie(user, res);
     }catch (error) {
@@ -116,11 +113,11 @@ app.get("/backend/login", async function (req, res) {
 });
 
 app.post("/backend/register", async function (req, res) {
-    logger.info("register");
     try {
         let user = req.body["user"]
         let emailsRaw = req.body["emails"]
         let [groupName, emails, portUDP, password, keyPairUser, keyPairRouter] = await databaseManager.registerGroup(user, emailsRaw);
+        logger.info(`Register: ${groupName}`)
         emailManager.sendPasswordEmail(emails, groupName, portUDP, password, keyPairUser, keyPairRouter);
         feedbackFetch("success", res)
     } catch (error) {
@@ -132,7 +129,7 @@ app.post("/backend/register", async function (req, res) {
 app.get("/backend/statusAllVMs", async function (req, res) {
     try {
         const server = req.query["server"]
-        await cookieManager.checkCookie(req, res)
+        await cookieManager.checkIsRootCookie(req, res)
         proxmoxManager.getStatusAllVMs(server).then(status => feedbackFetch(status, res))
     } catch (error) {
         logger.error(`Error gettingStatusAllVMs ${error}`)
@@ -143,7 +140,7 @@ app.get("/backend/statusAllVMs", async function (req, res) {
 app.get("/backend/statusVM", async function (req, res) {
     try {
         const vmID = req.query["vmID"]
-        groupName = await cookieManager.checkCookie(req, res)
+        groupName = await cookieManager.getUserCookie(req, res)
         if (vmID != null) {
             proxmoxManager.getStatusVM(vmID).then(status => feedbackFetch(JSON.stringify(status), res))
         } else {
@@ -157,7 +154,7 @@ app.get("/backend/statusVM", async function (req, res) {
 app.get("/backend/startingTimeVM", async function (req, res) {
     try {
         const vmID = req.query["vmID"]
-        groupName = await cookieManager.checkCookie(req, res)
+        groupName = await cookieManager.getUserCookie(req, res)
         if (vmID != null) {
             databaseManager.getStartingTimeVM(vmID).then(startingTime => feedbackFetch(startingTime, res))
         } else {
@@ -171,7 +168,7 @@ app.get("/backend/startingTimeVM", async function (req, res) {
 
 app.get("/backend/groups", async function (req, res) {
     try {
-        await cookieManager.checkCookie(req, res)
+        await cookieManager.checkIsRootCookie(req, res)
         databaseManager.getGroups(res).then(groups => feedbackFetch(groups, res))
     } catch (error) {
         logger.error(`Error getting groups ${error}`)
@@ -180,13 +177,16 @@ app.get("/backend/groups", async function (req, res) {
 });
 
 app.delete("/backend/group", async function (req, res) {
-    logger.info("eliminateGroup");
     try {
-        groupID = req.query["groupID"]
-        groupName = await cookieManager.checkCookie(req, res);
-        await databaseManager.eliminateGroup(groupID);
-        proxmoxManager.eliminateMachine(groupName.split("-").pop())
-        routerosManager.eliminateRouterOSConfig(groupName)
+        await cookieManager.checkIsRootCookie(req, res);
+        logger.info(`Eliminating groups: ${req.query["groupID"]}`)
+        groupNames = req.query["groupID"].split(',');
+        groupNames.forEach(async groupName => {
+            let groupID = groupName.split('-').pop()
+            await databaseManager.eliminateGroup(groupID);
+            proxmoxManager.eliminateMachine(groupID)
+            routerosManager.eliminateRouterOSConfig(groupName)
+        })
     } catch (error) {
         logger.error(`Error eliminating group ${error}`)
     }
@@ -194,7 +194,7 @@ app.delete("/backend/group", async function (req, res) {
 
 app.get("/backend/emails", async function (req, res) {
     try {
-        await cookieManager.checkCookie(req, res)
+        await cookieManager.checkIsRootCookie(req, res)
         databaseManager.getEmails(res).then(emails => feedbackFetch(emails, res))
     } catch (error) {
         logger.error(`Error getting Emails ${error}`)
@@ -202,11 +202,16 @@ app.get("/backend/emails", async function (req, res) {
 });
 
 app.delete("/backend/email", async function (req, res) {
-    logger.info("eliminateEmail");
     try {
-        const emailID = req.query["emailID"]
-        await cookieManager.checkCookie(req, res)
-        databaseManager.eliminateEmail(emailID, res).then(feedbackFetch("", res))
+        await cookieManager.checkIsRootCookie(req, res)
+        logger.info(`Eliminating emails: ${req.query["emailID"]}`)
+        const emailsID = req.query["emailID"].split(',')
+        let promises = [];
+        emailsID.forEach(emailID => {
+            logger.info(`emailid ${emailID}`)
+            promises.push(databaseManager.eliminateEmail(emailID, res))
+        })
+        Promise.all(promises).then(feedbackFetch(" ", res));
     } catch (error) {
         logger.error(`Error eliminating Email ${error}`)
     }
@@ -226,19 +231,26 @@ app.post("/backend/subject", async function (req, res) {
     try {
         const subjectName = req.body["subjectName"]
         const subjectID = req.body["subjectID"]
-        await cookieManager.checkCookie(req, res)
-        databaseManager.addSubject(subjectName, subjectID).then(feedbackFetch("", res))
+        logger.info(`Adding subject: ${subjectName}`)
+        await cookieManager.checkIsRootCookie(req, res)
+        databaseManager.addSubject(subjectName, subjectID).then(feedbackFetch(" ", res))
     } catch (error) {
         logger.error(`Error adding subject ${error}`)
     }
 });
 
 app.delete("/backend/subject", async function (req, res) {
-    logger.info("eliminateSubject");
     try {
-        const subjectID = req.query["subjectID"]
-        await cookieManager.checkCookie(req, res)
-        databaseManager.eliminateSubject(subjectID).then(feedbackFetch("", res))
+        await cookieManager.checkIsRootCookie(req, res)
+        logger.info(`Eliminating subjects: ${req.query["subjectID"]}`)
+        const subjectsID = req.query["subjectID"].split(',')
+        console.log(subjectsID)
+        let promises = [];
+        subjectsID.forEach(subjectID => {
+            console.log(subjectID)
+            promises.push(databaseManager.eliminateSubject(subjectID))
+        })
+        Promise.all(promises).then(feedbackFetch("", res));
     } catch (error) {
         logger.error(`Failed to eliminateSubject ${error}`)
     }
@@ -248,7 +260,8 @@ app.put("/backend/activateSubject", async function (req, res) {
     logger.info("activateSubject");
     try {
         const subjectID = req.body["subjectID"]
-        await cookieManager.checkCookie(req, res)
+        logger.info(`Activating subject: ${subjectID}`)
+        await cookieManager.checkIsRootCookie(req, res)
         databaseManager.activateSubject(subjectID).then(feedbackFetch("", res))
     } catch (error) {
         logger.error(`Failed activating machine ${error}`)
@@ -259,10 +272,10 @@ app.put("/backend/activateSubject", async function (req, res) {
 app.delete("/backend/restartDatabase", async function (req, res) {
     logger.info("restartDatabase");
     try {
-        groupName = await cookieManager.checkCookie(req, res)
-        if (groupName == "root") {
-            databaseManager.restartDatabase().then(feedbackFetch("", res));
-        }
+        logger.info(`Restarting database`)
+        await cookieManager.checkIsRootCookie(req, res)
+        databaseManager.restartDatabase().then(feedbackFetch("", res));
+        
     } catch (error) {
         logger.error(`Failed restartingDatabase ${error}`)
     }
@@ -272,7 +285,8 @@ app.put("/backend/resumeMachine", async function (req, res) {
     logger.info("resumeMachine");
     try {
         const vmID = req.body["vmID"]
-        groupName = await cookieManager.checkCookie(req, res)
+        logger.info(`Resuming machine: ${vmID}`)
+        groupName = await cookieManager.getUserCookie(req, res)
         if (vmID != null) {
             proxmoxManager.resumeMachine(vmID);
         } else {
@@ -287,7 +301,8 @@ app.put("/backend/suspendMachine", async function (req, res) {
     logger.info("suspendMachine");
     try {
         const vmID = req.body["vmID"]
-        groupName = await cookieManager.checkCookie(req, res)
+        logger.info(`Suspending machine: ${vmID}`)
+        groupName = await cookieManager.getUserCookie(req, res)
         if (vmID != null) {
             proxmoxManager.suspendMachine(vmID);
         } else {
@@ -307,7 +322,8 @@ app.delete("/backend/machine", async function (req, res) {
     logger.info("eliminateMachine");
     try {
         const vmID = req.body["vmID"]
-        groupName = await cookieManager.checkCookie(req, res)
+        logger.info(`Deleting machine: ${vmID}`)
+        groupName = await cookieManager.getUserCookie(req, res)
         if (vmID != null) {
             proxmoxManager.eliminateMachine(vmID);
         } else {

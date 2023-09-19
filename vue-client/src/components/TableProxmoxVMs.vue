@@ -1,4 +1,16 @@
 <template>
+    <div class="border-gray-300 border-t-2 pt-8">
+    </div>
+    <div class="pb-8 ml-auto">
+        <button type="button" @click="getData()" class="mr-4 bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white font-medium rounded-lg text-sm p-2.5">
+            <div class="flex space-x-2 items-center justify-between">
+                <svg class="w-[12px] h-[12px] text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
+                </svg>
+                <p> Actualitzar taula</p>
+            </div>
+        </button>
+    </div>
     <div class="flex items-center overflow-x-auto shadow-md rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-grey-400 uppercase bg-gray-100 dark:bg-grey-400 dark:text-gray-400">
@@ -71,13 +83,8 @@
         },
         mounted: function () {
             this.getData();
-            this.interval = setInterval(() => {
-                this.getData();
-            }, 2000);
         },
-        beforeUnmount() {
-            clearInterval(this.interval)
-        },
+
         methods: {
             async getData() {
                 let response = await fetch(`${process.env.VUE_APP_FETCH_URL}statusAllVMs?server=${this.server}`, {
