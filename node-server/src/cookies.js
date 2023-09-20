@@ -39,17 +39,20 @@ const getUserCookie = (req, res) => {
     });
 };
 
-const checkIsRootCookie = async (req, res) => {
-    try {
-        user = await getUserCookie(req, res);
-        if (user=="root"){
-            resolve()
-        }else{
+const checkIsRootCookie =  (req, res) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            user = await getUserCookie(req, res);
+            if (user=="root"){
+                resolve()
+            }else{
+                reject()
+            }
+        } catch (error) {
             reject()
         }
-    } catch (error) {
-        reject()
-    }
+    })
+
 
 }
 const eliminateCookie = (res) => {

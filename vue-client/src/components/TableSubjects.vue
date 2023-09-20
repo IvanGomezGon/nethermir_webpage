@@ -2,8 +2,8 @@
     <div class="border-gray-300 border-t-2 pt-8 ">
 
     </div>
-    <div class="pb-8 ml-auto">
-        <button type="button" @click="getData()" class="mr-4 bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white font-medium rounded-lg text-sm p-2.5">
+    <div class="pb-8 ml-auto ">
+        <button type="button" @click="getData()" class="mr-4 bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white font-medium rounded-lg text-sm p-2.5 ">
             <div class="flex space-x-2 items-center justify-between">
                 <svg class="w-[12px] h-[12px] text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
@@ -11,17 +11,41 @@
                 <p> Actualitzar taula</p>
             </div>
         </button>
-        <button :disabled="getElements()==0" type="button" @click="deleteElements()" :class="(getElements()== 0 ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'font-medium rounded-lg text-sm p-2.5'">
-            <span :class="(getElements()== 0 ? 'dark:text-grey-500 dark:bg-grey-300 text-gray-400 bg-gray-500 ' : ' text-primary-800 bg-primary-200 ') + 'inline-flex items-center justify-center w-4 h-4 mr-1 text-xs font-semibold rounded-full'">
-                {{getElements()}}
-            </span>
-            Eliminar elements
+        <div class="contents">
+            <button id="dropdownDefaultButton" @click="dropdownShow = !dropdownShow" data-dropdown-toggle="dropdown" class="w-[185px] bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white text-center inline-flex items-center font-medium rounded-lg text-sm p-2.5 block" type="button">
+                <span v-if="selectedAction != 'Seleccionar acció'" class="mr-2 text-primary-800 bg-primary-200 inline-flex items-center justify-center w-4 h-4 mr-1 text-xs font-semibold rounded-full text-center">
+                    {{getNumActiveRows()}}
+                </span>
+                <span :class="selectedAction == 'Seleccionar acció' ?'mr-auto ml-auto' : 'mr-auto'">
+                    {{ selectedAction }} {{ selectedAction != "Seleccionar acció" ? 'elements' : '' }} 
+                </span>
+                <svg class="w-2.5 h-2.5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                </svg>
+            </button>
+            <button :disabled="getNumActiveRows()==0 || selectedAction == 'Seleccionar acció'" type="button" @click="executeAction()" :class="(getNumActiveRows()== 0 || selectedAction == 'Seleccionar acció' ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'ml-4 font-medium rounded-lg text-sm p-2.5 '">
+            Executar
         </button>
+            <div id="dropdown" v-if="dropdownShow == true" class="mt-1 w-[185px] ml-[159px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-grey-400 absolute border dark:border-grey-300 border-gray-300 ">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200 " aria-labelledby="dropdownDefaultButton">
+                <li @click="selectedAction='Activar'; dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Activar</a>
+                </li>
+                <li  @click="selectedAction='Desactivar'; dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Desactivar</a>
+                </li>
+                <li  @click="selectedAction='Eliminar'; dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Eliminar</a>
+                </li>
+                </ul>
+            </div>  
+        </div>
+
     </div>
 
     <div class="flex items-center overflow-x-auto shadow-md rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-grey-400 uppercase bg-gray-50 dark:bg-grey-400 dark:text-gray-400" @click="getAllActive()">
+            <thead class="text-xs text-grey-400 uppercase bg-gray-50 dark:bg-grey-400 dark:text-gray-400" @click="areAllActive()">
                 <tr>
                     <th scope="col" class="px-6 py-3">
                         <div class="flex items-start">
@@ -92,24 +116,14 @@ export default {
         return {
             data: "",
             active:[],
+            dropdownShow: false,
+            selectedAction: "Seleccionar acció"
         };
     },
     mounted: function () {
         this.getData();
     },
     methods: {
-        getElements(){
-            let sum = this.active.reduce((partialSum, a) => partialSum + a, 0);
-            return sum
-        },
-        getAllActive(){
-            if (this.active.every(v => v == true)){
-                this.active.fill(false)
-            }else{
-                this.active.fill(true)
-            }
-            
-        },
         async getData() {
             let response = await fetch(`${process.env.VUE_APP_FETCH_URL}subjects`)
             response.json().then((json) => {
@@ -120,35 +134,87 @@ export default {
             });
         },
 
-        eliminateSubject(subjectsID) {
-            console.log("Elements to delete: ", subjectsID)
-            fetch(`${process.env.VUE_APP_FETCH_URL}subject?subjectID=${subjectsID}`, {
-                method: 'DELETE',
-                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-            }).then();
+        getNumActiveRows(){
+            let sum = this.active.reduce((partialSum, a) => partialSum + a, 0);
+            return sum
         },
-        deleteElements() {
-            let deleteElements = []
-            this.data.forEach((subject, i) => {
-                if(this.active[i]){
-                    deleteElements.push(subject.idsubject)
-                }
-            }) 
-            if (deleteElements.length > 0){
-                this.eliminateSubject(deleteElements.join(','))
+
+        areAllActive(){
+            if (this.active.every(v => v == true)){
+                this.active.fill(false)
+            }else{
+                this.active.fill(true)
             }
         },
-        activateSubject(subjectID) {
+
+        getActivatedRows() {
+            return new Promise((resolve, reject) => {
+                let deleteElements = []
+                this.data.forEach((subject, i) => {
+                    if(this.active[i]){
+                        deleteElements.push(subject.idsubject)
+                    }
+                }) 
+                if (deleteElements.length > 0){
+                    resolve(deleteElements.join(','))
+                }
+            })
+        },
+        
+        async executeAction() {
+            let activatedRows = await this.getNumActiveRows()
+            if (activatedRows == 0) {
+                return
+            }
+            if (this.selectedAction == "Activar"){
+                this.activateSubject()
+            }   
+            else if (this.selectedAction == "Desactivar"){
+                this.deactiveSubject()
+            }
+            else if (this.selectedAction == "Eliminar"){
+                this.eliminateSubject()
+            }
+        },
+        
+        async activateSubject() {
+            let subjectsID = await this.getActivatedRows()
+            console.log("Elements to activate: ", subjectsID)
             fetch(`${process.env.VUE_APP_FETCH_URL}activateSubject`, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({subjectID: subjectID}),
+                    body: JSON.stringify({subjectsID: subjectsID}),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },
+
+        async deactiveSubject() {
+            let subjectsID = await this.getActivatedRows()
+            console.log("Elements to deactivate: ", subjectsID)
+            fetch(`${process.env.VUE_APP_FETCH_URL}deactivateSubject`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({subjectsID: subjectsID}),
+                    credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+            }).then();
+        },
+
+        async eliminateSubject() {
+            let subjectsID = await this.getActivatedRows()
+            console.log("Elements to delete: ", subjectsID)
+            fetch(`${process.env.VUE_APP_FETCH_URL}subject?subjectsID=${subjectsID}`, {
+                method: 'DELETE',
+                credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
+            }).then();
+        },
+
+
     },
 };
 </script>

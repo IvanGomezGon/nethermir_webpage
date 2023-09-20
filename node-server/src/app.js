@@ -27,7 +27,7 @@ app.use(express.json());
 // ALL BACKEND CALLS FROM FRONTEND
 
 app.get("/backend/checkCookie", function (req, res) {
-    cookieManager.checkCookie(req, res)
+    cookieManager.getUserCookie(req, res)
         .then((groupName) => feedbackFetch(groupName, res))
         .catch(() => logger.info("cookieManager.checkCookie failed"));
 });
@@ -242,12 +242,10 @@ app.post("/backend/subject", async function (req, res) {
 app.delete("/backend/subject", async function (req, res) {
     try {
         await cookieManager.checkIsRootCookie(req, res)
-        logger.info(`Eliminating subjects: ${req.query["subjectID"]}`)
-        const subjectsID = req.query["subjectID"].split(',')
-        console.log(subjectsID)
+        logger.info(`Eliminating subjects: ${req.query["subjectsID"]}`)
+        const subjectsID = req.query["subjectsID"].split(',')
         let promises = [];
         subjectsID.forEach(subjectID => {
-            console.log(subjectID)
             promises.push(databaseManager.eliminateSubject(subjectID))
         })
         Promise.all(promises).then(feedbackFetch("", res));
@@ -259,14 +257,33 @@ app.delete("/backend/subject", async function (req, res) {
 app.put("/backend/activateSubject", async function (req, res) {
     logger.info("activateSubject");
     try {
-        const subjectID = req.body["subjectID"]
-        logger.info(`Activating subject: ${subjectID}`)
         await cookieManager.checkIsRootCookie(req, res)
-        databaseManager.activateSubject(subjectID).then(feedbackFetch("", res))
+        logger.info(`Activating subject: ${req.query["subjectsID"]}`)
+        const subjectsID = req.body["subjectsID"].split(',')
+        let promises = [];
+        subjectsID.forEach(subjectID => {
+            promises.push(databaseManager.activateSubject(subjectID))
+        })
+        Promise.all(promises).then(feedbackFetch("", res));
     } catch (error) {
         logger.error(`Failed activating machine ${error}`)
     }
+});
 
+app.put("/backend/deactivateSubject", async function (req, res) {
+    logger.info("DeactivateSubject");
+    try {
+        await cookieManager.checkIsRootCookie(req, res)
+        const subjectsID = req.body["subjectsID"].split(',')
+        logger.info(`Deactivating subject: ${req.query["subjectsID"]}`)
+        let promises = [];
+        subjectsID.forEach(subjectID => {
+            promises.push(databaseManager.deactivateSubject(subjectID))
+        })
+        Promise.all(promises).then(feedbackFetch("", res));
+    } catch (error) {
+        logger.error(`Failed deactivating machine ${error}`)
+    }
 });
 
 app.delete("/backend/restartDatabase", async function (req, res) {

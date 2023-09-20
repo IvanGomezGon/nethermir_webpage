@@ -217,7 +217,17 @@ const eliminateSubject = (id) => {
 const activateSubject = (id) => {
     return new Promise((resolve, reject) => {
         logger.info(`activateSubject ${id}`);
-        sql = `UPDATE nethermir.subjects SET active=(active+1)%2 WHERE idsubject=(?)`;
+        sql = `UPDATE nethermir.subjects SET active=1 WHERE idsubject=(?)`;
+        queryToDB(sql, [id]).then((x) => {
+            resolve();
+        });
+    })
+};
+
+const deactivateSubject = (id) => {
+    return new Promise((resolve, reject) => {
+        logger.info(`deactivateSubject ${id}`);
+        sql = `UPDATE nethermir.subjects SET active=0 WHERE idsubject=(?)`;
         queryToDB(sql, [id]).then((x) => {
             resolve();
         });
@@ -411,6 +421,7 @@ module.exports = {
     eliminateSubject,
     addSubject,
     activateSubject,
+    deactivateSubject,
     genKeyPairVLAN,
     getEmailsFromGroupName,
     getStartingTimeVM,
@@ -418,4 +429,5 @@ module.exports = {
     changeRenovationHoursVM,
     getGroupData,
     activateGroup,
+    
 };
