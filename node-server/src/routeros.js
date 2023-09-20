@@ -1,4 +1,5 @@
 const RosApi = require("node-routeros").RouterOSAPI;
+const { group } = require("console");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var logger = require(path.resolve(__dirname, "logger.js"));
@@ -16,10 +17,13 @@ const conn = new RosApi({
 // vlanId = 300
 // Interface = eth3
 
+var alreadyConneting = false;
 const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey, port_udp, interface, vlanId) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         logger.info("generateRouterOSConfig");
-
+        interval = await waitForConnection(groupName);
+        clearInterval(interval);
+        alreadyConneting = true;
         conn.connect()
             .then(() => {
                 logger.info("Connected to host!");
@@ -95,6 +99,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
                         logger.info(`ip firewall filter moved, ${data}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
+                        alreadyConneting = false;
                         resolve("Success");
                     })
 
@@ -103,6 +108,7 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
                         logger.info(`Error routeros on execution ${err}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
+                        alreadyConneting = false;
                         resolve(`Error routeros on execution ${err}`);
                     });
             })
@@ -110,16 +116,12 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             //Catching errors in connection
             .catch((err) => {
                 logger.info(`Error routeros failed to connect ${err}`);
+                alreadyConneting = false;
                 resolve(`Error routeros failed to connect ${err}`);
             });
     });
 };
-/*
 
-newRuleId = 
-
-            
-*/
 const getIdToRemove = (data, searchValue) => {
     return new Promise((resolve, reject) => {
         for (row of data) {
@@ -131,10 +133,25 @@ const getIdToRemove = (data, searchValue) => {
 
 };
 
+const waitForConnection = (id) => {
+    return new Promise((resolve, reject) => {
+        let maxTime = 5;
+        let interval = setInterval(async () => {
+            if (alreadyConneting == false || maxTime <= 0){
+                resolve(interval)
+            }
+            maxTime = maxTime - 1;
+        }, 5000);
+    });
+}
+
 const eliminateRouterOSConfig = async (groupName) => {
     return new Promise(async (resolve, reject) => {
         logger.info(`eliminateRouterOSConfig ${groupName}`);
         await sleep(5000);
+        interval = await waitForConnection(groupName);
+        clearInterval(interval);
+        alreadyConneting = true;
         conn.connect()
             .then(() => {
                 logger.info("Connected to host!");
@@ -243,6 +260,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`ip firewall filter removed, ${data}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
+                        alreadyConneting = false;
                         resolve("Success");
                     })
 
@@ -251,6 +269,7 @@ const eliminateRouterOSConfig = async (groupName) => {
                         logger.info(`Error eliminating router config in execution${err}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
+                        alreadyConneting = false;
                         resolve("Error");
                     });
             })
@@ -258,12 +277,14 @@ const eliminateRouterOSConfig = async (groupName) => {
             //Catching errors in connection
             .catch((err) => {
                 logger.info(`Error eliminating router config in connection ${err}`);
+                alreadyConneting = false;
+                console.log("NOW CONNECTION IS" , alreadyConneting)
                 resolve("Error");
             });
     });
 };
+
 //generateRouterOSConfig('XX-2022-2-111', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 'd6RkghbowFsH8hafgjMeTWnsfZIZVJMGXr6toVd2jxU=', 65439, "ether1",13)
-//eliminateRouterOSConfig("FX-2022-1-101");
 
 module.exports = {
     generateRouterOSConfig,
