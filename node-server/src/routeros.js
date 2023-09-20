@@ -135,12 +135,10 @@ const getIdToRemove = (data, searchValue) => {
 
 const waitForConnection = (id) => {
     return new Promise((resolve, reject) => {
-        let maxTime = 5;
         let interval = setInterval(async () => {
-            if (alreadyConneting == false || maxTime <= 0){
+            if (alreadyConneting == false){
                 resolve(interval)
             }
-            maxTime = maxTime - 1;
         }, 5000);
     });
 }
