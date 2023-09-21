@@ -258,10 +258,13 @@ app.delete("/backend/restartDatabase", async function (req, res) {
 
 app.put("/backend/activateMachine", async function (req, res) {
     try {
-        const vmIDs = req.body["vmIDs"].split(',')
         const hours = req.body["hours"]
         groupName = await cookieManager.getUserCookie(req, res)
-        logger.info(`activateMachine: ${req.body["vmIDs"]}`)
+        vmIDs = [groupName.split("-").pop()]
+        if (req.body["vmIDs"] != null) {
+            vmIDs = req.body["vmIDs"].split(',') 
+        }     
+        logger.info(`activateMachine: ${vmIDs}`)
         if (vmIDs.length > 1){
             let promises = [];
             vmIDs.forEach(async vmID => {
@@ -269,7 +272,7 @@ app.put("/backend/activateMachine", async function (req, res) {
             })
             Promise.all(promises).then(feedbackFetch("", res));  
         }else{
-            vmID = groupName.split("-").pop();
+            vmID = vmIDs[0]
             active = await proxmoxManager.getActiveVM(vmID);
             await databaseManager.changeRenovationHoursVM(vmID, active, hours);
             renovationHours = await databaseManager.getRenovationHoursVM(vmID)
@@ -293,16 +296,15 @@ app.put("/backend/activateMachine", async function (req, res) {
 
 app.put("/backend/stopMachine", async function (req, res) {
     try {
-        logger.info(`Stopping machines: ${req.body["vmIDs"]}`)
-        const vmIDs = req.body["vmIDs"].split(',')
         groupName = await cookieManager.getUserCookie(req, res)
+        vmIDs = [groupName.split("-").pop()]
+        if (req.body["vmIDs"] != null) {
+            vmIDs = req.body["vmIDs"].split(',') 
+        }        
         let promises = [];
+        logger.info(`Stopping machines: ${vmIDs}`)
         vmIDs.forEach(async vmID => {
-            if (vmID != null) {
-                promises.push(proxmoxManager.stopMachine(vmID));
-            } else {
-                promises.push(proxmoxManager.stopMachine(groupName.split("-").pop()));
-            }
+            promises.push(proxmoxManager.stopMachine(vmID));
         })
         Promise.all(promises).then(feedbackFetch("", res));  
     } catch (error) {
@@ -313,16 +315,15 @@ app.put("/backend/stopMachine", async function (req, res) {
 app.put("/backend/resumeMachine", async function (req, res) {
     logger.info("resumeMachine");
     try {
-        const vmIDs = req.body["vmIDs"].split(',')
-        logger.info(`Resuming machines: ${req.body["vmIDs"]}`)
         groupName = await cookieManager.getUserCookie(req, res)
+        vmIDs = [groupName.split("-").pop()]
+        logger.info(`Resuming machines: ${vmIDs}`)
         let promises = [];
+        if (req.body["vmIDs"] != null) {
+            vmIDs = req.body["vmIDs"].split(',') 
+        }  
         vmIDs.forEach(async vmID => {
-            if (vmID != null) {
-                promises.push(proxmoxManager.resumeMachine(vmID));
-            } else {
-                promises.push(proxmoxManager.resumeMachine(groupName.split("-").pop()));
-            }
+            promises.push(proxmoxManager.resumeMachine(vmID));
         })
         Promise.all(promises).then(feedbackFetch("", res));
     } catch (error) {
@@ -333,9 +334,12 @@ app.put("/backend/resumeMachine", async function (req, res) {
 app.put("/backend/suspendMachine", async function (req, res) {
     logger.info("suspendMachine");
     try {
-        const vmIDs = req.body["vmIDs"].split(',')
-        logger.info(`Suspending machines: ${req.body["vmIDs"]}`)
         groupName = await cookieManager.getUserCookie(req, res)
+        vmIDs = [groupName.split("-").pop()]
+        if (req.body["vmIDs"] != null) {
+            vmIDs = req.body["vmIDs"].split(',') 
+        }  
+        logger.info(`Suspending machines: ${vmIDs}`)
         let promises = [];
         vmIDs.forEach(async vmID => {
             if (vmID != null) {

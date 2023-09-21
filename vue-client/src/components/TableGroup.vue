@@ -79,22 +79,6 @@
                             :class="statusVM == 'stopped' ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">
                             {{ "Parar" }}</a>
                     </td>
-                    <td class="px-6 py-4 text-right">
-                        HOLA
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-start">
-                                <div class="flex items-center h-5">
-                                    <input id="remember" aria-describedby="remember" type="checkbox"
-                                        @click="passwordType = (passwordType + 1) % 2"
-                                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50">
-                                </div>
-                                <div class="ml-3 text-sm">
-                                    <div for="remember" class="text-gray-500">Mostrar contrasenya</div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-
                 </tr>
 
             </tbody>
