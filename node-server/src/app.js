@@ -285,9 +285,9 @@ app.put("/backend/activateMachine", async function (req, res) {
                         if (await databaseManager.getRenovationHoursVM(vmID) == renovationHours) {
                             proxmoxManager.stopMachine(vmID, req, res)
                         }
-                    }, 1000 * 30)
+                    }, 1800000)
                 }
-            }, hours * 1000 * 30);
+            }, hours * 3600000 - 1800000);
         }       
     } catch (error) {
         logger.error(`Failed activating machines ${error}`)
