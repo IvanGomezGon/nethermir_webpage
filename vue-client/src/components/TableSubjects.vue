@@ -40,7 +40,6 @@
                 </ul>
             </div>  
         </div>
-
     </div>
 
     <div class="flex items-center overflow-x-auto shadow-md rounded-lg">
@@ -50,7 +49,7 @@
                     <th scope="col" class="px-6 py-3">
                         <div class="flex items-start">
                                 <div class="flex items-center h-5">
-                                    <input type="checkbox" :checked="this.active.every(v => v == true)"
+                                    <input type="checkbox" :checked="active.every(v => v == true)"
                                         class="w-4 h-4 border border-gray-300 rounded bg-gray-50 accent-slate-500">
                                 </div>
                         </div>
@@ -178,37 +177,37 @@ export default {
         },
         
         async activateSubject() {
-            let subjectsID = await this.getActivatedRows()
-            console.log("Elements to activate: ", subjectsID)
+            let subjectIDs = await this.getActivatedRows()
+            console.log("Elements to activate: ", subjectIDs)
             fetch(`${process.env.VUE_APP_FETCH_URL}activateSubject`, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({subjectsID: subjectsID}),
+                    body: JSON.stringify({subjectIDs: subjectIDs}),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },
 
         async deactiveSubject() {
-            let subjectsID = await this.getActivatedRows()
-            console.log("Elements to deactivate: ", subjectsID)
+            let subjectIDs = await this.getActivatedRows()
+            console.log("Elements to deactivate: ", subjectIDs)
             fetch(`${process.env.VUE_APP_FETCH_URL}deactivateSubject`, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({subjectsID: subjectsID}),
+                    body: JSON.stringify({subjectIDs: subjectIDs}),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();
         },
 
         async eliminateSubject() {
-            let subjectsID = await this.getActivatedRows()
-            console.log("Elements to delete: ", subjectsID)
-            fetch(`${process.env.VUE_APP_FETCH_URL}subject?subjectsID=${subjectsID}`, {
+            let subjectIDs = await this.getActivatedRows()
+            console.log("Elements to delete: ", subjectIDs)
+            fetch(`${process.env.VUE_APP_FETCH_URL}subject?subjectIDs=${subjectIDs}`, {
                 method: 'DELETE',
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then();

@@ -153,13 +153,8 @@ const changeRenovationHoursVM = (idGroup, active, hours) => {
     })
 }
 //EMAILS
-const getEmailsFromGroupName = (groupName, id) => {
+const getEmailsFromGroupName = (vmID) => {
     return new Promise((resolve, reject) => {
-        if (groupName == null) {
-            vmID = id
-        } else {
-            vmID = groupName.split("-").pop()
-        }
         sql = `SELECT email FROM nethermir.emails WHERE SUBSTRING(group_name, -3)=(?)`;
         logger.info(`vmID: ${vmID}`)
         queryToDB(sql, [vmID]).then((data) => {

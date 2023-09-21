@@ -32,33 +32,6 @@ app.get("/backend/checkCookie", function (req, res) {
         .catch(() => logger.info("cookieManager.checkCookie failed"));
 });
 
-app.put("/backend/activateMachine", async function (req, res) {
-    try {
-        const vmID = req.body["vmID"]
-        const hours = req.body["hours"]
-        groupName = await cookieManager.getUserCookie(req, res)
-        logger.info(`activateMachine: ${groupName}`)
-        group = (vmID != null ? vmID : groupName.split("-").pop())
-        active = await proxmoxManager.getActiveVM(group);
-        await databaseManager.changeRenovationHoursVM(group, active, hours);
-        renovationHours = await databaseManager.getRenovationHoursVM(group)
-        await proxmoxManager.activateMachine(group);
-        emails = await databaseManager.getEmailsFromGroupName(group, vmID);
-        setTimeout(async function () {
-            if (await databaseManager.getRenovationHoursVM(group) == renovationHours) {
-                emailManager.sendWarningMail(emails);
-                setTimeout(async function () {
-                    if (await databaseManager.getRenovationHoursVM(group) == renovationHours) {
-                        proxmoxManager.stopMachine(group, req, res)
-                    }
-                }, 1800000)
-            }
-        }, hours * 3600000 - 1800000);
-    } catch (error) {
-        logger.error(`Failed activatingMachine ${error}`)
-    }
-});
-
 app.post("/backend/machine", async function (req, res) {
     try {
         groupName = await cookieManager.getUserCookie(req, res);
@@ -82,21 +55,6 @@ app.post("/backend/machine", async function (req, res) {
         }
     } catch (error) {
         logger.error(`Failed generatingMachine ${error}`)
-    }
-});
-
-app.put("/backend/stopMachine", async function (req, res) {
-    try {
-        const vmID = req.body["vmID"]
-        logger.info(`Stopping machine: ${vmID}`)
-        groupName = await cookieManager.getUserCookie(req, res)
-        if (vmID != null) {
-            proxmoxManager.stopMachine(vmID, req, res);
-        } else {
-            proxmoxManager.stopMachine(groupName.split("-").pop(), req, res);
-        }
-    } catch (error) {
-        logger.error(`Failed stopingMachine ${error}`)
     }
 });
 
@@ -242,10 +200,10 @@ app.post("/backend/subject", async function (req, res) {
 app.delete("/backend/subject", async function (req, res) {
     try {
         await cookieManager.checkIsRootCookie(req, res)
-        logger.info(`Eliminating subjects: ${req.query["subjectsID"]}`)
-        const subjectsID = req.query["subjectsID"].split(',')
+        logger.info(`Eliminating subjects: ${req.query["subjectIDs"]}`)
+        const subjectIDs = req.query["subjectIDs"].split(',')
         let promises = [];
-        subjectsID.forEach(subjectID => {
+        subjectIDs.forEach(subjectID => {
             promises.push(databaseManager.eliminateSubject(subjectID))
         })
         Promise.all(promises).then(feedbackFetch("", res));
@@ -258,15 +216,15 @@ app.put("/backend/activateSubject", async function (req, res) {
     logger.info("activateSubject");
     try {
         await cookieManager.checkIsRootCookie(req, res)
-        logger.info(`Activating subject: ${req.query["subjectsID"]}`)
-        const subjectsID = req.body["subjectsID"].split(',')
+        logger.info(`Activating subject: ${req.body["subjectIDs"]}`)
+        const subjectIDs = req.body["subjectIDs"].split(',')
         let promises = [];
-        subjectsID.forEach(subjectID => {
+        subjectIDs.forEach(subjectID => {
             promises.push(databaseManager.activateSubject(subjectID))
         })
         Promise.all(promises).then(feedbackFetch("", res));
     } catch (error) {
-        logger.error(`Failed activating machine ${error}`)
+        logger.error(`Failed activating subject ${error}`)
     }
 });
 
@@ -274,15 +232,15 @@ app.put("/backend/deactivateSubject", async function (req, res) {
     logger.info("DeactivateSubject");
     try {
         await cookieManager.checkIsRootCookie(req, res)
-        const subjectsID = req.body["subjectsID"].split(',')
-        logger.info(`Deactivating subject: ${req.query["subjectsID"]}`)
+        const subjectIDs = req.body["subjectIDs"].split(',')
+        logger.info(`Deactivating subject: ${req.body["subjectIDs"]}`)
         let promises = [];
-        subjectsID.forEach(subjectID => {
+        subjectIDs.forEach(subjectID => {
             promises.push(databaseManager.deactivateSubject(subjectID))
         })
         Promise.all(promises).then(feedbackFetch("", res));
     } catch (error) {
-        logger.error(`Failed deactivating machine ${error}`)
+        logger.error(`Failed deactivating subject ${error}`)
     }
 });
 
@@ -294,39 +252,101 @@ app.delete("/backend/restartDatabase", async function (req, res) {
         databaseManager.restartDatabase().then(feedbackFetch("", res));
         
     } catch (error) {
-        logger.error(`Failed restartingDatabase ${error}`)
+        logger.error(`Failed restarting database ${error}`)
+    }
+});
+
+app.put("/backend/activateMachine", async function (req, res) {
+    try {
+        const vmIDs = req.body["vmIDs"].split(',')
+        const hours = req.body["hours"]
+        groupName = await cookieManager.getUserCookie(req, res)
+        logger.info(`activateMachine: ${req.body["vmIDs"]}`)
+        if (vmIDs.length > 1){
+            let promises = [];
+            vmIDs.forEach(async vmID => {
+                promises.push(proxmoxManager.activateMachine(vmID));
+            })
+            Promise.all(promises).then(feedbackFetch("", res));  
+        }else{
+            vmID = groupName.split("-").pop();
+            active = await proxmoxManager.getActiveVM(vmID);
+            await databaseManager.changeRenovationHoursVM(vmID, active, hours);
+            renovationHours = await databaseManager.getRenovationHoursVM(vmID)
+            await proxmoxManager.activateMachine(vmID);
+            emails = await databaseManager.getEmailsFromGroupName(vmID);
+            setTimeout(async function () {
+                if (await databaseManager.getRenovationHoursVM(vmID) == renovationHours) {
+                    emailManager.sendWarningMail(emails);
+                    setTimeout(async function () {
+                        if (await databaseManager.getRenovationHoursVM(vmID) == renovationHours) {
+                            proxmoxManager.stopMachine(vmID, req, res)
+                        }
+                    }, 1800000)
+                }
+            }, hours * 3600000 - 1800000);
+        }       
+    } catch (error) {
+        logger.error(`Failed activating machines ${error}`)
+    }
+});
+
+app.put("/backend/stopMachine", async function (req, res) {
+    try {
+        logger.info(`Stopping machines: ${req.body["vmIDs"]}`)
+        const vmIDs = req.body["vmIDs"].split(',')
+        groupName = await cookieManager.getUserCookie(req, res)
+        let promises = [];
+        vmIDs.forEach(async vmID => {
+            if (vmID != null) {
+                promises.push(proxmoxManager.stopMachine(vmID));
+            } else {
+                promises.push(proxmoxManager.stopMachine(groupName.split("-").pop()));
+            }
+        })
+        Promise.all(promises).then(feedbackFetch("", res));  
+    } catch (error) {
+        logger.error(`Failed stopping machines ${error}`)
     }
 });
 
 app.put("/backend/resumeMachine", async function (req, res) {
     logger.info("resumeMachine");
     try {
-        const vmID = req.body["vmID"]
-        logger.info(`Resuming machine: ${vmID}`)
+        const vmIDs = req.body["vmIDs"].split(',')
+        logger.info(`Resuming machines: ${req.body["vmIDs"]}`)
         groupName = await cookieManager.getUserCookie(req, res)
-        if (vmID != null) {
-            proxmoxManager.resumeMachine(vmID);
-        } else {
-            proxmoxManager.resumeMachine(groupName.split("-").pop());
-        }
+        let promises = [];
+        vmIDs.forEach(async vmID => {
+            if (vmID != null) {
+                promises.push(proxmoxManager.resumeMachine(vmID));
+            } else {
+                promises.push(proxmoxManager.resumeMachine(groupName.split("-").pop()));
+            }
+        })
+        Promise.all(promises).then(feedbackFetch("", res));
     } catch (error) {
-        logger.error(`Failed resumingMachine ${error}`)
+        logger.error(`Failed resuming machines ${error}`)
     }
 });
 
 app.put("/backend/suspendMachine", async function (req, res) {
     logger.info("suspendMachine");
     try {
-        const vmID = req.body["vmID"]
-        logger.info(`Suspending machine: ${vmID}`)
+        const vmIDs = req.body["vmIDs"].split(',')
+        logger.info(`Suspending machines: ${req.body["vmIDs"]}`)
         groupName = await cookieManager.getUserCookie(req, res)
-        if (vmID != null) {
-            proxmoxManager.suspendMachine(vmID);
-        } else {
-            proxmoxManager.suspendMachine(groupName.split("-").pop());
-        }
+        let promises = [];
+        vmIDs.forEach(async vmID => {
+            if (vmID != null) {
+                promises.push(proxmoxManager.suspendMachine(vmID));
+            } else {
+                promises.push(proxmoxManager.suspendMachine(groupName.split("-").pop()));
+            }
+        })
+        Promise.all(promises).then(feedbackFetch("", res));
     } catch (error) {
-        logger.error(`Failed suspendingMachine ${error}`)
+        logger.error(`Failed suspending machines ${error}`)
     }
 });
 
@@ -339,7 +359,7 @@ app.delete("/backend/machine", async function (req, res) {
     logger.info("eliminateMachine");
     try {
         const vmID = req.body["vmID"]
-        logger.info(`Deleting machine: ${vmID}`)
+        logger.info(`Deleting machines: ${req.body["vmIDs"]}`)
         groupName = await cookieManager.getUserCookie(req, res)
         if (vmID != null) {
             proxmoxManager.eliminateMachine(vmID);
@@ -347,7 +367,7 @@ app.delete("/backend/machine", async function (req, res) {
             proxmoxManager.eliminateMachine(groupName.split("-").pop());
         }
     } catch (error) {
-        logger.error(`Failed eliminathingMachine ${error}`)
+        logger.error(`Failed eliminating machines ${error}`)
     }
 });
 
