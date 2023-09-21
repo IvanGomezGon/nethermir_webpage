@@ -259,8 +259,8 @@ app.delete("/backend/restartDatabase", async function (req, res) {
 app.put("/backend/activateMachine", async function (req, res) {
     try {
         const hours = req.body["hours"]
-        groupName = await cookieManager.getUserCookie(req, res)
-        vmIDs = [groupName.split("-").pop()]
+        let groupName = await cookieManager.getUserCookie(req, res)
+        let vmIDs = [groupName.split("-").pop()]
         if (req.body["vmIDs"] != null) {
             vmIDs = req.body["vmIDs"].split(',') 
         }     
@@ -272,12 +272,12 @@ app.put("/backend/activateMachine", async function (req, res) {
             })
             Promise.all(promises).then(feedbackFetch("", res));  
         }else{
-            vmID = vmIDs[0]
-            active = await proxmoxManager.getActiveVM(vmID);
+            let vmID = vmIDs[0]
+            let active = await proxmoxManager.getActiveVM(vmID);
             await databaseManager.changeRenovationHoursVM(vmID, active, hours);
-            renovationHours = await databaseManager.getRenovationHoursVM(vmID)
+            let renovationHours = await databaseManager.getRenovationHoursVM(vmID)
             await proxmoxManager.activateMachine(vmID);
-            emails = await databaseManager.getEmailsFromGroupName(vmID);
+            let emails = await databaseManager.getEmailsFromGroupName(vmID);
             setTimeout(async function () {
                 if (await databaseManager.getRenovationHoursVM(vmID) == renovationHours) {
                     emailManager.sendWarningMail(emails);
@@ -285,9 +285,9 @@ app.put("/backend/activateMachine", async function (req, res) {
                         if (await databaseManager.getRenovationHoursVM(vmID) == renovationHours) {
                             proxmoxManager.stopMachine(vmID, req, res)
                         }
-                    }, 1800000)
+                    }, 1000 * 30)
                 }
-            }, hours * 3600000 - 1800000);
+            }, hours * 1000 * 30);
         }       
     } catch (error) {
         logger.error(`Failed activating machines ${error}`)

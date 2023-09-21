@@ -32,9 +32,6 @@
                     <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Parar</span>
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Select</span>
-                    </th>
                 </tr>
             </thead>
             <tbody>
