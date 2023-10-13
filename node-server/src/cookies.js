@@ -55,7 +55,7 @@ const checkIsRootCookie =  (req, res) => {
 
 
 }
-const eliminateCookie = (res) => {
+const deleteCookie = (res) => {
     res.clearCookie("token");
     feedbackFetch("", res);
 };
@@ -63,6 +63,6 @@ const eliminateCookie = (res) => {
 module.exports = {
     setCookie,
     getUserCookie,
-    eliminateCookie,
+    deleteCookie,
     checkIsRootCookie,
 };

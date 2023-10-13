@@ -24,8 +24,8 @@
                 </svg>
             </button>
             <button :disabled="getNumActiveRows()==0 || selectedAction == 'Seleccionar acció'" type="button" @click="executeAction()" :class="(getNumActiveRows()== 0 || selectedAction == 'Seleccionar acció' ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'ml-4 font-medium rounded-lg text-sm p-2.5 '">
-            Executar
-        </button>
+                Executar
+            </button>
             <div id="dropdown" v-if="dropdownShow == true" class="mt-1 w-[185px] ml-[159px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-grey-400 absolute border dark:border-grey-300 border-gray-300 ">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200 " aria-labelledby="dropdownDefaultButton">
                 <li @click="selectedAction='Activar'; dropdownShow = false">
@@ -98,7 +98,7 @@
                             class="font-medium text-green-600 hover:underline dark:text-green-600">{{ subject.active ? "Desactivar" : "Activar" }}</a>
                     </td>
                     <td class="px-6 py-4 text-right dark:text-white">
-                        <a href="#" @click="eliminateSubject(subject.idsubject)"
+                        <a href="#" @click="deleteSubject(subject.idsubject)"
                             class="font-medium text-green-600 hover:underline dark:text-green-600">Eliminar</a>
                     </td>
                 </tr>
@@ -116,11 +116,17 @@ export default {
             data: "",
             active:[],
             dropdownShow: false,
-            selectedAction: "Seleccionar acció"
+            selectedAction: "Seleccionar acció",
         };
     },
+    props: {fetch},
     mounted: function () {
         this.getData();
+    },
+    watch: {
+        fetch(){
+            this.getData();
+        }
     },
     methods: {
         async getData() {
@@ -128,11 +134,12 @@ export default {
             response.json().then((json) => {
                 console.log(json);
                 this.data = json;
-                this.active.length=this.data.length
-                this.active.fill(false)
+                this.active.length=this.data.length;
+                this.active.fill(false);
+                
             });
         },
-
+        
         getNumActiveRows(){
             let sum = this.active.reduce((partialSum, a) => partialSum + a, 0);
             return sum
@@ -172,7 +179,7 @@ export default {
                 this.deactiveSubject()
             }
             else if (this.selectedAction == "Eliminar"){
-                this.eliminateSubject()
+                this.deleteSubject()
             }
         },
         
@@ -187,7 +194,7 @@ export default {
                     },
                     body: JSON.stringify({subjectIDs: subjectIDs}),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-            }).then();
+            }).then(data => {this.getData()});
         },
 
         async deactiveSubject() {
@@ -201,16 +208,16 @@ export default {
                     },
                     body: JSON.stringify({subjectIDs: subjectIDs}),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-            }).then();
+            }).then(data => {this.getData()});
         },
 
-        async eliminateSubject() {
+        async deleteSubject() {
             let subjectIDs = await this.getActivatedRows()
             console.log("Elements to delete: ", subjectIDs)
             fetch(`${process.env.VUE_APP_FETCH_URL}subject?subjectIDs=${subjectIDs}`, {
                 method: 'DELETE',
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-            }).then();
+            }).then(data => {this.getData()});
         },
 
 

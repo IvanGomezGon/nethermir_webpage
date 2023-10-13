@@ -143,9 +143,9 @@ const waitForConnection = (id) => {
     });
 }
 
-const eliminateRouterOSConfig = async (groupName) => {
+const deleteRouterOSConfig = async (groupName) => {
     return new Promise(async (resolve, reject) => {
-        logger.info(`eliminateRouterOSConfig ${groupName}`);
+        logger.info(`deleteRouterOSConfig ${groupName}`);
         await sleep(5000);
         interval = await waitForConnection(groupName);
         clearInterval(interval);
@@ -264,7 +264,7 @@ const eliminateRouterOSConfig = async (groupName) => {
 
                     //Catching errors in execution
                     .catch((err) => {
-                        logger.info(`Error eliminating router config in execution${err}`);
+                        logger.info(`Error deleting router config in execution${err}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
                         alreadyConneting = false;
@@ -274,7 +274,7 @@ const eliminateRouterOSConfig = async (groupName) => {
 
             //Catching errors in connection
             .catch((err) => {
-                logger.info(`Error eliminating router config in connection ${err}`);
+                logger.info(`Error deleting router config in connection ${err}`);
                 alreadyConneting = false;
                 console.log("NOW CONNECTION IS" , alreadyConneting)
                 resolve("Error");
@@ -286,5 +286,5 @@ const eliminateRouterOSConfig = async (groupName) => {
 
 module.exports = {
     generateRouterOSConfig,
-    eliminateRouterOSConfig,
+    deleteRouterOSConfig,
 };

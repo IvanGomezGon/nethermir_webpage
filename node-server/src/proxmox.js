@@ -154,25 +154,25 @@ const suspendMachine = (vmID) => {
     });
 };
 
-const eliminateMachine = (vmID) => {
+const deleteMachine = (vmID) => {
     return new Promise(async (resolve, reject) => {
         await stopMachine(vmID);
         await sleep(3000);
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
-        logger.info(`Eliminating machine ${vmID} on server ${serverID}`);
+        logger.info(`deleting machine ${vmID} on server ${serverID}`);
         try {
             proxmox.qemu.del(serverID, vmID, (err, data) => {
                 if (err) {
-                    logger.error(`Failed to eliminate machine: ${err}`);
+                    logger.error(`Failed to delete machine: ${err}`);
                     reject();
                 }
                 if (data) {
-                    logger.info(`Sucess to eliminate machine: ${vmID}: ${data}`);
+                    logger.info(`Sucess to delete machine: ${vmID}: ${data}`);
                     resolve(groupName);
                 }
             });
         } catch {
-            logger.error("eliminateMachine failed trycatch");
+            logger.error("deleteMachine failed trycatch");
             reject();
         }
     });
@@ -226,6 +226,6 @@ module.exports = {
     cloneMachine,
     resumeMachine,
     suspendMachine,
-    eliminateMachine,
+    deleteMachine,
     modifyMachineVLAN,
 };

@@ -95,7 +95,7 @@
                         {{ getFinishHour(group.starting_time, group.renovated_hours) }}
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <a href="#" @click="eliminateGroup(group.name)"
+                        <a href="#" @click="deleteGroup(group.name)"
                             class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">Eliminar</a>
                     </td>
 
@@ -159,15 +159,15 @@ export default {
                 }
             }) 
             if (deleteElements.length > 0){
-                this.eliminateGroup(deleteElements.join(','))
+                this.deleteGroup(deleteElements.join(','))
             }
         },
-        eliminateGroup(groupId) {
+        deleteGroup(groupId) {
             console.log("Elements to delete: ", groupId)
             fetch(`${process.env.VUE_APP_FETCH_URL}group?groupID=${groupId}`, {
                 method: 'DELETE',
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-            }).then();
+            }).then(data => {this.getData()});
         },
     },
 };

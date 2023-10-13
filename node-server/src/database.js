@@ -82,14 +82,14 @@ const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, 
     });
 };
 
-const eliminateGroup = async (id) => {
+const deleteGroup = async (id) => {
     return new Promise(async (resolve, reject) => {
         groupName = await getGroupName(id);
         if (groupName == "Failed") {
             logger.error("GroupName not found");
             reject("GroupName not found");
         }
-        eliminateGroupDatabaseQuery(id).then(resolve());
+        deleteGroupDatabaseQuery(id).then(resolve());
     });
 };
 
@@ -104,7 +104,7 @@ const activateGroup = (id) => {
 
 };
 
-const eliminateGroupDatabaseQuery = (id) => {
+const deleteGroupDatabaseQuery = (id) => {
     return new Promise((resolve, reject) => {
         sql = `DELETE FROM nethermir.groups WHERE idgroup=(?)`;
         queryToDB(sql, [id]).then((x) => {
@@ -171,7 +171,7 @@ const getEmails = () => {
         });
     })
 };
-const eliminateEmail = (id) => {
+const deleteEmail = (id) => {
     return new Promise((resolve, reject) => {
         sql = `DELETE FROM nethermir.emails WHERE email_id=(?)`;
         queryToDB(sql, [id]).then((x) => {
@@ -199,9 +199,9 @@ const addSubject = async (subjectName, subjectID) => {
         resolve();
     })
 };
-const eliminateSubject = (id) => {
+const deleteSubject = (id) => {
     return new Promise((resolve, reject) => {
-        logger.info("eliminateSubject");
+        logger.info("deleteSubject");
         sql = `DELETE FROM nethermir.subjects WHERE idsubject=(?)`;
         queryToDB(sql, [parseInt(id)]).then((x) => {
             logger.info(x);
@@ -407,13 +407,13 @@ const genKeyPair = () => {
 module.exports = {
     getGroups,
     getEmails,
-    eliminateGroup,
-    eliminateEmail,
+    deleteGroup,
+    deleteEmail,
     authenticate,
     registerGroup,
     restartDatabase,
     getSubjects,
-    eliminateSubject,
+    deleteSubject,
     addSubject,
     activateSubject,
     deactivateSubject,

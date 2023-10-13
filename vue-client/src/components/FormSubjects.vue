@@ -60,7 +60,7 @@ export default {
                 },
                 body: JSON.stringify({subjectName: this.assignatura + "-" + this.curs, subjectID: this.vmTemplateID}),
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-            }).then();
+            }).then(data => {this.$emit('added')});
         },
     },
 };

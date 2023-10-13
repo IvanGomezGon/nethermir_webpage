@@ -50,7 +50,7 @@ app.post("/backend/machine", async function (req, res) {
         if (generateRes == "Success") {
             feedbackFetch(groupName, res);
         } else {
-            eliminateRes = await proxmoxManager.eliminateRouterOSConfig(groupName);
+            deleteRes = await proxmoxManager.deleteRouterOSConfig(groupName);
             feedbackFetch("Generating router config failed - Contact Professor", res)
         }
     } catch (error) {
@@ -137,16 +137,17 @@ app.get("/backend/groups", async function (req, res) {
 app.delete("/backend/group", async function (req, res) {
     try {
         await cookieManager.checkIsRootCookie(req, res);
-        logger.info(`Eliminating groups: ${req.query["groupID"]}`)
+        logger.info(`deleting groups: ${req.query["groupID"]}`)
         groupNames = req.query["groupID"].split(',');
         groupNames.forEach(async groupName => {
             let groupID = groupName.split('-').pop()
-            await databaseManager.eliminateGroup(groupID);
-            proxmoxManager.eliminateMachine(groupID)
-            routerosManager.eliminateRouterOSConfig(groupName)
+            await databaseManager.deleteGroup(groupID);
+            proxmoxManager.deleteMachine(groupID)
+            routerosManager.deleteRouterOSConfig(groupName)
+            feedbackFetch("Success", res)
         })
     } catch (error) {
-        logger.error(`Error eliminating group ${error}`)
+        logger.error(`Error deleting group ${error}`)
     }
 });
 
@@ -162,16 +163,16 @@ app.get("/backend/emails", async function (req, res) {
 app.delete("/backend/email", async function (req, res) {
     try {
         await cookieManager.checkIsRootCookie(req, res)
-        logger.info(`Eliminating emails: ${req.query["emailID"]}`)
+        logger.info(`deleting emails: ${req.query["emailID"]}`)
         const emailsID = req.query["emailID"].split(',')
         let promises = [];
         emailsID.forEach(emailID => {
             logger.info(`emailid ${emailID}`)
-            promises.push(databaseManager.eliminateEmail(emailID, res))
+            promises.push(databaseManager.deleteEmail(emailID, res))
         })
         Promise.all(promises).then(feedbackFetch(" ", res));
     } catch (error) {
-        logger.error(`Error eliminating Email ${error}`)
+        logger.error(`Error deleting Email ${error}`)
     }
 });
 
@@ -200,15 +201,15 @@ app.post("/backend/subject", async function (req, res) {
 app.delete("/backend/subject", async function (req, res) {
     try {
         await cookieManager.checkIsRootCookie(req, res)
-        logger.info(`Eliminating subjects: ${req.query["subjectIDs"]}`)
+        logger.info(`deleting subjects: ${req.query["subjectIDs"]}`)
         const subjectIDs = req.query["subjectIDs"].split(',')
         let promises = [];
         subjectIDs.forEach(subjectID => {
-            promises.push(databaseManager.eliminateSubject(subjectID))
+            promises.push(databaseManager.deleteSubject(subjectID))
         })
         Promise.all(promises).then(feedbackFetch("", res));
     } catch (error) {
-        logger.error(`Failed to eliminateSubject ${error}`)
+        logger.error(`Failed to deleteSubject ${error}`)
     }
 });
 
@@ -355,23 +356,23 @@ app.put("/backend/suspendMachine", async function (req, res) {
 });
 
 app.delete("/backend/cookie", function (req, res) {
-    logger.info("eliminateCookie");
-    cookieManager.eliminateCookie(res);
+    logger.info("deleteCookie");
+    cookieManager.deleteCookie(res);
 });
 
 app.delete("/backend/machine", async function (req, res) {
-    logger.info("eliminateMachine");
+    logger.info("deleteMachine");
     try {
         const vmID = req.body["vmID"]
         logger.info(`Deleting machines: ${req.body["vmIDs"]}`)
         groupName = await cookieManager.getUserCookie(req, res)
         if (vmID != null) {
-            proxmoxManager.eliminateMachine(vmID);
+            proxmoxManager.deleteMachine(vmID);
         } else {
-            proxmoxManager.eliminateMachine(groupName.split("-").pop());
+            proxmoxManager.deleteMachine(groupName.split("-").pop());
         }
     } catch (error) {
-        logger.error(`Failed eliminating machines ${error}`)
+        logger.error(`Failed deleting machines ${error}`)
     }
 });
 

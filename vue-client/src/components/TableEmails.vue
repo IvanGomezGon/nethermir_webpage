@@ -66,7 +66,7 @@
                     </td>
 
                     <td class="px-6 py-4 text-right">
-                        <a href="#" @click="eliminateEmail(email.email_id)"
+                        <a href="#" @click="deleteEmail(email.email_id)"
                             class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">Eliminar</a>
                     </td>
                 </tr>
@@ -119,15 +119,15 @@ export default {
                 }
             }) 
             if (deleteElements.length > 0){
-                this.eliminateEmail(deleteElements.join(','))
+                this.deleteEmail(deleteElements.join(','))
             }
         },
-        eliminateEmail(emailsID) {
-            console.log("Eliminate Emails", emailsID)
+        deleteEmail(emailsID) {
+            console.log("delete Emails", emailsID)
             fetch(`${process.env.VUE_APP_FETCH_URL}email?emailID=${emailsID}`, {
                 method: 'DELETE',
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
-            }).then();
+            }).then(data => {this.getData()});
         },
     },
 };

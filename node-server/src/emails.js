@@ -80,7 +80,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
         logger.info("Sending finished, unlinking");
         fs.unlink(`/tmp/${groupName}.zip`, (err) => {
             if (err) {
-                logger.error(`Error eliminating zip ${err}`);
+                logger.error(`Error deleting zip ${err}`);
             }
             logger.info("Unlinking ended");
         });
