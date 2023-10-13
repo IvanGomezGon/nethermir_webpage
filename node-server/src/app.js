@@ -233,6 +233,7 @@ app.put("/backend/deactivateSubject", async function (req, res) {
     logger.info("DeactivateSubject");
     try {
         await cookieManager.checkIsRootCookie(req, res)
+        console.log(req.body["subjectIDs"], typeof(req.body["subjectIDs"]))
         const subjectIDs = req.body["subjectIDs"].split(',')
         logger.info(`Deactivating subject: ${req.body["subjectIDs"]}`)
         let promises = [];

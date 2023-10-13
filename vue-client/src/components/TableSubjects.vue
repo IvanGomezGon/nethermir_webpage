@@ -94,11 +94,11 @@
                         {{ subject.active ? "Cert" : "Fals" }}
                     </td>
                     <td class="px-6 py-4 text-right dark:text-white">
-                        <a href="#" @click="activateSubject(subject.idsubject)"
+                        <a href="#" @click="!subject.active ? activateSubject(subject.idsubject.toString()) : deactiveSubject(subject.idsubject.toString())"
                             class="font-medium text-green-600 hover:underline dark:text-green-600">{{ subject.active ? "Desactivar" : "Activar" }}</a>
                     </td>
                     <td class="px-6 py-4 text-right dark:text-white">
-                        <a href="#" @click="deleteSubject(subject.idsubject)"
+                        <a href="#" @click="deleteSubject(subject.idsubject.toString())"
                             class="font-medium text-green-600 hover:underline dark:text-green-600">Eliminar</a>
                     </td>
                 </tr>
@@ -183,38 +183,39 @@ export default {
             }
         },
         
-        async activateSubject() {
-            let subjectIDs = await this.getActivatedRows()
-            console.log("Elements to activate: ", subjectIDs)
+        async activateSubject(subjectsID = null) {
+            subjectsID = subjectsID == null ? await this.getActivatedRows() : subjectsID
+            console.log("Elements to activate: ", subjectsID)
             fetch(`${process.env.VUE_APP_FETCH_URL}activateSubject`, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({subjectIDs: subjectIDs}),
+                    body: JSON.stringify({subjectIDs: subjectsID}),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then(data => {this.getData()});
         },
 
-        async deactiveSubject() {
-            let subjectIDs = await this.getActivatedRows()
-            console.log("Elements to deactivate: ", subjectIDs)
+        async deactiveSubject(subjectsID = null) {
+            subjectsID = subjectsID == null ? await this.getActivatedRows() : subjectsID
+            console.log("Elements to deactivate: ", subjectsID)
             fetch(`${process.env.VUE_APP_FETCH_URL}deactivateSubject`, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({subjectIDs: subjectIDs}),
+                    body: JSON.stringify({subjectIDs: subjectsID}),
                     credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then(data => {this.getData()});
         },
 
-        async deleteSubject() {
-            let subjectIDs = await this.getActivatedRows()
-            console.log("Elements to delete: ", subjectIDs)
-            fetch(`${process.env.VUE_APP_FETCH_URL}subject?subjectIDs=${subjectIDs}`, {
+        async deleteSubject(subjectsID = null) {
+            console.log(subjectsID)
+            subjectsID = subjectsID == null ? await this.getActivatedRows() : subjectsID
+            console.log("Elements to delete: ", subjectsID)
+            fetch(`${process.env.VUE_APP_FETCH_URL}subject?subjectIDs=${subjectsID}`, {
                 method: 'DELETE',
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS,
             }).then(data => {this.getData()});
