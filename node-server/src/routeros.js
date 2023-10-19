@@ -1,5 +1,4 @@
 const RosApi = require("node-routeros").RouterOSAPI;
-const { group } = require("console");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var logger = require(path.resolve(__dirname, "logger.js"));
@@ -17,13 +16,10 @@ const conn = new RosApi({
 // vlanId = 300
 // Interface = eth3
 
-var alreadyConneting = false;
 const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey, port_udp, interface, vlanId) => {
     return new Promise(async (resolve, reject) => {
         logger.info("generateRouterOSConfig");
-        interval = await waitForConnection(groupName);
-        clearInterval(interval);
-        alreadyConneting = true;
+
         conn.connect()
             .then(() => {
                 logger.info("Connected to host!");
@@ -108,7 +104,6 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
                         logger.info(`Error routeros on execution ${err}`);
                         logger.info(`closing connection routeros...`);
                         conn.close();
-                        alreadyConneting = false;
                         resolve(`Error routeros on execution ${err}`);
                     });
             })
@@ -116,7 +111,6 @@ const generateRouterOSConfig = (groupName, wgRouterPrivateKey, wgGroupPublicKey,
             //Catching errors in connection
             .catch((err) => {
                 logger.info(`Error routeros failed to connect ${err}`);
-                alreadyConneting = false;
                 resolve(`Error routeros failed to connect ${err}`);
             });
     });
@@ -133,23 +127,10 @@ const getIdToRemove = (data, searchValue) => {
 
 };
 
-const waitForConnection = (id) => {
-    return new Promise((resolve, reject) => {
-        let interval = setInterval(async () => {
-            if (alreadyConneting == false){
-                resolve(interval)
-            }
-        }, 5000);
-    });
-}
-
 const deleteRouterOSConfig = async (groupName) => {
     return new Promise(async (resolve, reject) => {
         logger.info(`deleteRouterOSConfig ${groupName}`);
         await sleep(5000);
-        interval = await waitForConnection(groupName);
-        clearInterval(interval);
-        alreadyConneting = true;
         conn.connect()
             .then(() => {
                 logger.info("Connected to host!");
@@ -275,7 +256,6 @@ const deleteRouterOSConfig = async (groupName) => {
             //Catching errors in connection
             .catch((err) => {
                 logger.info(`Error deleting router config in connection ${err}`);
-                alreadyConneting = false;
                 console.log("NOW CONNECTION IS" , alreadyConneting)
                 resolve("Error");
             });

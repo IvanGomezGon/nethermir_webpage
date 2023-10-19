@@ -1,8 +1,10 @@
+// PACKETS 
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const Queue = require('bull');
 
 const corsOptions = {
     origin: process.env.CORS_ORIGIN,
@@ -11,6 +13,8 @@ const corsOptions = {
     allowCredentials: true,
     exposedHeaders: ["set-cookie"],
 };
+
+// DEPENDENCIES 
 const emailManager = require(path.resolve(__dirname, "emails.js"));
 const proxmoxManager = require(path.resolve(__dirname, "proxmox.js"));
 const databaseManager = require(path.resolve(__dirname, "database.js"));
@@ -19,13 +23,35 @@ const routerosManager = require(path.resolve(__dirname, "routeros.js"));
 const { feedbackFetch } = require(path.resolve(__dirname, "globalFunctions.js"));
 var logger = require(path.resolve(__dirname, "logger.js"));
 
+
+// EXPRESS
 const app = express();
 const port = process.env.SERVER_LISTEN_PORT;
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
-// ALL BACKEND CALLS FROM FRONTEND
 
+// BULL QUEUES
+const qModifyRouterConfig = new Queue('generateConfig', { redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST, password: process.env.REDIS_PASSWORD } }); 
+
+qModifyRouterConfig.process(async function(job, done){
+    if (job.data.generate == 1){
+        const {user, privKey, pubKey, portUDP, interface, idgroup, res} = job.data;
+        generateRes = await routerosManager.generateRouterOSConfig(user, privKey, pubKey, portUDP, interface, idgroup);
+        if (generateRes != "Success"){
+            qModifyRouterConfig.add({groupName: groupName, generate: 0});
+            feedbackFetch("Generating router config failed - Contact Professor", res);
+        }else{
+            feedbackFetch(groupName, res);
+        }
+        done()
+    }else{
+        await routerosManager.deleteRouterOSConfig(job.data.groupName);
+        done()
+    }
+})
+
+// ALL BACKEND CALLS FROM FRONTEND
 app.get("/backend/checkCookie", function (req, res) {
     cookieManager.getUserCookie(req, res)
         .then((groupName) => feedbackFetch(groupName, res))
@@ -42,19 +68,13 @@ app.post("/backend/machine", async function (req, res) {
             return;
         }
         cloneRes = await proxmoxManager.cloneMachine(groupData.idgroup, groupName)
-        bridge = process.env.PROXMOX_PUBLIC_BRIDGE
+        bridge = process.env.PROXMOX_PUBLIC_BRIDGE;
         proxmoxManager.modifyMachineVLAN(groupName, groupData.idgroup, bridge);
         portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
         databaseManager.activateGroup(groupData.idgroup);
-        generateRes = await proxmoxManager.generateRouterOSConfig(user, groupData.private_key_router, groupData.public_key_user, portUDP, process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, groupData.idgroup);
-        if (generateRes == "Success") {
-            feedbackFetch(groupName, res);
-        } else {
-            deleteRes = await proxmoxManager.deleteRouterOSConfig(groupName);
-            feedbackFetch("Generating router config failed - Contact Professor", res)
-        }
+        await qGenerateRouterConfig({user: user, privKey: groupData.private_key_router, pubKey: roupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, res: res, generate: 1});
     } catch (error) {
-        logger.error(`Failed generatingMachine ${error}`)
+        logger.error(`Failed generatingMachine ${error}`);
     }
 });
 
@@ -143,7 +163,7 @@ app.delete("/backend/group", async function (req, res) {
             let groupID = groupName.split('-').pop()
             await databaseManager.deleteGroup(groupID);
             proxmoxManager.deleteMachine(groupID)
-            routerosManager.deleteRouterOSConfig(groupName)
+            qDeleteRouterConfig({groupName: groupName, generate: 0})
             feedbackFetch("Success", res)
         })
     } catch (error) {
