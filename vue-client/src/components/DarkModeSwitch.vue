@@ -1,8 +1,8 @@
 <template>
-    <div class="absolute top-3 sm:right-8 right-3 grid grid-flow-col auto-cols-min z-10">
+    <div class="absolute top-3 right-[59px] md:right-3 grid grid-flow-col auto-cols-min z-10 dark:bg-grey-400  md:rounded-r-lg bg-gray-50	">
         <button type="button" @click="toggleDark()"
-            class="text-white hover:bg-gray-600 active:bg-gray-600 active:hover:bg-gray-700 rounded-lg text-sm p-2.5 w-10 h-10 inline-flex items-center justify-center">
-            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" v-if="!isDark"
+            class=" border  dark:border-gray-600 box-border border-l-0 text-white hover:bg-gray-200 active:hover:bg-gray-300 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-700 dark:active:hover:bg-gray-600 md:rounded-r-lg text-sm p-2.5 w-10 h-10 inline-flex items-center justify-center">
+            <svg class="w-4 h-4 fill-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" v-if="!isDark"
                 viewBox="0 0 20 20">
                 <path
                     d="M10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-11a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v2a1 1 0 0 0 1 1Zm0 12a1 1 0 0 0-1 1v2a1 1 0 1 0 2 0v-2a1 1 0 0 0-1-1ZM4.343 5.757a1 1 0 0 0 1.414-1.414L4.343 2.929a1 1 0 0 0-1.414 1.414l1.414 1.414Zm11.314 8.486a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414ZM4 10a1 1 0 0 0-1-1H1a1 1 0 0 0 0 2h2a1 1 0 0 0 1-1Zm15-1h-2a1 1 0 1 0 0 2h2a1 1 0 0 0 0-2ZM4.343 14.243l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0-1.414-1.414ZM14.95 6.05a1 1 0 0 0 .707-.293l1.414-1.414a1 1 0 1 0-1.414-1.414l-1.414 1.414a1 1 0 0 0 .707 1.707Z">

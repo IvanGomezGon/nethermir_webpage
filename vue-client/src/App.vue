@@ -1,14 +1,16 @@
 <template>
-<DarkModeSwitch />
+<LangDarkSwitch />
 <router-view :style="isDark? 'input:-webkit-autofill:active {}' : ''"/>
 </template>
 <script>
 // @ is an alias to /src
-import DarkModeSwitch from "@/components/DarkModeSwitch.vue";
+import LangDarkSwitch from "@/components/LangDarkSwitch.vue";
+
 export default {
     name: "App.vue",
     components: {
-        DarkModeSwitch,
+        LangDarkSwitch,
+
     },
 };
 </script>

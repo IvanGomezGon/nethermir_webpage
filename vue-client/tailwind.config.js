@@ -13,10 +13,10 @@ module.exports = {
       },
       screens:{
         'xl':'1330px',
-        'lg':'1080px',
-        'lmd':'910px',
-        'mmd':'868px',
-        'md':'785px'
+        'lg':'1094px',
+        'lmd':'930px',
+        'mmd':'895px',
+        'md':'815px'
       },
     },
     fontFamily: {

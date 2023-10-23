@@ -19,13 +19,13 @@
                     </div>
                 </div>
                 <div class="hidden md:block mr-20 xl:mr-0">
-                    <div class="ml-4 flex items-center">
+                    <div class="ml-2 flex items-center mr-10">
                         <!-- Profile dropdown -->
                         <div class="relative  ">
                             <div>
                                 <button type="button" @click="logOut()"
                                     class=" float-right text-white bg-red-600 hover:bg-red-700 active:bg-red-700 hover:active:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 ">
-                                    <div class="flex space-x-2 items-center justify-between">
+                                    <div class="flex space-x-2 items-center justify-between ">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="hidden md:block" width="16"
                                             height="16" viewBox="0 0 24 24" stroke-width="3" stroke="#ffffff" fill="none"
                                             stroke-linecap="round" stroke-linejoin="round">
@@ -68,10 +68,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="mr-[72px] flex md:hidden" @click="toggleMobile()">
+                <div class="mr-[20px] flex md:hidden" @click="toggleMobile()">
                     <!-- Mobile menu button -->
                     <button type="button"
-                        class="text-white hover:bg-gray-600 active:bg-gray-600 active:hover:bg-gray-700 rounded-lg text-sm p-2.5 w-10 h-10 inline-flex items-center justify-center">
+                        class="hover:bg-gray-200 active:hover:bg-gray-300 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-700 dark:active:hover:bg-gray-600 p-[7px] bg-gray-50 border border-bg-gray-50 text-grey-700 text-sm rounded-r-lg dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <span class="sr-only">Open main menu</span>
                         <!-- Menu open: "hidden", Menu closed: "block" -->
                         <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"

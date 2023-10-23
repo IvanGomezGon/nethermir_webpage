@@ -11,10 +11,11 @@
                 class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-grey-600 -700 dark:border-grey-400">
                 <div class="p-6 space-y-4  sm:p-8">
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-grey-700 md:text-2xl dark:text-white">
-                        Registre de grup
+                        {{ $t("registerHeader") }}
                     </h1>
-                    <h2 v-if="errors.length" class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Si us plau,
-                        corregeix els següents errors:</h2>
+                    <h2 v-if="errors.length" class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+                        {{ $t("correctErrorsPlease") }}
+                    </h2>
                     <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
                         <li v-for="error in errors" class="flex items-center">
                             <svg class="w-3.5 h-3.5 mr-2 text-red-500 dark:text-red-500 flex-shrink-0" aria-hidden="true"
@@ -31,7 +32,8 @@
                         <div class="grid gap-6 mb-4 md:grid-cols-2">
 
                             <div>
-                                <div for="countries" class="block  text-sm font-medium text-grey-700 dark:text-white">Curs
+                                <div for="countries" class="block  text-sm font-medium text-grey-700 dark:text-white">
+                                    {{ $t("courseYear") }}
                                 </div>
                                 <select id="countries" v-model="curs"
                                     class="bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500">
@@ -40,7 +42,8 @@
                             </div>
                             <div>
                                 <div for="countries" class="block  text-sm font-medium text-grey-700 dark:text-white">
-                                    Assignatura</div>
+                                    {{ $t("course") }}
+                                </div>
                                 <select id="countries" v-model="assignatura"
                                     class="bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500">
                                     <option v-for="subject in subjects()" :value="subject">{{ subject }}</option>
@@ -52,8 +55,9 @@
                         <div class="space-y-2 md:space-y-2">
 
                             <div>
-                                <div for="countries" class="block  text-sm font-medium text-grey-700 dark:text-white">Num
-                                    d'integrants</div>
+                                <div for="countries" class="block  text-sm font-medium text-grey-700 dark:text-white">
+                                    {{ $t("numberOfStudents") }}
+                                </div>
                                 <select id="countries" v-model="numIntegrants"
                                     class="bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500">
                                     <option value="1">1</option>
@@ -64,24 +68,26 @@
                             </div>
 
                             <div v-if="numIntegrants" class="block  text-sm font-medium text-grey-700 dark:text-white">
-                                Adreces de correu</div>
+                                {{ $t("emailAddresses") }}    
+                            </div>
                             <div v-for="index in parseInt(numIntegrants)" :key="index">
                                 <input type="email" id="email" v-model="emails[index - 1]" @keyup.enter="checkRegister()"
                                     class="outline-0 bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
-                                    :placeholder="'usuari' + index + '@uab.cat'" required>
+                                    :placeholder=" $t('userEmail') + index + '@uab.cat'" required>
                             </div>
 
                         </div>
                         <button type="button" @click="checkRegister()"
                             class="mt-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 hover:active:bg-emerald-800 border border-emerald-800 font-medium rounded-lg text-sm block w-full p-2.5 text-white">
-                            Registrar grup
+                            {{ $t("registerGroup") }}
                         </button>
                     </form>
                     <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                        Ja temps un compte?
+                        {{ $t("alreadyHaveAccount") }}
                         <router-link to="/"
-                            class="font-medium text-primary-600 hover:underline dark:text-primary-500">Inicia
-                            sessió!</router-link>
+                            class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+                            {{ $t("signInExclamation") }}
+                        </router-link>
 
                     </p>
                 </div>

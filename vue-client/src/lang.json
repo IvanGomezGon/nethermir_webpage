@@ -1,0 +1,63 @@
+{
+    "EN":{
+        "login":"Sign in to your account",
+        "user":"User",
+        "password":"Password",
+        "showPassword":"Show password",
+        "makeLogin":"Sign in",
+        "dontHaveAccountQuestion":"Don't have an account yet?",
+        "signUpExclamation":"Sign up!",
+        "correctErrorsPlease":"Please, correct the following errors:",
+
+        "registerHeader":"Create a group",
+        "courseYear":"Year",
+        "course":"Course",
+        "userEmail":"user",
+        "numberOfStudents":"Number of students",
+        "registerGroup":"Register group",
+        "emailAddresses":"Email addresses",
+        "alreadyHaveAccount":"Already have an account?",
+        "signInExclamation":"Sign in!"
+        
+    },
+    "CA":{
+        "login":"Inici de sessió",
+        "user":"Usuari",
+        "password":"Contrasenya",
+        "showPassword":"Mostrar contrasenya",
+        "makeLogin":"Iniciar sessió",
+        "dontHaveAccountQuestion":"No tens un compte encara?",
+        "signUpExclamation":"Registrat!",
+        "correctErrorsPlease":"Si us plau, corregeix els següents errors:",
+
+        "registerHeader":"Registre de grup",
+        "courseYear":"Curs",
+        "course":"Assignatura",
+        "userEmail":"usuari",
+        "numberOfStudents":"Número d'integrants",
+        "registerGroup":"Registrar grup",
+        "emailAddresses":"Adreces de correu",
+        "alreadyHaveAccount":"Ja temps un compte?",
+        "signInExclamation":"Inicia sessió!"
+    },
+    "ES":{
+        "login":"Inicio de sesión",
+        "user":"Usuario",
+        "password":"Contraseña",
+        "showPassword":"Mostrar contraseña",
+        "makeLogin":"Iniciar sesión",
+        "dontHaveAccountQuestion":"No tienes cuenta aún?",
+        "signUpExclamation":"¡Regístrate!",
+        "correctErrorsPlease":"Por favor, corrije los siguientes errores:",
+
+        "registerHeader":"Registro de grupo",
+        "courseYear":"Curso",
+        "course":"Asignatura",
+        "userEmail":"usuario",
+        "numberOfStudents":"Número de integrantes",
+        "registerGroup":"Registrar grupo",
+        "emailAddresses":"Direcciones de correo",
+        "alreadyHaveAccount":"¿Ya tienes una cuenta?",
+        "signInExclamation":"¡Inicia sessión!"
+    }
+}

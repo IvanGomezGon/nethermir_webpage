@@ -14,12 +14,13 @@
                 class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-grey-600 -700 dark:border-grey-400">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-grey-700 md:text-2xl dark:text-white">
-                        Inici de sessió
+                        {{ $t("login") }}
                     </h1>
 
 
-                    <h2 v-if="errors.length" class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Si us plau,
-                        corregeix els següents errors:</h2>
+                    <h2 v-if="errors.length" class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+                        {{ $t("correctErrorsPlease") }}
+                    </h2>
                     <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
                         <li v-for="error in errors" class="flex items-center">
                             <svg class="w-3.5 h-3.5 mr-2 text-red-500 dark:text-red-500 flex-shrink-0" aria-hidden="true"
@@ -35,7 +36,8 @@
 
                     <form class="space-y-4 md:space-y-6" action="#">
                         <div>
-                            <div for="email" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">Usuari
+                            <div for="email" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">
+                                {{ $t("user") }}
                             </div>
 
 
@@ -46,7 +48,8 @@
                         </div>
                         <div>
                             <div for="password" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">
-                                Contrasenya</div>
+                                {{ $t("password") }}
+                            </div>
                             <div class="flex">
                                 <input :type="passwordType ? 'password' : 'text'" name="password" id="password" @keyup.enter="checkLogin()"
                                     v-model="password" placeholder="••••••••"
@@ -66,17 +69,20 @@
                                         class="w-4 h-4 border border-gray-300 rounded bg-gray-50">
                                 </div>
                                 <div class="ml-3 text-sm">
-                                    <div for="remember" class="text-gray-500">Mostrar contrasenya</div>
+                                    <div for="remember" class="text-gray-500">{{ $t("showPassword") }}</div>
                                 </div>
                             </div>
                         </div>
                         <button type="button" @click="checkLogin()"
-                            class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 hover:active:bg-emerald-800 border border-emerald-800 font-medium rounded-lg text-sm block w-full p-2.5 text-white">Iniciar
-                            sessió</button>
+                            class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 hover:active:bg-emerald-800 border border-emerald-800 font-medium rounded-lg text-sm block w-full p-2.5 text-white">
+                            {{ $t("makeLogin") }}
+                        </button>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                            No tens un compte encara?
+                            {{ $t("dontHaveAccountQuestion") }}
                             <router-link to="/register"
-                                class="font-medium text-primary-600 hover:underline dark:text-primary-500">Registrat!</router-link>
+                                class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+                                {{ $t("signUpExclamation") }}
+                            </router-link>
 
                         </p>
                     </form>
@@ -84,6 +90,12 @@
             </div>
         </div>
     </section>
+    <b-button
+  size="sm"
+  class="my-2 my-sm-0 btn-info"
+  type="submit"
+  @click="$i18n.locale = 'en'"
+>{{ $t('english') }}</b-button>
 </template>
 
   
@@ -134,6 +146,7 @@ export default {
            
         }
     }
+
 }
 </script>
 
