@@ -7,25 +7,27 @@ const qModifyRouterConfig = new Queue('generateConfig', { redis: { port: process
 
 qModifyRouterConfig.process(async function(job, done){
     if (job.data.generate == 1){
-        const {id, fail} = job.data;
-        generateRes = await generateRouterOSConfig(fail);
-        if (generateRes == 1){
-            console.log("FAILED GENERATING ROUTERCONFIG ", id)
+        let {id, fail, generate} = job.data;
+        await generateRouterOSConfig();
+        if (fail == 1){
+            console.log("FAILED GENERATING ROUTERCONFIG ", id);
             qModifyRouterConfig.add({generate: 0, id: id});
+            done();
         }else{
-            console.log("SUCCESS GENERATING ROUTERCONFIG", id)
+            console.log("SUCCESS GENERATING ROUTERCONFIG", id);
+            done();
         }
-        done()
+        
     }else{
         await deleteRouterOSConfig();
         console.log("SUCCESS DELETING ROUTERCONFIG", job.data.id)
-        done()
+        done();
     }
 })
 
-generateRouterOSConfig = (willFail) => {
+generateRouterOSConfig = () => {
     return new Promise((resolve, reject) => {
-        setTimeout(resolve(willFail), 1000)
+        setTimeout(resolve(), 1000)
     })
 }
 deleteRouterOSConfig = () => {
@@ -33,8 +35,11 @@ deleteRouterOSConfig = () => {
         setTimeout(resolve(), 1000)
     })
 }
-
+console.log("Starting test")
 qModifyRouterConfig.add({id: 1, fail:1, generate:1})
+console.log("Starting test")
 qModifyRouterConfig.add({id: 2, fail:0, generate:1})
+console.log("Starting test")
 qModifyRouterConfig.add({id: 4, fail:0, generate:1})
+console.log("Starting test")
 qModifyRouterConfig.add({id: 3, fail:1, generate:1})
