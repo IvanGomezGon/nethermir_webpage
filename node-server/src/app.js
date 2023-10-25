@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 // BULL QUEUES
-const qModifyRouterConfig = new Queue('generateConfig', { redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST, password: process.env.REDIS_PASSWORD } }); 
+const qModifyRouterConfig = new Queue('modifyRouterConfig', { redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST, password: process.env.REDIS_PASSWORD } }); 
 
 qModifyRouterConfig.process(async function(job, done){
     if (job.data.generate == 1){

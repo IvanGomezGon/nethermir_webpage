@@ -3,7 +3,7 @@ const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 
-const qModifyRouterConfig = new Queue('generateConfig', { redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST, password: process.env.REDIS_PASSWORD } }); 
+const qModifyRouterConfig = new Queue('testQueue', { redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST, password: process.env.REDIS_PASSWORD } }); 
 
 qModifyRouterConfig.process(async function(job, done){
     if (job.data.generate == 1){
