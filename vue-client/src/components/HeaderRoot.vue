@@ -132,6 +132,11 @@ export default {
             pathNames: [ this.$t("dashboard"), this.$t("proxmox"), this.$t("groups"), this.$t("users"), this.$t("courses")],
         }
     },
+    watch:{
+        '$i18n.locale'(newVal){
+            this.pathNames = [ this.$t("dashboard"), this.$t("proxmox"), this.$t("groups"), this.$t("users"), this.$t("courses")];
+        },
+    },
     created: function () {
         this.route = useRoute()
         if (this.route.path == `/controlPannelRoot`) {

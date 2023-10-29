@@ -21,8 +21,6 @@ export default {
     watch: {
         language(newVal){
             this.$i18n.locale = newVal;
-            this.$forceUpdate();
-
         },
         '$i18n.locale': function(newVal) {
         localStorage.setItem('last-locale', newVal)
