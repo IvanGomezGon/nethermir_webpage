@@ -108,7 +108,7 @@ app.get("/backend/statusAllVMs", async function (req, res) {
     try {
         const server = req.query["server"]
         await cookieManager.checkIsRootCookie(req, res)
-        //proxmoxManager.getStatusAllVMs(server).then(status => feedbackFetch(status, res))
+        proxmoxManager.getStatusAllVMs(server).then(status => feedbackFetch(status, res))
     } catch (error) {
         logger.error(`Error gettingStatusAllVMs ${error}`)
     }
