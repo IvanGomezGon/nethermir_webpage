@@ -103,16 +103,6 @@
                         :class="(current == index ? 'dark:bg-grey-600 bg-grey-500 ' : 'hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white ') + 'w-[295px] text-clip text-gray-200 active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
                             pathName }}</a>
                 </div>
-                <div class="px-3 h-[1px] border-t border-bg-gray-50" v-if="mobileDrowdownFinished"></div>
-                <a href="#" @click="$emit('deleteDB')" v-if="mobileDrowdownFinished"
-                    class="w-[295px] text-clip block rounded-md px-3 py-2 text-gray-200 font-medium hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white  ">
-                    {{ $t("deleteDatabase") }}
-                </a>
-                <a href="#" v-if="mobileDrowdownFinished" @click="logOut()"
-                    class="w-[295px] text-clip block rounded-md px-3 py-2 text-gray-200 font-medium hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white">
-                    {{ $t("signOut") }}
-                </a>
-
             </div>
         </div>
 </template>

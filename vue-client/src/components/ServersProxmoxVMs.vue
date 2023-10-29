@@ -26,7 +26,7 @@ export default {
     name: "ServersProxmoxVMs",
     data: function () {
         return {
-            server: 0,
+            server: 1,
         };
     },
     watch: {
