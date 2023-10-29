@@ -7,7 +7,7 @@
                     <div class="mr-[20px] flex " @click="toggleMobile()">
                     <!-- Mobile menu button -->
                     <button type="button"
-                        class="absolute left-[20px] top-3 hover:bg-gray-200 active:hover:bg-gray-300 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-700 dark:active:hover:bg-gray-600 p-[7px] bg-gray-50 border border-bg-gray-50 text-grey-700 text-sm rounded-lg dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        class="absolute left-[20px] top-3 hover:bg-gray-200 active:hover:bg-gray-300 active:bg-gray-200 dark:hover:bg-grey-500 dark:active:bg-grey-500 dark:active:hover:bg-grey-600 p-[7px] bg-gray-50 border border-bg-gray-50 text-grey-700 text-sm rounded-lg dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <span class="sr-only">Open main menu</span>
                         <!-- Menu open: "hidden", Menu closed: "block" -->
                         <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -87,7 +87,7 @@
                     class="block rounded-md px-3 py-2 text-base font-medium text-gray-200 hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white">
                     {{ $t("deleteDatabase") }}
                 </a>
-                <a href="#" v-if="mobileDrowdownFinished"
+                <a href="#" v-if="mobileDrowdownFinished" @click="logOut()"
                     class="block rounded-md px-3 py-2 text-base font-medium text-gray-200 hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white">
                     {{ $t("signOut") }}
                 </a>
@@ -95,12 +95,12 @@
             </div>
         </div>
     </nav>
-    <div :class="'shadow-xl shadow-gray-700		 hidden md:block bg-emerald-700 z-50 h-[calc(100vh-4rem)] absolute transition-max-width duration-500 ease-in-out ' + (mobileDropdown ? 'w-[320px]' : 'w-0 overflow-hidden ')"
+    <div :class="'shadow-xl shadow-gray-700 hidden md:block bg-emerald-700 z-50 h-[calc(100vh-4rem)] absolute transition-max-width duration-500 ease-in-out border-t-2 dark:border-t-grey-700 border-t-slate-200 border-radius-10 rounded-r-2xl ' + (mobileDropdown ? 'w-[320px]' : 'w-0 overflow-hidden ')"
             id="mobile-menu">
             <div class="space-y-1 pl-5 pr-3 pb-3 pt-2 sm:px-3">
                 <div v-for="(pathName, index) in pathNames" v-if="mobileDrowdownFinished" class="overflow-hidden">
                     <a href="#" @click="this.$router.push(`/controlPannelRoot/${paths[index]}`); current = index"
-                        :class="(current == index ? 'bg-grey-600 ' : '') + 'w-[295px] text-clip text-gray-200 hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
+                        :class="(current == index ? 'dark:bg-grey-600 bg-grey-500 ' : 'hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white ') + 'w-[295px] text-clip text-gray-200 active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
                             pathName }}</a>
                 </div>
                 <div class="px-3 h-[1px] border-t border-bg-gray-50" v-if="mobileDrowdownFinished"></div>
@@ -108,7 +108,7 @@
                     class="w-[295px] text-clip block rounded-md px-3 py-2 text-gray-200 font-medium hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white  ">
                     {{ $t("deleteDatabase") }}
                 </a>
-                <a href="#" v-if="mobileDrowdownFinished"
+                <a href="#" v-if="mobileDrowdownFinished" @click="logOut()"
                     class="w-[295px] text-clip block rounded-md px-3 py-2 text-gray-200 font-medium hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white">
                     {{ $t("signOut") }}
                 </a>

@@ -1,7 +1,7 @@
 <template>
     <div class="absolute top-3 right-3 grid grid-flow-col auto-cols-min z-10 dark:bg-grey-400  rounded-r-lg bg-gray-50	">
         <button type="button" @click="toggleDark()"
-            class=" border  dark:border-gray-600 box-border border-l-0 text-white hover:bg-gray-200 active:hover:bg-gray-300 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-700 dark:active:hover:bg-gray-600 rounded-r-lg text-sm p-2.5 w-10 h-10 inline-flex items-center justify-center">
+            class=" border  dark:border-gray-600 box-border border-l-0 text-white hover:bg-gray-200 active:hover:bg-gray-300 active:bg-gray-200 dark:hover:bg-grey-500 dark:active:bg-grey-500 dark:active:hover:bg-grey-600 rounded-r-lg text-sm p-2.5 w-10 h-10 inline-flex items-center justify-center">
             <svg class="w-4 h-4 fill-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" v-if="!isDark"
                 viewBox="0 0 20 20">
                 <path

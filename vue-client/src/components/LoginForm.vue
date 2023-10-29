@@ -69,7 +69,7 @@
                                         class="w-4 h-4 border border-gray-300 rounded bg-gray-50">
                                 </div>
                                 <div class="ml-3 text-sm">
-                                    <div for="remember" class="text-gray-500">{{ $t("showPassword") }}</div>
+                                    <div for="remember" class="text-gray-500 select-none" @click="passwordType = (passwordType + 1) % 2">{{ $t("showPassword") }}</div>
                                 </div>
                             </div>
                         </div>

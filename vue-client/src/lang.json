@@ -63,14 +63,32 @@
         "resume":"Resume",
         "pause":"Pause",
         "running":"Running",
+        "stopped":"Stopped",
         "paused":"Running (Paused)",
+        "extend":"Extend",
         "virtualMachine":"Virtual Machine",
         "CPU":"CPU",
         "status":"Status",
         "uptime":"Uptime",
         "machines":"machines",
-        "addNewSubject":"Add New Subject"
+        "addNewSubject":"Add New Subject",
         
+        "404notFoundBig":"Error 404: Not Found",
+        "404notFoundMedium":"Requested page doesn't exist",
+        "404notFoundSmall":"Check if the URL direction is written corretly, or press the button below",
+        "404notFoundSmallLink":"Go to the main page of the site",
+
+        "hour":"hour",
+        "hours":"hours",
+
+        "noVMFoundBig":"Virtual Machine not Found",
+        "noVMFoundMedium":"Are you new here? Deploy your virtualized envoriment!",
+        "noVMFoundSmall":"Click the button below to start the process. If you have already created a virtual machine and you still can't access it, contact your professor.",
+        "noVMFoundLink":"Create Virtual Machine",
+        "creatingYourVM":"Creating your Virtual Machine",
+        "thisProcessMayTakeLong":"This process may take up to 5 minutes",
+        "ifItTakesTooLong":"If it takes too long, contact your professor"
+
     },
     "CA":{
         "login":"Inici de sessió",
@@ -136,16 +154,33 @@
         "resume":"Resumir",
         "pause":"Pausar",
         "running":"Corrent",
+        "stopped":"Parat",
         "paused":"Corrent (Pausat)",
+        "extend":"Extendre",
         "virtualMachine":"Màquina Virtual",
         "CPU":"CPU",
         "status":"Estatus",
         "uptime":"Temps encès",
         "machines":"màquines",
-        "addNewSubject":"Afegir una nova assignatura"
+        "addNewSubject":"Afegir una nova assignatura",
 
+        "404notFoundBig":"Error 404: Pàgina no trobada",
+        "404notFoundMedium":"La pàgina que busca no existeix",
+        "404notFoundSmall":"Comprova que la direcció estigui ben escrita, o",
+        "404notFoundSmallLink":"Porta'm a la pàgina principal",
 
-        
+        "hour":"hora",
+        "hours":"hores",
+
+        "noVMFoundBig":"Màquina virtual no trobada",
+        "noVMFoundMedium":"Ets nou aquí? Desplega el teu entorn virtualitzat!",
+        "noVMFoundSmall":"Fes click al botó inferior per començar el procès. Si ja has creat la teva màquina virtual i encara no pots accedir, contacta al teu professor.",
+        "noVMFoundLink":"Crear màquina virtual",
+
+        "creatingYourVM":"Creant la teva màquina virtual",
+        "thisProcessMayTakeLong":"Aquest procès pot arribar a trigar 5 minuts.",
+        "ifItTakesTooLong":"Si triga massa temps, contacta el teu professor"
+
     },
     "ES":{
         "login":"Inicio de sesión",
@@ -209,13 +244,32 @@
         "turnOff":"Apagar",
         "resume":"Resumir",
         "pause":"Pausar",
+        "stopped":"Apagado",
         "running":"Corriendo",
         "paused":"Corriendo (Pausado)",
+        "extend":"Extender",
         "virtualMachine":"Máquina Virtual",
         "CPU":"CPU",
         "status":"Estatus",
         "uptime":"Tiempo encendida",
         "machines":"máquinas",
-        "addNewSubject":"Añadir una nueva asignatura"
+        "addNewSubject":"Añadir una nueva asignatura",
+
+        "404notFoundBig":"Error 404: Página no encontrada",
+        "404notFoundMedium":"La página que busca no existe",
+        "404notFoundSmall":"Compruebe que la dirección URL esté bien escrita, o",
+        "404notFoundSmallLink":"Ir a la página principal",
+
+        "hour":"hora",
+        "hours":"horas",
+
+        "noVMFoundBig":"Máquina virtual no encontrada",
+        "noVMFoundMedium":"¿Eres nuevo aquí? ¡Despliega tu entorno virtualizado!",
+        "noVMFoundSmall":"Haz click en el botón inferior para comenzar el proceso. Si ya has creado tu máquina virtual y aún no puedes acceder, contacta con tu profesor.",
+        "noVMFoundLink":"Crear máquina virtual",
+
+        "creatingYourVM":"Creando tu máquina virtual",
+        "thisProcessMayTakeLong":"Este proceso puede llegar a tardar 5 minutos.",
+        "ifItTakesTooLong":"Si tarda demasiado tiempo, contacta con tu profesor."
     }
 }

@@ -101,7 +101,7 @@
                         {{ vm.template == 1 ? "-" : (vm.cpu * 100).toFixed(2) + "%" }}
                     </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
-                        {{ vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu < 0.05
+                        {{ vm.template == 1 ? "Template" : vm.status == "stopped" ? $t("stopped")  : vm.cpu < 0.05
                             ? $t("paused") : $t("running") }} </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.template == 1 ? "-" : vm.uptime }}

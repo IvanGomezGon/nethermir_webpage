@@ -6,31 +6,31 @@
             <thead class="text-xs text-grey-400 uppercase bg-gray-100 dark:bg-grey-400 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
-                        Virtual Machine id
+                        {{$t("virtualMachine")}} ID
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Nom
+                        {{$t("name")}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        CPU
+                        {{$t("CPU")}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Estat
+                        {{$t("name")}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Uptime
+                        {{$t("uptime")}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Hores
+                        {{$t("hours")}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Iniciar</span>
+                        <span class="sr-only">{{$t("turnOn")}}</span>
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Suspendre</span>
+                        <span class="sr-only">{{$t("pause")}}</span>
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Parar</span>
+                        <span class="sr-only">{{$t("turnOff")}}</span>
                     </th>
                 </tr>
             </thead>
@@ -47,7 +47,7 @@
                         {{ template == 1 ? "-" : (cpuVM * 100).toFixed(2) + "%" }}
                     </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
-                        {{ template == 1 ? "Template" : statusVM == "stopped" ? "Stopped" : statusVM == "paused" ? "Corrent (Pausat)" : "Corrent" }}
+                        {{ template == 1 ? "Template" : statusVM == "stopped" ? $t('stopped') : statusVM == "paused" ? $t('paused') : $t('running') }}
                     </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ template == 1 ? "-" : uptimeVM }}
@@ -64,17 +64,17 @@
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="activateVM(cpuVM, idVM)"
                             class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">
-                            {{ `${statusVM != "stopped" ? "Extendre" : "Encendre"} ${hours + (hours == 1 ? ' hora' : 'hores')}`}}</a>
+                            {{ `${statusVM != "stopped" ? $t("extend") : $t("turnOn")} ${hours + (hours == 1 ? $t("hour") : $t("hours"))}`}}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="suspendResumeVM()"
                             :class="statusVM == 'paused' ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">
-                            {{ "Pausar" }}</a>
+                            {{ $t("pause") }}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="stopVM()"
                             :class="statusVM == 'stopped' ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' : 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">
-                            {{ "Parar" }}</a>
+                            {{ $t("turnOff") }}</a>
                     </td>
                 </tr>
 

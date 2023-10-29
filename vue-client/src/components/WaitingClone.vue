@@ -4,7 +4,8 @@
             <div class="mx-auto  text-center">
                 <h1
                     class="pb-4 mb-4 text-5xl tracking-tight font-extrabold lg:text-7xl text-primary-600 dark:text-primary-500">
-                    Creant la teva màquina virtual</h1>
+                    {{$t("creatingYourVM")}}    
+                </h1>
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                     style="margin: auto; background: none; display: block; shape-rendering: auto;" width="200px"
                     height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
@@ -52,8 +53,11 @@
                         keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="-2.5s"></animate>
                 </circle>
             </svg>
-            <p class="pt-4 mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">Aquest procès pot arribar a trigar un parell de minuts</p>
-            <p class="mb-8 text-lg font-light text-gray-500 dark:text-gray-400">Si aquest procès triga massa temps, contacta al teu professor.
+            <p class="pt-4 mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
+                {{ $t("thisProcessMayTakeLong") }}
+            </p>
+            <p class="mb-8 text-lg font-light text-gray-500 dark:text-gray-400">
+                {{ $t("ifItTakesTooLong") }}
             </p>
         </div>
     </div>
