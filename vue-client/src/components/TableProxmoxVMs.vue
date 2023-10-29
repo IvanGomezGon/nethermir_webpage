@@ -7,37 +7,37 @@
                 <svg class="w-[12px] h-[12px] text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
                 </svg>
-                <p> Actualitzar taula</p>
+                <p>  {{ $t("updateTable") }}</p>
             </div>
         </button>
         <div class="contents">
             <button id="dropdownDefaultButton" @click="dropdownShow = !dropdownShow" data-dropdown-toggle="dropdown" class="w-[185px] bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white text-center inline-flex items-center font-medium rounded-lg text-sm p-2.5 block" type="button">
-                <span v-if="selectedAction != 'Seleccionar acció'" class="mr-2 text-primary-800 bg-primary-200 inline-flex items-center justify-center w-4 h-4 mr-1 text-xs font-semibold rounded-full text-center">
+                <span v-if="selectedAction != selectAction" class="mr-2 text-primary-800 bg-primary-200 inline-flex items-center justify-center w-4 h-4 mr-1 text-xs font-semibold rounded-full text-center">
                     {{getNumActiveRows()}}
                 </span>
-                <span :class="selectedAction == 'Seleccionar acció' ?'mr-auto ml-auto' : 'mr-auto'">
-                    {{ selectedAction }} {{ selectedAction != "Seleccionar acció" ? 'màquines' : '' }} 
+                <span class="mr-auto ml-auto">
+                    {{ selectedAction }} {{ selectedAction != selectAction ? $t("machines") : '' }} 
                 </span>
                 <svg class="w-2.5 h-2.5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                 </svg>
             </button>
-            <button :disabled="getNumActiveRows()==0 || selectedAction == 'Seleccionar acció'" type="button" @click="executeAction()" :class="(getNumActiveRows()== 0 || selectedAction == 'Seleccionar acció' ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'ml-4 font-medium rounded-lg text-sm p-2.5 '">
-            Executar
+            <button :disabled="getNumActiveRows()==0 || selectedAction != selectAction" type="button" @click="executeAction()" :class="(getNumActiveRows()== 0 || selectedAction != selectAction ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'ml-4 font-medium rounded-lg text-sm p-2.5 '">
+            {{ $t("execute") }}
         </button>
             <div id="dropdown" v-if="dropdownShow == true" class="mt-1 w-[185px] ml-[159px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-grey-400 absolute border dark:border-grey-300 border-gray-300 ">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200 " aria-labelledby="dropdownDefaultButton">
-                <li @click="selectedAction='Encendre'; dropdownShow = false">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Encendre</a>
+                <li @click="selectedAction=$t('turnOn'); dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">{{ $t("turnOn") }}</a>
                 </li>
-                <li  @click="selectedAction='Parar'; dropdownShow = false">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Parar</a>
+                <li  @click="selectedAction=$t('turnOff'); dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">{{ $t("turnOff") }}</a>
                 </li>
-                <li  @click="selectedAction='Resumir'; dropdownShow = false">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Resumir</a>
+                <li  @click="selectedAction=$t('resume'); dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">{{ $t("resume") }}</a>
                 </li>
-                <li  @click="selectedAction='Pausar'; dropdownShow = false">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Pausar</a>
+                <li  @click="selectedAction=$t('pause'); dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">{{ $t("pause") }}</a>
                 </li>
                 </ul>
             </div>  
@@ -56,25 +56,25 @@
                         </div>
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Virtual Machine id
+                        {{ $t("virtualMachine") }} ID
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Nom
+                        {{ $t("name") }}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        CPU
+                        {{ $t("CPU") }}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Estat
+                        {{ $t("status") }}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Uptime
+                        {{ $t("uptime") }}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Encendre / Parar</span>
+                        <span class="sr-only">{{$t("turnOn")}} / {{$t("turnOff")}}</span>
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Resumir / Suspendre</span>
+                        <span class="sr-only">{{$t("resume")}} / {{$t("pause")}}</span>
                     </th>
                 </tr>
             </thead>
@@ -102,19 +102,19 @@
                     </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.template == 1 ? "Template" : vm.status == "stopped" ? "Stopped" : vm.cpu < 0.05
-                            ? "Corrent (Pausat)" : "Corrent" }} </td>
+                            ? $t("paused") : $t("running") }} </td>
                     <td :class="'px-6 py-4 font-medium whitespace-nowrap'">
                         {{ vm.template == 1 ? "-" : vm.uptime }}
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="stopActivate(vm.status, vm.vmid.toString())"
                             :class="vm.template == 1 ? 'font-medium dark:text-emerald-800 pointer-events-none text-gray-400' :'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{ vm.status == "stopped" ?
-                                "Encendre" : "Parar" }}</a>
+                                $t("turnOn") : $t("turnOff") }}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="resumeSuspend(vm.cpu, vm.vmid.toString())" 
                             :class="vm.status == 'stopped' || vm.template == 1 ? 'font-medium dark:text-emerald-800 pointer-events-none	text-gray-400': 'font-medium text-emerald-600 dark:text-emerald-500 hover:underline'">{{ vm.cpu < 0.05
-                                ? "Resumir" : "Pausar" }}</a>
+                                ? $t("resume") : $t("pause") }}</a>
                     </td>
                 </tr>
 
@@ -130,7 +130,9 @@
             return {
                 data: "",
                 active:[],
-                selectedAction: "Seleccionar acció",
+                selectActionIndex: 0,
+                selectAction: this.$t('selectAction'),
+                selectedAction: this.$t('selectAction'),
                 dropdownShow: false,
             };
         },

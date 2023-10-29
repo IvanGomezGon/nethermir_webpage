@@ -38,7 +38,62 @@
         "registerGroup":"Registrar grup",
         "emailAddresses":"Adreces de correu",
         "alreadyHaveAccount":"Ja temps un compte?",
-        "signInExclamation":"Inicia sessió!"
+        "signInExclamation":"Inicia sessió!",
+        
+        "deleteDatabase":"Eliminar Base de Dades",
+        "signOut":"Tancar sessió",
+        "dashboard":"Panell de Control",
+        "proxmox":"Gestió Màquines Virtuals",
+        "groups":"Base de dades - Grups",
+        "users":"Base de dades - Usuaris",
+        "courses":"Base de dades - Assignatures",
+
+
+        "updateTable":"Actualitzar taula",
+        "execute":"Executar",
+        "selectAction":"Seleccionar acció",
+
+        "addCourse":"Afegir assignatura",
+        "name":"Nom",
+        "isActive":"Està activa?",
+        "activateDesactivate":"Activar/Desactivar",
+        "activate":"Activar",
+        "desactivate":"Desactivar",
+        "delete":"Eliminar",
+        "deleteElements":"Eliminar elements",
+        "email":"email",
+        "groupName":"Nom del grup",
+        "identifier":"Identificador",
+        "vlan":"VLAN",
+        "portUDP":"Port UDP",
+        "startHour":"Hora d'inici",
+        "finishHour":"Hora final",
+        "true":"Cert",
+        "false":"False",
+        "modalWarning":"Estàs segur que vols reiniciar la base de dades?",
+        "modalWarning2":"Aquesta acció",
+        "cant":"NO",
+        "modalWarning3":"pot ser desfeta i eliminarà ",
+        "permanent":"permanentment",
+        "modalWarning4":"tota la informació.",
+        "yesEliminate":"Si, eliminar base de dades",
+        "cancel":" No, cancel·lar",
+        "numServer":"Servidor ID",
+        "turnOn":"Encendre",
+        "turnOff":"Apagar",
+        "resume":"Resumir",
+        "pause":"Pausar",
+        "running":"Corrent",
+        "paused":"Corrent (Pausat)",
+        "virtualMachine":"Màquina Virtual",
+        "CPU":"CPU",
+        "status":"Estatus",
+        "uptime":"Temps encès",
+        "machines":"màquines",
+        "addNewSubject":"Afegir una nova assignatura"
+
+
+        
     },
     "ES":{
         "login":"Inicio de sesión",
@@ -58,6 +113,8 @@
         "registerGroup":"Registrar grupo",
         "emailAddresses":"Direcciones de correo",
         "alreadyHaveAccount":"¿Ya tienes una cuenta?",
-        "signInExclamation":"¡Inicia sessión!"
+        "signInExclamation":"¡Inicia sessión!",
+
+        "selectAction":"Seleccionar acción"
     }
 }

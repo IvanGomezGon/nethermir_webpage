@@ -1,7 +1,7 @@
 <template>
-    <SubHeader :titleName="'Base de dades - Assignatures'"></SubHeader>
+    <SubHeader :titleName="$t('courses')"></SubHeader>
     <main class="pt-10 bg-slate-200 dark:bg-grey-700 min-h-[calc(100vh-150px)] pb-8">
-        <div class="xl:w-3/4 md:w-full sm:w-full w-full mx-auto px-8 xl:px-0 ">
+        <div class="md:mx-[70px] md:px-[70px] mx-[20px]">
             <FormSubjects @added="fetch = !fetch"></FormSubjects>
             <TableSubjects :fetch="fetch"></TableSubjects>
         </div>

@@ -22,14 +22,22 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
-                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Estàs segur que vols reiniciar la base de dades? Aquesta acció <b>NO</b> pot ser desfeta i eliminarà <b>permanentment</b> tota la informació.</h3>
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                        {{ $t("modalWarning") }}<br/>
+                        {{ $t("modalWarning2") }}
+                        <b>{{ $t("cant") }}</b>
+                        {{ $t("modalWarning3") }}
+                        <b>{{ $t("permanent") }}</b> 
+                        {{ $t("modalWarning4") }}
+                    </h3>
                     <button data-modal-hide="popup-modal" type="button" @click="restartDatabase(); $emit('resetDB')"
                         class="text-white bg-red-600 hover:bg-red-800  focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
-                        Si, eliminar base de dades
+                        {{ $t("yesEliminate") }}
                     </button>
                     <button data-modal-hide="popup-modal" type="button" @click="$emit('goBack')"
-                        class="text-gray-500 bg-white hover:bg-gray-100  focus:outline-none rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-grey-700 focus:z-10 dark:bg-grey-400 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-grey-500 dark:focus:ring-gray-600">No,
-                        cancel·lar</button>
+                        class="text-gray-500 bg-white hover:bg-gray-100  focus:outline-none rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-grey-700 focus:z-10 dark:bg-grey-400 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-grey-500 dark:focus:ring-gray-600">
+                        {{ $t("cancel") }}
+                    </button>
                 </div>
             </div>
         </div>

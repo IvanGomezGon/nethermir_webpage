@@ -1,24 +1,24 @@
 <template>
     <section class="pb-8">
         <div class="">
-            <h2 class="mb-4 text-xl font-bold text-grey-700 dark:text-white">Afegir una nova assignatura</h2>
+            <h2 class="mb-4 text-xl font-bold text-grey-700 dark:text-white">{{$t("addNewSubject") }}</h2>
 
             <div class="grid gap-4 sm:grid-cols-5 sm:gap-6">
                 <div class="w-full" >
-                    <div for="curs" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">Curs</div>
+                    <div for="curs" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">{{$t('courseYear')}}</div>
                     <input type="text" name="curs" id="curs" v-model="curs"
                         class="outline-0 bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark: dark:focus:border-primary-500"
                         placeholder="2022-1" required="">
                 </div>
                 <div class="w-full">
                     <div for="assignatura"
-                        class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">Assignatura</div>
+                        class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">{{$t('course')}}</div>
                     <input type="text" name="assignatura" id="assignatura" v-model="assignatura"
                         class="outline-0 bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark: dark:focus:border-primary-500"
                         placeholder="FX" required="">
                 </div>
                 <div class="w-full">
-                    <div for="assignaturaID" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">Assignatura
+                    <div for="assignaturaID" class="block mb-2 text-sm font-medium text-grey-700 dark:text-white">{{$t('course')}}
                         ID</div>
                     <input type="number" name="assignaturaID" id="assignaturaID" v-model="vmTemplateID"
                         class="outline-0 bg-gray-50 border border-gray-300 text-grey-700 text-sm rounded-lg  focus:border-primary-600 block w-full p-2.5 dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark: dark:focus:border-primary-500"
@@ -30,7 +30,7 @@
                     </div>
                     <button type="button" @click="addSubject()"
                         class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 hover:active:bg-emerald-800 font-medium rounded-lg text-sm block px-5 p-2.5 text-white">
-                        Afegir assignatura
+                        {{$t('addCourse')}}
                     </button>
                 </div>
 

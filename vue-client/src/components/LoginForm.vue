@@ -4,7 +4,7 @@
             <img class="h-10 mr-2" src="../assets/logo_uab.png" alt="logo">
         </div>
         <div class="flex-shrink-0 block sm:hidden absolute top-2 left-2">
-            <img class="h-[71px]  mr-2 invert" src="../assets/logo_uab_small.svg" alt="UAB Logo">
+            <img class="h-[71px]  mr-2 " src="../assets/logo_uab_small.png" alt="UAB Logo">
         </div>
         <div class="absolute top-4 left-[170px] sm:left-[270px]">
             <img class="h-14 mr-2" src="../assets/logo_enginyeria.png" alt="logo">

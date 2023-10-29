@@ -1,27 +1,35 @@
 <template>
     <nav class="bg-emerald-700">
-        <div class="mx-auto w-full xl:w-3/4">
+        
+        <div class="mx-auto w-full ">
             <div class="flex h-16 items-center justify-between">
-                <div class="flex items-center ml-8 xl:ml-0">
-                    <div class="flex-shrink-0">
-                        <img class="h-8 invert" src="../assets/logo_uab_small.svg" alt="UAB Logo" @click="logOut()">
-                    </div>
-
-                    <div class="hidden md:block">
-                        <div class="ml-10 flex items-baseline xl:space-x-4 lg:space-x-2  space-x-0">
-                            <div v-for="(path, index) in paths">
-                                <a href="#" @click="this.$router.push(`/controlPannelRoot/${path}`); current = index"
-                                    :class="current == index ? 'bg-grey-700 text-white rounded-md px-3 py-2 text-sm font-medium' : 'text-gray-200 hover:bg-gray-700 active:bg-gray-700 active:hover:bg-gray-800 hover:text-white active:text-white rounded-md px-3 py-2 text-sm font-medium'">{{
-                                        path
-                                    }}</a>
-                            </div>
-                        </div>
+                <div class="">
+                    <div class="mr-[20px] flex " @click="toggleMobile()">
+                    <!-- Mobile menu button -->
+                    <button type="button"
+                        class="absolute left-[20px] top-3 hover:bg-gray-200 active:hover:bg-gray-300 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-700 dark:active:hover:bg-gray-600 p-[7px] bg-gray-50 border border-bg-gray-50 text-grey-700 text-sm rounded-lg dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <span class="sr-only">Open main menu</span>
+                        <!-- Menu open: "hidden", Menu closed: "block" -->
+                        <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
+                        <!-- Menu open: "block", Menu closed: "hidden" -->
+                        <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                    <div class="flex-shrink-0  ml-[70px]">
+                        <img class="h-[23px] " src="../assets/logo_uab_small.png" alt="UAB Logo" @click="logOut()">
                     </div>
                 </div>
-                <div class="hidden md:block mr-20 xl:mr-0">
-                    <div class="ml-2 flex items-center mr-10">
+                <div class="hidden md:block mr-[120px] ">
+                    <div class="ml-2 flex items-center">
                         <!-- Profile dropdown -->
-                        <div class="relative  ">
+                        <div class="relative">
                             <div>
                                 <button type="button" @click="logOut()"
                                     class=" float-right text-white bg-red-600 hover:bg-red-700 active:bg-red-700 hover:active:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 ">
@@ -35,10 +43,7 @@
                                             <path d="M9 12h12l-3 -3" />
                                             <path d="M18 15l3 -3" />
                                         </svg>
-                                        <div class="lmd:block hidden">
-                                            <p class=" lg:hidden block"> Sortir</p>
-                                        </div>
-                                        <p class=" lg:block hidden"> Tancar sessió</p>
+                                        <p>{{ $t("signOut") }}</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="$emit('deleteDB')"
@@ -56,11 +61,7 @@
                                             <path d="M22 22l-5 -5" />
                                             <path d="M17 22l5 -5" />
                                         </svg>
-                                        <div class="mmd:block hidden">
-                                            <p class=" lg:hidden block"> Eliminar DB</p>
-                                        </div>
-                                        <p class=" lg:block hidden "> Eliminar base de dades</p>
-
+                                        <p> {{ $t("deleteDatabase") }}</p>
                                     </div>
                                 </button>
                             </div>
@@ -68,46 +69,52 @@
                         </div>
                     </div>
                 </div>
-                <div class="mr-[20px] flex md:hidden" @click="toggleMobile()">
-                    <!-- Mobile menu button -->
-                    <button type="button"
-                        class="hover:bg-gray-200 active:hover:bg-gray-300 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-700 dark:active:hover:bg-gray-600 p-[7px] bg-gray-50 border border-bg-gray-50 text-grey-700 text-sm rounded-r-lg dark:bg-grey-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                        <span class="sr-only">Open main menu</span>
-                        <!-- Menu open: "hidden", Menu closed: "block" -->
-                        <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                            aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                        </svg>
-                        <!-- Menu open: "block", Menu closed: "hidden" -->
-                        <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                            aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
+
             </div>
         </div>
 
         <!-- Mobile menu, show/hide based on menu state. -->
-        <div :class="'md:hidden transition-max-height duration-500 ease-in-out ' + (mobileDropdown ? 'h-[320px]' : 'h-2 overflow-hidden ')"
+        <div :class="'md:hidden transition-max-height duration-500 ease-in-out ' + (mobileDropdown ? 'h-[320px]' : 'h-0 overflow-hidden ')"
             id="mobile-menu">
-            <div class="space-y-1 px-8 pb-3 pt-2 sm:px-3">
-                <div v-for="(path, index) in paths" v-if="mobileDrowdownFinished" class="overflow-hidden">
-                    <a href="#" @click="this.$router.push(`/controlPannelRoot/${path}`); current = index"
-                        :class="(current == index ? 'bg-grey-700 ' : '') + 'text-gray-200 hover:bg-gray-700 active:bg-gray-700 active:hover:bg-gray-800 hover:text-white active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
-                            path }}</a>
+            <div class="space-y-1 pb-3 pt-2 px-3">
+                <div v-for="(pathName, index) in pathNames" v-if="mobileDrowdownFinished" class="overflow-hidden">
+                    <a href="#" @click="this.$router.push(`/controlPannelRoot/${paths[index]}`); current = index"
+                        :class="(current == index ? 'bg-grey-600 ' : '') + 'text-gray-200 hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
+                            pathName }}</a>
                 </div>
-                <a href="#"
-                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-grey-400 hover:text-white">Eliminar
-                    base de dades</a>
-                <a href="#"
-                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-grey-400 hover:text-white">Tancar
-                    sessió</a>
+                <div class="px-3 h-[1px] border-t border-bg-gray-50" v-if="mobileDrowdownFinished"></div>
+                <a href="#" @click="$emit('deleteDB')" v-if="mobileDrowdownFinished"
+                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-200 hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white">
+                    {{ $t("deleteDatabase") }}
+                </a>
+                <a href="#" v-if="mobileDrowdownFinished"
+                    class="block rounded-md px-3 py-2 text-base font-medium text-gray-200 hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white">
+                    {{ $t("signOut") }}
+                </a>
 
             </div>
         </div>
     </nav>
+    <div :class="'shadow-xl shadow-gray-700		 hidden md:block bg-emerald-700 z-50 h-[calc(100vh-4rem)] absolute transition-max-width duration-500 ease-in-out ' + (mobileDropdown ? 'w-[320px]' : 'w-0 overflow-hidden ')"
+            id="mobile-menu">
+            <div class="space-y-1 pl-5 pr-3 pb-3 pt-2 sm:px-3">
+                <div v-for="(pathName, index) in pathNames" v-if="mobileDrowdownFinished" class="overflow-hidden">
+                    <a href="#" @click="this.$router.push(`/controlPannelRoot/${paths[index]}`); current = index"
+                        :class="(current == index ? 'bg-grey-600 ' : '') + 'w-[295px] text-clip text-gray-200 hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
+                            pathName }}</a>
+                </div>
+                <div class="px-3 h-[1px] border-t border-bg-gray-50" v-if="mobileDrowdownFinished"></div>
+                <a href="#" @click="$emit('deleteDB')" v-if="mobileDrowdownFinished"
+                    class="w-[295px] text-clip block rounded-md px-3 py-2 text-gray-200 font-medium hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white  ">
+                    {{ $t("deleteDatabase") }}
+                </a>
+                <a href="#" v-if="mobileDrowdownFinished"
+                    class="w-[295px] text-clip block rounded-md px-3 py-2 text-gray-200 font-medium hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white">
+                    {{ $t("signOut") }}
+                </a>
+
+            </div>
+        </div>
 </template>
 
 <script>
@@ -121,7 +128,8 @@ export default {
             mobileDropdown: 0,
             mobileDrowdownFinished: 0,
             route: '',
-            paths: ['Dashboard', 'Proxmox', 'Grups', 'Usuaris', 'Assignatures'],
+            paths: ["dashboard", "proxmox", "groups", "users", "courses"],
+            pathNames: [ this.$t("dashboard"), this.$t("proxmox"), this.$t("groups"), this.$t("users"), this.$t("courses")],
         }
     },
     created: function () {

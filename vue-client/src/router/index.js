@@ -44,19 +44,19 @@ const routes = [
       {
         // UserProfile will be rendered inside User's <router-view>
         // when /user/:id/profile is matched
-        path: 'grups',
+        path: 'groups',
         component: GetGroups,
       },
       {
         // UserPosts will be rendered inside User's <router-view>
         // when /user/:id/posts is matched
-        path: 'usuaris',
+        path: 'users',
         component: GetUsuaris,
       },
       {
         // UserPosts will be rendered inside User's <router-view>
         // when /user/:id/posts is matched
-        path: 'assignatures',
+        path: 'courses',
         component: GetSubjects,
       },
     ],

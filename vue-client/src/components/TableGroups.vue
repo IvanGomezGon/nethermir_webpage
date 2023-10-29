@@ -5,14 +5,14 @@
                 <svg class="w-[12px] h-[12px] text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
                 </svg>
-                <p> Actualitzar taula</p>
+                <p> {{$t('updateTable')}}</p>
             </div>
         </button>
         <button :disabled="getElements()==0" type="button" @click="deleteElements()" :class="(getElements()== 0 ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'font-medium rounded-lg text-sm p-2.5'">
             <span :class="(getElements()== 0 ? 'dark:text-grey-500 dark:bg-grey-300 text-gray-400 bg-gray-500 ' : ' text-primary-800 bg-primary-200 ') + 'inline-flex items-center justify-center w-4 h-4 mr-1 text-xs font-semibold rounded-full'">
                 {{getElements()}}
             </span>
-            Eliminar elements
+            {{$t('deleteElements')}}
         </button>
     </div>
          
@@ -29,31 +29,31 @@
                         </div>
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Identificador
+                        {{$t('groupName')}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Assignatura
+                        {{$t('course')}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Grup
+                        {{$t('identifier')}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        VLAN
+                        {{$t('vlan')}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Port UDP
+                        {{$t('portUDP')}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Està actiu?
+                        {{$t('isActive')}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Hora d'inici
+                        {{$t('startHour')}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Hora final
+                        {{$t('finishHour')}}
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Edit</span>
+                        
                     </th>
 
                 </tr>
@@ -86,7 +86,7 @@
                         {{ group.vlan_id + 65434 }}
                     </td>
                     <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
-                        {{ group.active == '0' ? 'Cert' : 'Fals' }}
+                        {{ group.active == '0' ? $t("true"): $t("false") }}
                     </td>
                     <td class="px-6 py-4 text-grey-700 whitespace-nowrap dark:text-white">
                         {{ group.starting_time }}
@@ -96,7 +96,7 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="deleteGroup(group.name)"
-                            class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">Eliminar</a>
+                            class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">{{ $t("delete") }}</a>
                     </td>
 
                 </tr>
