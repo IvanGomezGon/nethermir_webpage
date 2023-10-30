@@ -64,7 +64,7 @@
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="activateVM(cpuVM, idVM)"
                             class="font-medium text-emerald-600 dark:text-emerald-500 hover:underline">
-                            {{ `${statusVM != "stopped" ? $t("extend") : $t("turnOn")} ${hours + (hours == 1 ? $t("hour") : $t("hours"))}`}}</a>
+                            {{ `${statusVM != "stopped" ? $t("extend") : $t("turnOn")} ${hours + " "+(hours == 1 ? $t("hour") : $t("hours"))}`}}</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="#" @click="suspendResumeVM()"
