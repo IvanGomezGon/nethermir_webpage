@@ -112,10 +112,10 @@ export default {
             this.feedback = ""
             this.errors = [];
             if (!this.usuari) {
-                this.errors.push('Usuari obligatori');
+                this.errors.push(this.$t("errorUser"));
             }
             if (!this.password) {
-                this.errors.push('Contrasenya obligatoria');
+                this.errors.push(this.$t("errorPassword"));
             }
             if (!this.errors.length) {
                 this.login()
@@ -134,7 +134,7 @@ export default {
                     this.$router.push('/controlPannelUser')
                 } else {
                     this.feedback = ""
-                    this.errors.push(`Contrasenya incorrecte. Pots trobar-la al teu compte d'email usuari@uab.cat`)
+                    this.errors.push(this.$t("errorLogin"))
                 }
             })
            

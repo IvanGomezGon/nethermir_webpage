@@ -89,6 +89,9 @@
         "thisProcessMayTakeLong":"This process may take up to 5 minutes",
         "ifItTakesTooLong":"If it takes too long, contact your professor",
 
+        "errorUser":"The field 'User' is mandatory",
+        "errorPassword":"The field 'Password' is mandatory",
+        "errorLogin":"Wrong password. You can find it in the register email",
         "errorCourse":"The field 'Course' is mandatory.",
         "errorYear":"The field 'Year' is mandatory.",
         "errorNumPeople":"The field 'Number of students' is mandatory.",
@@ -188,6 +191,9 @@
         "thisProcessMayTakeLong":"Aquest procès pot arribar a trigar 5 minuts.",
         "ifItTakesTooLong":"Si triga massa temps, contacta el teu professor",
 
+        "errorUser":"El camp 'Usuari' és obligatori",
+        "errorPassword":"El camp 'Contrasenya' és obligatori",
+        "errorLogin":"Contrasenya incorrecta. Pots trobar-la a l'email de registre",
         "errorCourse":"El camp 'Assignatura' és obligatori.",
         "errorYear":"El camp 'Curs' és obligatori.",
         "errorNumPeople":"El camp 'Num d'Integrants' és obligatori.",
@@ -287,6 +293,9 @@
         "thisProcessMayTakeLong":"Este proceso puede llegar a tardar 5 minutos.",
         "ifItTakesTooLong":"Si tarda demasiado tiempo, contacta con tu profesor.",
 
+        "errorUser":"El campo 'Usuario' es obligatorio",
+        "errorPassword":"El campo 'Contraseña' es obligatorio",
+        "errorLogin":"Contraseña incorrecta. Puedes encontrarla en el email de registro",
         "errorCourse":"El campo 'Asignatura' es obligatorio",
         "errorYear":"El campo 'Curso' es obligatorio.",
         "errorNumPeople":"El campo 'Número de integrantes' es obligatorio.",
