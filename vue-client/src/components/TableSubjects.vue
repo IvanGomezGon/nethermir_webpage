@@ -13,29 +13,29 @@
         </button>
         <div class="contents">
             <button id="dropdownDefaultButton" @click="dropdownShow = !dropdownShow" data-dropdown-toggle="dropdown" class="w-[185px] bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white text-center inline-flex items-center font-medium rounded-lg text-sm p-2.5 block" type="button">
-                <span v-if="selectedAction != selectAction" class="mr-2 text-primary-800 bg-primary-200 inline-flex items-center justify-center w-4 h-4 mr-1 text-xs font-semibold rounded-full text-center">
+                <span v-if="selectedAction != -1" class="mr-2 text-primary-800 bg-primary-200 inline-flex items-center justify-center w-4 h-4 mr-1 text-xs font-semibold rounded-full text-center">
                     {{getNumActiveRows()}}
                 </span>
                 <span :class="selectedAction == selectAction ?'mr-auto ml-auto' : 'mr-auto'">
-                    {{ selectActionIndex == 0 ? $t("selectAction") : selectedAction }} {{ selectedAction != selectAction ? 'elements' : '' }} 
+                    {{ getSelectedAction() }} 
                 </span>
                 <svg class="w-2.5 h-2.5 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                 </svg>
             </button>
-            <button :disabled="getNumActiveRows()==0 || selectedAction == selectAction" type="button" @click="executeAction()" :class="(getNumActiveRows()== 0 || selectedAction == selectAction ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'ml-4 font-medium rounded-lg text-sm p-2.5 '">
+            <button :disabled="getNumActiveRows()==0 || selectedAction == -1" type="button" @click="executeAction()" :class="(getNumActiveRows()== 0 || selectedAction == -1 ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'ml-4 font-medium rounded-lg text-sm p-2.5 '">
                 {{$t('execute')}}
             </button>
             <div id="dropdown" v-if="dropdownShow == true" class="mt-1 w-[185px] ml-[159px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-grey-400 absolute border dark:border-grey-300 border-gray-300 ">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200 " aria-labelledby="dropdownDefaultButton">
-                <li @click="selectedAction='Activar'; dropdownShow = false">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Activar</a>
+                <li @click="selectedAction=0; dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">{{ $t("activate") }}</a>
                 </li>
-                <li  @click="selectedAction='Desactivar'; dropdownShow = false">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Desactivar</a>
+                <li  @click="selectedAction=1; dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">{{ $t("desactivate") }}</a>
                 </li>
-                <li  @click="selectedAction='Eliminar'; dropdownShow = false">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">Eliminar</a>
+                <li  @click="selectedAction=2; dropdownShow = false">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-grey-300 dark:hover:text-white">{{ $t("delete") }}</a>
                 </li>
                 </ul>
             </div>  
@@ -115,9 +115,8 @@ export default {
         return {
             data: "",
             active:[],
-            selectActionIndex: 0,
-            selectAction: this.$t('selectAction'),
-            selectedAction: this.$t('selectAction'),
+            selectedAction: -1,
+            dropdownShow: false,
         };
     },
     props: {fetch},
@@ -131,6 +130,17 @@ export default {
         
     },
     methods: {
+        getSelectedAction() {
+            if (this.selectedAction == -1){
+                return this.$t("selectAction")
+            }else if (this.selectedAction == 0){
+                return `${this.$t("activate")} ${this.$t("elements")}`
+            }else if (this.selectedAction == 1){
+                return `${this.$t("desactivate")} ${this.$t("elements")}`
+            }else if (this.selectedAction == 2){
+                return `${this.$t("delete")} ${this.$t("elements")}`
+            }
+        },
         async getData() {
             let response = await fetch(`${process.env.VUE_APP_FETCH_URL}subjects`)
             response.json().then((json) => {
@@ -174,13 +184,13 @@ export default {
             if (activatedRows == 0) {
                 return
             }
-            if (this.selectedAction == "Activar"){
+            if (this.selectedAction == 0){
                 this.activateSubject()
             }   
-            else if (this.selectedAction == "Desactivar"){
+            else if (this.selectedAction == 1){
                 this.deactiveSubject()
             }
-            else if (this.selectedAction == "Eliminar"){
+            else if (this.selectedAction == 2){
                 this.deleteSubject()
             }
         },

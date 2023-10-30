@@ -36,7 +36,7 @@ const sendWarningMail = (emails) => {
     emails.forEach((email) => sendEmail(email.email, emailText, "Notificació apagament Màquina Virtual"));
 };
 const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyPairUser, keyPairRouter) => {
-    logger.info(`sendPasswordEmail ${groupName} ${password}`);
+    logger.info(`sendPasswordEmail ${groupName}`);
     emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
                 Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>

@@ -90,12 +90,6 @@
             </div>
         </div>
     </section>
-    <b-button
-  size="sm"
-  class="my-2 my-sm-0 btn-info"
-  type="submit"
-  @click="$i18n.locale = 'en'"
->{{ $t('english') }}</b-button>
 </template>
 
   

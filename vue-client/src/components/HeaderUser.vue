@@ -4,10 +4,10 @@
             <div class="flex h-16 items-center justify-between">
                 <div class="flex items-center ml-8 xl:ml-0">
                     <div class="flex-shrink-0">
-                        <img class="h-8 " src="../assets/logo_uab_small.png" alt="UAB Logo" @click="logOut()">
+                        <img class="h-[23px]" src="../assets/logo_uab_small.png" alt="UAB Logo" @click="logOut()">
                     </div>
                 </div>
-                <div class="mr-20 xl:mr-0">
+                <div class="mr-[120px] xl:mr-0">
                     <div class="ml-4 flex items-center">
                         <!-- Profile dropdown -->
                         <div class="relative  ">
