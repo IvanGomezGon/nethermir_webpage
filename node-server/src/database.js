@@ -322,9 +322,10 @@ const checkEmails = (emails) => {
     return new Promise((resolve, reject) => {
         elements = 0;
         emails.forEach(async (email) => {
-            if (!email.endsWith("@uab.cat")) {
-                resolve("Doesn't end in @uab.cat");
+            if (!email.endsWith("@uab.cat") && !email.endsWith("@autonoma.cat")) {
+                resolve("Doesn't end in @uab.cat or autonoma.cat");
             }
+            
             sql = `SELECT email FROM nethermir.emails WHERE email=?`;
             queryToDB(sql, [email]).then((x) => {
                 if (x.length != 0) {

@@ -165,20 +165,20 @@ export default {
         checkRegister() {
             this.errors = [];
             if (!this.assignatura) {
-                this.errors.push("El camp 'Assignatura' és obligatori.");
+                this.errors.push(this.$t("errorCourse"));
             }
             if (!this.curs) {
-                this.errors.push("El camp 'Curs' és obligatori.");
+                this.errors.push(this.$t("errorYear"));
             }
             if (this.numIntegrants == 0) {
-                this.errors.push("El camp 'Num d'Integrants' és obligatori.");
+                this.errors.push(this.$t("errorNumPeople"));
             }
             if (this.emails.length != this.numIntegrants) {
-                this.errors.push("El camp 'Adreces de correu' és obligatori.")
+                this.errors.push(this.$t("errorEmails"))
             }
             this.emails.forEach((value, index) => {
-                if (!/.+@uab\.cat/.test(value)) {
-                    this.errors.push(`L'email ${index + 1} ha de tenir el format:"usuari@uab.cat"`);
+                if (!/.+@uab\.cat/.test(value) && !/.+@autonoma\.cat/.test(value)) {
+                    this.errors.push(`${this.$t("theEmail")} ${index + 1} ${this.$t("errorFormatEmail")}`);
                 }
             })
             if (!this.errors.length) {

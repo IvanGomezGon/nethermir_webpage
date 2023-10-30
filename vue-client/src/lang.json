@@ -87,7 +87,14 @@
         "noVMFoundLink":"Create Virtual Machine",
         "creatingYourVM":"Creating your Virtual Machine",
         "thisProcessMayTakeLong":"This process may take up to 5 minutes",
-        "ifItTakesTooLong":"If it takes too long, contact your professor"
+        "ifItTakesTooLong":"If it takes too long, contact your professor",
+
+        "errorCourse":"The field 'Course' is mandatory.",
+        "errorYear":"The field 'Year' is mandatory.",
+        "errorNumPeople":"The field 'Number of students' is mandatory.",
+        "errorEmails":"The field 'Email addresses' is mandatory.",
+        "theEmail":"The email",
+        "errorFormatEmail":"needs to have the format:'user@uab.cat' or 'user@autonoma.cat'"
 
     },
     "CA":{
@@ -179,7 +186,14 @@
 
         "creatingYourVM":"Creant la teva màquina virtual",
         "thisProcessMayTakeLong":"Aquest procès pot arribar a trigar 5 minuts.",
-        "ifItTakesTooLong":"Si triga massa temps, contacta el teu professor"
+        "ifItTakesTooLong":"Si triga massa temps, contacta el teu professor",
+
+        "errorCourse":"El camp 'Assignatura' és obligatori.",
+        "errorYear":"El camp 'Curs' és obligatori.",
+        "errorNumPeople":"El camp 'Num d'Integrants' és obligatori.",
+        "errorEmails":"El camp 'Adreces de correu' és obligatori.",
+        "theEmail":"L'email",
+        "errorFormatEmail":"ha de tenir el format:'usuari@uab.cat' o 'usuario@autonoma.cat'"
 
     },
     "ES":{
@@ -271,6 +285,13 @@
 
         "creatingYourVM":"Creando tu máquina virtual",
         "thisProcessMayTakeLong":"Este proceso puede llegar a tardar 5 minutos.",
-        "ifItTakesTooLong":"Si tarda demasiado tiempo, contacta con tu profesor."
+        "ifItTakesTooLong":"Si tarda demasiado tiempo, contacta con tu profesor.",
+
+        "errorCourse":"El campo 'Asignatura' es obligatorio",
+        "errorYear":"El campo 'Curso' es obligatorio.",
+        "errorNumPeople":"El campo 'Número de integrantes' es obligatorio.",
+        "errorEmails":"El campo 'Direcciones de correo' es obligatorio.",
+        "theEmail":"El email",
+        "errorFormatEmail":"debe tener el formato:'usuari@uab.cat' o 'usuario@autonoma.cat'"
     }
 }
