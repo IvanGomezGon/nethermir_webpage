@@ -7,7 +7,7 @@
                         <img class="h-[23px]" src="../assets/logo_uab_small.png" alt="UAB Logo" @click="logOut()">
                     </div>
                 </div>
-                <div class="mr-[120px] xl:mr-0">
+                <div class="mr-[120px]">
                     <div class="ml-4 flex items-center">
                         <!-- Profile dropdown -->
                         <div class="relative  ">
