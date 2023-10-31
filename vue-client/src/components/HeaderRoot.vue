@@ -77,7 +77,7 @@
         <div :class="'md:hidden transition-max-height duration-500 ease-in-out ' + (mobileDropdown ? 'h-[320px]' : 'h-0 overflow-hidden ')"
             id="mobile-menu">
             <div class="space-y-1 pb-3 pt-2 px-3">
-                <div v-for="(pathName, index) in pathNames" v-if="mobileDrowdownFinished" class="overflow-hidden">
+                <div v-for="(pathName, index) in pathNames" v-if="mobileDrowdownFinished" class="overflow-hidden" @click="toggleMobile()">
                     <a href="#" @click="this.$router.push(`/controlPannelRoot/${paths[index]}`); current = index"
                         :class="(current == index ? 'bg-grey-600 ' : '') + 'text-gray-200 hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
                             pathName }}</a>
@@ -98,7 +98,7 @@
     <div :class="'shadow-xl shadow-gray-700 hidden md:block bg-emerald-700 z-50 h-[calc(100vh-4rem)] absolute transition-max-width duration-500 ease-in-out border-t-2 dark:border-t-grey-700 border-t-slate-200 border-radius-10 rounded-r-2xl ' + (mobileDropdown ? 'w-[320px]' : 'w-0 overflow-hidden ')"
             id="mobile-menu">
             <div class="space-y-1 pl-5 pr-3 pb-3 pt-2 sm:px-3">
-                <div v-for="(pathName, index) in pathNames" v-if="mobileDrowdownFinished" class="overflow-hidden">
+                <div v-for="(pathName, index) in pathNames" v-if="mobileDrowdownFinished" class="overflow-hidden" @click="toggleMobile()">
                     <a href="#" @click="this.$router.push(`/controlPannelRoot/${paths[index]}`); current = index"
                         :class="(current == index ? 'dark:bg-grey-600 bg-grey-500 ' : 'hover:bg-grey-300 active:bg-grey-300 active:hover:bg-grey-400 hover:text-white ') + 'w-[295px] text-clip text-gray-200 active:text-white block rounded-md px-3 py-2 text-base font-medium'">{{
                             pathName }}</a>
