@@ -37,21 +37,15 @@ const qModifyRouterConfig = new Queue('modifyRouterConfig', { redis: { port: pro
 qModifyRouterConfig.process(async function(job, done){
     logger.info("Inside queue")
     if (job.data.generate == 1){
-        const {groupName, privKey, pubKey, portUDP, interface, idgroup, res} = job.data;
+        const {groupName, privKey, pubKey, portUDP, interface, idgroup} = job.data;
         generateRes = await routerosManager.generateRouterOSConfig(groupName, privKey, pubKey, portUDP, interface, idgroup);
         if (generateRes != "Success"){
             qModifyRouterConfig.add({groupName: groupName, generate: 0});
-            feedbackFetch("Generating router config failed - Contact Professor", res);
-        }else{
-            feedbackFetch(groupName, res);
         }
         done()
     }else{
         logger.info("lets delete some configs")
         await routerosManager.deleteRouterOSConfig(job.data.groupName);
-        if (job.data.res){
-            feedbackFetch("Success", res)
-        }
         done()
     }
 })
@@ -77,7 +71,7 @@ app.post("/backend/machine", async function (req, res) {
         proxmoxManager.modifyMachineVLAN(groupName, groupData.idgroup, bridge);
         portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
         databaseManager.activateGroup(groupData.idgroup);
-        await qModifyRouterConfig.add({groupName: groupName, privKey: groupData.private_key_router, pubKey: groupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, res: res, generate: 1});
+        await qModifyRouterConfig.add({groupName: groupName, privKey: groupData.private_key_router, pubKey: groupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, generate: 1});
     } catch (error) {
         logger.error(`Failed generatingMachine ${error}`);
     }
@@ -168,7 +162,7 @@ app.delete("/backend/group", async function (req, res) {
             let groupID = groupName.split('-').pop()
             await databaseManager.deleteGroup(groupID);
             await proxmoxManager.deleteMachine(groupID)
-            qModifyRouterConfig.add({groupName: groupName, generate: 0, res: res})
+            qModifyRouterConfig.add({groupName: groupName, generate: 0})
         })
     } catch (error) {
         logger.error(`Error deleting group ${error}`)
