@@ -72,7 +72,7 @@ app.post("/backend/machine", async function (req, res) {
         proxmoxManager.modifyMachineVLAN(groupName, groupData.idgroup, bridge);
         portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
         databaseManager.activateGroup(groupData.idgroup);
-        await qGenerateRouterConfig({user: user, privKey: groupData.private_key_router, pubKey: roupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, res: res, generate: 1});
+        await qModifyRouterConfig({user: user, privKey: groupData.private_key_router, pubKey: roupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, res: res, generate: 1});
     } catch (error) {
         logger.error(`Failed generatingMachine ${error}`);
     }
@@ -162,8 +162,8 @@ app.delete("/backend/group", async function (req, res) {
         groupNames.forEach(async groupName => {
             let groupID = groupName.split('-').pop()
             await databaseManager.deleteGroup(groupID);
-            proxmoxManager.deleteMachine(groupID)
-            qDeleteRouterConfig({groupName: groupName, generate: 0})
+            await proxmoxManager.deleteMachine(groupID)
+            qModifyRouterConfig({groupName: groupName, generate: 0})
             feedbackFetch("Success", res)
         })
     } catch (error) {
