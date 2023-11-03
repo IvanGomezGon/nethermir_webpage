@@ -203,16 +203,16 @@ const modifyMachineVLAN = (vmID, vlan, bridge) => {
             proxmox.qemu.updateConfig(serverID, vmID, data, (err, data) => {
                 if (err) {
                     logger.error(`Failed to modify VLAN machine: ${err}`);
-                    resolve("Failed");
+                    reject(err)
                 }
                 if (data) {
                     logger.info(`Sucess to modify VLAN machine ${vmID}: ${data}`);
                     resolve("Success");
                 }
             });
-        } catch {
+        } catch (err){
             logger.error("modifyMachineVLAN failed trycatch");
-            resolve("Failed");
+            reject(err);
         }
     });
 };
