@@ -37,8 +37,8 @@ const qModifyRouterConfig = new Queue('modifyRouterConfig', { redis: { port: pro
 qModifyRouterConfig.process(async function(job, done){
     logger.info("Inside queue")
     if (job.data.generate == 1){
-        const {user, privKey, pubKey, portUDP, interface, idgroup, res} = job.data;
-        generateRes = await routerosManager.generateRouterOSConfig(user, privKey, pubKey, portUDP, interface, idgroup);
+        const {groupName, privKey, pubKey, portUDP, interface, idgroup, res} = job.data;
+        generateRes = await routerosManager.generateRouterOSConfig(groupName, privKey, pubKey, portUDP, interface, idgroup);
         if (generateRes != "Success"){
             qModifyRouterConfig.add({groupName: groupName, generate: 0});
             feedbackFetch("Generating router config failed - Contact Professor", res);
@@ -77,7 +77,7 @@ app.post("/backend/machine", async function (req, res) {
         proxmoxManager.modifyMachineVLAN(groupName, groupData.idgroup, bridge);
         portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
         databaseManager.activateGroup(groupData.idgroup);
-        await qModifyRouterConfig.add({user: user, privKey: groupData.private_key_router, pubKey: groupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, res: res, generate: 1});
+        await qModifyRouterConfig.add({user: groupName, privKey: groupData.private_key_router, pubKey: groupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, res: res, generate: 1});
     } catch (error) {
         logger.error(`Failed generatingMachine ${error}`);
     }
