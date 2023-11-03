@@ -35,6 +35,7 @@ app.use(express.json());
 const qModifyRouterConfig = new Queue('modifyRouterConfig', { redis: { port: process.env.REDIS_PORT, host: process.env.REDIS_HOST, password: process.env.REDIS_PASSWORD } }); 
 
 qModifyRouterConfig.process(async function(job, done){
+    logger.info("Inside queue")
     if (job.data.generate == 1){
         const {user, privKey, pubKey, portUDP, interface, idgroup, res} = job.data;
         generateRes = await routerosManager.generateRouterOSConfig(user, privKey, pubKey, portUDP, interface, idgroup);
@@ -46,6 +47,7 @@ qModifyRouterConfig.process(async function(job, done){
         }
         done()
     }else{
+        logger.info("lets delete some configs")
         await routerosManager.deleteRouterOSConfig(job.data.groupName);
         if (job.data.res){
             feedbackFetch("Success", res)
