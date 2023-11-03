@@ -47,6 +47,9 @@ qModifyRouterConfig.process(async function(job, done){
         done()
     }else{
         await routerosManager.deleteRouterOSConfig(job.data.groupName);
+        if (job.data.res){
+            feedbackFetch("Success", res)
+        }
         done()
     }
 })
@@ -163,8 +166,7 @@ app.delete("/backend/group", async function (req, res) {
             let groupID = groupName.split('-').pop()
             await databaseManager.deleteGroup(groupID);
             await proxmoxManager.deleteMachine(groupID)
-            qModifyRouterConfig({groupName: groupName, generate: 0})
-            feedbackFetch("Success", res)
+            qModifyRouterConfig({groupName: groupName, generate: 0, res: res})
         })
     } catch (error) {
         logger.error(`Error deleting group ${error}`)
