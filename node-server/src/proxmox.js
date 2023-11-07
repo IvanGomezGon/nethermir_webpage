@@ -181,6 +181,7 @@ const machineFinishedClonning = (vmID) => {
     return new Promise((resolve, reject) => {
         interval = setInterval(async () => {
             nodeInfo = await getStatusVM(vmID);
+            logger.info(`Checking.. ${nodeInfo}`)
             if (nodeInfo) {
                 if (!nodeInfo["lock"]) {
                     logger.info("Not longer locked");
@@ -192,7 +193,7 @@ const machineFinishedClonning = (vmID) => {
 };
 const modifyMachineVLAN = (vmID, vlan, bridge) => {
     return new Promise(async (resolve, reject) => {
-        logger.info(`modifyMachineVLAN ${groupName} ${vlan} ${bridge}`);
+        logger.info(`modifyMachineVLAN ${vmID} ${vlan} ${bridge}`);
         interval = await machineFinishedClonning(vmID);
         clearInterval(interval);
         logger.info("Machine finished clonning");

@@ -68,7 +68,8 @@ app.post("/backend/machine", async function (req, res) {
         }
         cloneRes = await proxmoxManager.cloneMachine(groupData.idgroup, groupName)
         bridge = process.env.PROXMOX_PUBLIC_BRIDGE;
-        proxmoxManager.modifyMachineVLAN(groupName, groupData.idgroup, bridge);
+        vmID = groupName.split("-").pop()
+        proxmoxManager.modifyMachineVLAN(vmID, groupData.idgroup, bridge);
         portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
         databaseManager.activateGroup(groupData.idgroup);
         await qModifyRouterConfig.add({groupName: groupName, privKey: groupData.private_key_router, pubKey: groupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, generate: 1});
