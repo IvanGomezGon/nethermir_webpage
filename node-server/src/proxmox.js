@@ -179,7 +179,7 @@ const deleteMachine = (vmID) => {
 };
 const machineFinishedClonning = (vmID) => {
     return new Promise((resolve, reject) => {
-        interval = setInterval(async () => {
+        let interval = setInterval(async () => {
             nodeInfo = await getStatusVM(vmID);
             if (nodeInfo) {
                 if (!nodeInfo["lock"]) {
