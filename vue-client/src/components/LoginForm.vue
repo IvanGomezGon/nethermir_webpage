@@ -1,12 +1,9 @@
 <template>
     <section class="bg-[url('./columnes.svg')] bg-cover h-screen">
-        <div class="absolute top-6 left-6 hidden sm:block">
+        <div class="absolute top-6 left-6 block">
             <img class="h-10 mr-2" src="../assets/logo_uab.png" alt="logo">
         </div>
-        <div class="flex-shrink-0 block sm:hidden absolute top-2 left-2">
-            <img class="h-[71px]  mr-2 " src="../assets/logo_uab_small.png" alt="UAB Logo">
-        </div>
-        <div class="absolute top-4 left-[170px] sm:left-[270px]">
+        <div class="absolute top-4 left-[170px] hidden sm:block">
             <img class="h-14 mr-2" src="../assets/logo_enginyeria.png" alt="logo">
         </div>
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0 ">
