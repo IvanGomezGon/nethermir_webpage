@@ -182,25 +182,24 @@ const machineFinishedClonning = (vmID) => {
     return new Promise((resolve, reject) => {
         interval = setInterval(async () => {
             nodeInfo = await getStatusVM(vmID);
-            logger.info(`Checking.. ${nodeInfo}`)
             if (nodeInfo) {
                 if (!nodeInfo["lock"]) {
-                    logger.info("Not longer locked");
-                    resolve(interval);
+                    logger.info(`Not longer locked ${vmID}`);
+                    resolve();
+                    clearInterval(interval)
                 }
             }
         }, 5000);
     });
 };
-const modifyMachineVLAN = (vmID, vlan, bridge) => {
+const modifyMachineVLAN = (vmID, bridge) => {
     return new Promise(async (resolve, reject) => {
-        logger.info(`modifyMachineVLAN ${vmID} ${vlan} ${bridge}`);
-        interval = await machineFinishedClonning(vmID);
-        clearInterval(interval);
+        logger.info(`modifyMachineVLAN ${vmID} ${bridge}`);
+        await machineFinishedClonning(vmID);
         logger.info("Machine finished clonning");
         serverID = PROXMOX_SERVERS[vmID % process.env.PROXMOX_SERVERS_COUNT];
-        logger.info(`Modifiying machine ${vmID} VLAN to ${vlan} on server ${serverID} ${PROXMOX_SERVERS}`);
-        data = { net0: `virtio,bridge=${bridge},tag=${vlan}` };
+        logger.info(`Modifiying machine ${vmID} VLAN to ${vmID} on server ${serverID} ${PROXMOX_SERVERS}`);
+        data = { net0: `virtio,bridge=${bridge},tag=${vmID}` };
         try {
             proxmox.qemu.updateConfig(serverID, vmID, data, (err, data) => {
                 if (err) {

@@ -69,7 +69,7 @@ app.post("/backend/machine", async function (req, res) {
         cloneRes = await proxmoxManager.cloneMachine(groupData.idgroup, groupName)
         bridge = process.env.PROXMOX_PUBLIC_BRIDGE;
         vmID = groupName.split("-").pop()
-        proxmoxManager.modifyMachineVLAN(vmID, groupData.idgroup, bridge);
+        proxmoxManager.modifyMachineVLAN(vmID, bridge);
         portUDP = parseInt(process.env.PORT_UDP_FIRST_ID) + parseInt(groupData.vlan_id);
         databaseManager.activateGroup(groupData.idgroup);
         await qModifyRouterConfig.add({groupName: groupName, privKey: groupData.private_key_router, pubKey: groupData.public_key_user, portUDP: portUDP, interface: process.env.ROUTEROS_TO_PROXMOX_INTERFACE_NAME, idgroup: groupData.idgroup, generate: 1});
@@ -284,7 +284,7 @@ app.put("/backend/activateMachine", async function (req, res) {
         let vmIDs = [groupName.split("-").pop()]
         if (req.body["vmIDs"] != null) {
             vmIDs = req.body["vmIDs"].split(',') 
-        }     
+        }   
         logger.info(`activateMachine: ${vmIDs}`)
         if (vmIDs.length > 1){
             let promises = [];
@@ -294,6 +294,8 @@ app.put("/backend/activateMachine", async function (req, res) {
             Promise.all(promises).then(feedbackFetch("", res));  
         }else{
             let vmID = vmIDs[0]
+            bridge = process.env.PROXMOX_PUBLIC_BRIDGE;
+            await proxmoxManager.modifyMachineVLAN(vmID, bridge);
             let active = await proxmoxManager.getActiveVM(vmID);
             await databaseManager.changeRenovationHoursVM(vmID, active, hours);
             let renovationHours = await databaseManager.getRenovationHoursVM(vmID)
