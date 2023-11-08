@@ -77,6 +77,7 @@ const getStatusVM = (vmID) => {
                     logger.error(`Failed to getStatusVM: ${err}`);
                 } else {
                     data_json = JSON.parse(data).data;
+                    logger.info(`DATA STATUS VM: ${data_json}`);
                     resolve(data_json);
                 }
             });
