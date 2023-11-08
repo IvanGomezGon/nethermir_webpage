@@ -287,12 +287,14 @@ app.put("/backend/activateMachine", async function (req, res) {
         }   
         logger.info(`activateMachine: ${vmIDs}`)
         if (vmIDs.length > 1){
+            logger.info("Activating multiple machines")
             let promises = [];
             vmIDs.forEach(async vmID => {
                 promises.push(proxmoxManager.activateMachine(vmID));
             })
             Promise.all(promises).then(feedbackFetch("", res));  
         }else{
+            logger.info("Activating one machine")
             let vmID = vmIDs[0]
             bridge = process.env.PROXMOX_PUBLIC_BRIDGE;
             await proxmoxManager.modifyMachineVLAN(vmID, bridge);
