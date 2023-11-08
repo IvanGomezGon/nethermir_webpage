@@ -3,7 +3,7 @@
         <div class="absolute top-6 left-6 block">
             <img class="h-10 mr-2" src="../assets/logo_uab.png" alt="logo">
         </div>
-        <div class="absolute top-4 left-[170px] hidden sm:block">
+        <div class="absolute top-4 left-[270px] hidden sm:block">
             <img class="h-14 mr-2" src="../assets/logo_enginyeria.png" alt="logo">
         </div>
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0 ">
