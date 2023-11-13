@@ -199,7 +199,7 @@ export default {
             subjectsID = subjectsID == null ? await this.getActivatedRows() : subjectsID
             console.log("Elements to activate: ", subjectsID)
             fetch(`${process.env.VUE_APP_FETCH_URL}activateSubject`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -213,7 +213,7 @@ export default {
             subjectsID = subjectsID == null ? await this.getActivatedRows() : subjectsID
             console.log("Elements to deactivate: ", subjectsID)
             fetch(`${process.env.VUE_APP_FETCH_URL}deactivateSubject`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'

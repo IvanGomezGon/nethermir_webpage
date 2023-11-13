@@ -29,7 +29,7 @@ const sendEmail = (sendTo, txt, subject, attachements = null) => {
 };
 
 const sendWarningMail = (emails) => {
-    emailText = `Atenció, la concessió de temps de la vostra màquina virtual a Nethermir caduca en 30 minuts. <br>
+    var emailText = `Atenció, la concessió de temps de la vostra màquina virtual a Nethermir caduca en 30 minuts. <br>
                 Si voleu continuar treballant amb la màquina virtual heu d'entrar a l'entorn de gestió, https://nethermir.uab.cat/, i estendre la vostra reserva de temps. <br>
                 En canvi, si heu acabat de treballar amb la màquina virtual, podeu ignorar aquest missatge i la màquina s'aturarà automàticament passat el temps. <br>
                 Salutacions, Nethermir`;
@@ -37,7 +37,7 @@ const sendWarningMail = (emails) => {
 };
 const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyPairUser, keyPairRouter) => {
     logger.info(`sendPasswordEmail ${groupName}`);
-    emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
+    var emailText = `Hola, les credencials per entrar al panell de gestió de Nethermir son: <br>
                 Usuari: ${groupName} <br>
                 Contransenya: ${password} <br><br>
                 Adjunt a aquest correu trobareu: <br>
@@ -46,8 +46,8 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
                 Salutacions, <br> 
                 Nethermir
                 `;
-    wireguardTxtPath = `/tmp/${groupName}.zip`;
-    wireguardTxt = `
+    var wireguardTxtPath = `/tmp/${groupName}.zip`;
+    var wireguardTxt = `
     [Interface]
     PrivateKey = ${keyPairUser.prv}
     Address = 10.1.1.2/30
@@ -58,7 +58,7 @@ const sendPasswordEmail = async (emails, groupName, endpointPort, password, keyP
     Endpoint = 158.109.79.32:${endpointPort}
     PersistentKeepalive = 30`;
 
-    attachements = [
+    var attachements = [
         {
             filename: "instructions.pdf",
             path: process.env.PDF_WIREGUARD_FILEPATH,

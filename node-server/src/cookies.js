@@ -32,7 +32,6 @@ const getUserCookie = (req, res) => {
                 resolve(payload.user);
             });
         } catch (err) {
-            logger.info("no cookie");
             res.clearCookie("token");
             reject();
         }

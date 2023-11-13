@@ -52,7 +52,7 @@ const getGroupName = (id) => {
 
 const getGroupData = (groupName) => {
     return new Promise((resolve, reject) => {
-        sql = `SELECT idgroup, active, password_login_hash, private_key_router, public_key_user, vlan_id  FROM nethermir.groups WHERE name=?`;
+        sql = `SELECT active, password_login_hash, private_key_router, public_key_user, vlan_id  FROM nethermir.groups WHERE name=?`;
         queryToDB(sql, [groupName]).then(async (data) => {
             if (data.length > 0) {
                 resolve(data[0]);
@@ -358,16 +358,16 @@ const restartDatabase = async () => {
             renovated_hours INT NOT NULL DEFAULT 0,
             starting_time TIME NULL,
             PRIMARY KEY (vlan_id),
-            UNIQUE INDEX idgroup_UNIQUE (idgroup ASC) VISIBLE,
-            UNIQUE INDEX name_UNIQUE (name ASC) VISIBLE,
-            UNIQUE INDEX password_login_hash_UNIQUE (password_login_hash ASC) VISIBLE);`;
+            UNIQUE KEY idgroup_UNIQUE (idgroup) VISIBLE,
+            UNIQUE KEY name_UNIQUE (name) VISIBLE;`;              
         await queryToDB(sql);
         sql = `CREATE TABLE nethermir.emails (
             email_id INT NOT NULL AUTO_INCREMENT,
             email VARCHAR(45) NOT NULL,
             group_name VARCHAR(45) NOT NULL,
             PRIMARY KEY (email_id),
-            INDEX group_name_idx (group_name ASC) VISIBLE,
+            UNIQUE KEY email_UNIQUE (email),
+            INDEX group_name_idx (group_name) VISIBLE,
             CONSTRAINT group_name
               FOREIGN KEY (group_name)
               REFERENCES nethermir.groups (name)
@@ -378,7 +378,8 @@ const restartDatabase = async () => {
             idsubject INT NOT NULL,
             subject_name VARCHAR(45) NULL,
             active TINYINT NULL DEFAULT 0,
-            PRIMARY KEY (idsubject));`;
+            PRIMARY KEY (idsubject)),
+            UNIQUE KEY subject_name_UNIQUE (subject_name);`;
         await queryToDB(sql);
     });
 };
@@ -418,7 +419,6 @@ module.exports = {
     addSubject,
     activateSubject,
     deactivateSubject,
-    genKeyPairVLAN,
     getEmailsFromGroupName,
     getStartingTimeVM,
     getRenovationHoursVM,

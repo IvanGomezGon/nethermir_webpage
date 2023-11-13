@@ -25,7 +25,7 @@ export default {
     methods: {
         generateVM() {
             fetch(`${process.env.VUE_APP_FETCH_URL}machine`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',

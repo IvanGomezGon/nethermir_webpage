@@ -53,7 +53,7 @@ export default {
     methods: {
         addSubject() {
             fetch(`${process.env.VUE_APP_FETCH_URL}subject`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'

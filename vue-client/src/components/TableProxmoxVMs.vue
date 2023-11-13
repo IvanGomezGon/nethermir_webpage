@@ -242,7 +242,7 @@
                 }
                 console.log("Machines to activate: ", vmIDs)
                 fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -257,7 +257,7 @@
                 }
                 console.log("Machines to stop: ", vmIDs)
                 fetch(`${process.env.VUE_APP_FETCH_URL}stopMachine`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -272,7 +272,7 @@
                 }
                 console.log("Machines to resume: ", vmIDs)
                 fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -287,7 +287,7 @@
                 }
                 console.log("Machines to suspend: ", vmIDs)
                 fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'

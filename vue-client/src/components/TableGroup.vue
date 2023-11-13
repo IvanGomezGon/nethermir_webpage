@@ -134,7 +134,7 @@ export default {
         activateVM() {
             if (this.hours > 0 && this.hours < 7) {
                 fetch(`${process.env.VUE_APP_FETCH_URL}activateMachine`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -147,7 +147,7 @@ export default {
         suspendResumeVM() {
             if (this.statusVM == "paused") {
                 fetch(`${process.env.VUE_APP_FETCH_URL}resumeMachine`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -157,7 +157,7 @@ export default {
                 }).then();
             } else {
                 fetch(`${process.env.VUE_APP_FETCH_URL}suspendMachine`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ export default {
         },
         stopVM() {
             fetch(`${process.env.VUE_APP_FETCH_URL}stopMachine`, {
-                method: 'PUT',
+                method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',

@@ -190,7 +190,7 @@ export default {
             this.feedback = "Processant registre..."
             let emailsString = this.emails.join(',')
             let response = await fetch(`${process.env.VUE_APP_FETCH_URL}register`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
