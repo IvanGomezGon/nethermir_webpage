@@ -61,7 +61,7 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-start">
                                 <div class="flex items-center h-5">
-                                    <input id="remember" aria-describedby="remember" type="checkbox"
+                                    <input id="remember" aria-describedby="remember" type="checkbox" :checked="!passwordType"
                                         @click="passwordType = (passwordType + 1) % 2"
                                         class="w-4 h-4 border border-gray-300 rounded bg-gray-50">
                                 </div>
