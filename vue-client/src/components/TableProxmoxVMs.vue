@@ -22,7 +22,7 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                 </svg>
             </button>
-            <button :disabled="getNumActiveRows() ==0 || selectedAction == -1" type="button" @click="executeAction()" :class="(getNumActiveRows()== 0 || selectedAction != -1 ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'ml-4 font-medium rounded-lg text-sm p-2.5 '">
+            <button :disabled="getNumActiveRows() ==0 || selectedAction == -1" type="button" @click="executeAction()" :class="(getNumActiveRows()== 0 || selectedAction == -1 ? 'dark:bg-grey-400 dark:text-grey-300 bg-gray-400 text-gray-300 ' : 'bg-emerald-600 hover:bg-emerald-700 hover:active:bg-emerald-800 active:bg-emerald-700 text-white ') + 'ml-4 font-medium rounded-lg text-sm p-2.5 '">
             {{ $t("execute") }}
         </button>
             <div id="dropdown" v-if="dropdownShow == true" class="mt-1 w-[185px] ml-[159px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-grey-400 absolute border dark:border-grey-300 border-gray-300 ">
@@ -195,7 +195,7 @@
                 return `${this.$t("turnOff")} ${this.$t("machines")}`
             }else if (this.selectedAction == 2){
                 return `${this.$t("resume")} ${this.$t("machines")}`
-            }else if (this.selectedAction == 2){
+            }else if (this.selectedAction == 3){
                 return `${this.$t("pause")} ${this.$t("machines")}`
             }
             
