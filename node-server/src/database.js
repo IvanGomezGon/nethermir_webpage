@@ -72,13 +72,15 @@ const getEndpointPortGroup = (idGroup) => {
     });
 };
 
-const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser) => {
+const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID) => {
     return new Promise((resolve, reject) => {
         logger.info("insertGroup started");
         logger.info(`${idGroup}, ${groupName}, ${password_login_hash}, ${privateKeyRouter}, ${publicKeyUser}`)
-        sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user) VALUES (?, ?, ?, ?, ?)`;
-        queryToDB(sql, [idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser])
-            .then(resolve)
+        if (vlanID > 99){reject()}
+        sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user, vlan_id) VALUES (?, ?, ?, ?, ?, ?)`;
+        queryToDB(sql, [idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID])
+        .then(resolve)
+        .catch(insertGroup(idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID+1).then(resolve).catch(reject()))
     });
 };
 
@@ -266,21 +268,27 @@ const insertEmails = (emails, groupName) => {
 };
 const registerGroup = (groupName, emails) => {
     return new Promise(async (resolve, reject) => {
-        logger.info("Register Iniciated");
-        logger.info(`emails: ${emails}`)
-        emails = emails.split(",");
-        checkRes = await checkEmails(emails);
-        if (checkRes != "Correct") {
-            reject(checkRes);
+        try{
+            logger.info("Register Iniciated");
+            logger.info(`emails: ${emails}`)
+            emails = emails.split(",");
+            checkRes = await checkEmails(emails);
+            if (checkRes != "Correct") {
+                reject(checkRes);
+            }
+            idGroup = await generateGroup(groupName);
+            groupName = groupName + "-" + idGroup;
+            [password, paswordHash] = await generatePassword();
+            [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
+            await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub, 1);
+            await insertEmails(emails, groupName);
+            portUDP = await getEndpointPortGroup(idgroup);
+            resolve([groupName, emails, portUDP, password, keyPairUser, keyPairRouter]);
+        } catch (error) {
+            logger.error("Failed registring Group");
+            reject();
         }
-        idGroup = await generateGroup(groupName);
-        groupName = groupName + "-" + idGroup;
-        [password, paswordHash] = await generatePassword();
-        [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
-        await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub);
-        await insertEmails(emails, groupName);
-        portUDP = await getEndpointPortGroup(idgroup)
-        resolve([groupName, emails, portUDP, password, keyPairUser, keyPairRouter]);
+
     })
 }
 
