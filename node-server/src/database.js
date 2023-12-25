@@ -79,8 +79,8 @@ const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, 
         if (vlanID > 99){reject()}
         sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user, vlan_id) VALUES (?, ?, ?, ?, ?, ?)`;
         queryToDB(sql, [idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID])
-        .then(resolve)
-        .catch(insertGroup(idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID+1).then(resolve).catch(reject()))
+        .then(resolve())
+        .catch(insertGroup(idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID+1).then(resolve()).catch(reject()))
     });
 };
 
