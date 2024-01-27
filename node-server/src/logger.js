@@ -28,7 +28,6 @@ var logger = winston.createLogger({
 });
 
 module.exports = logger;
-
 module.exports.stream = {
     write: function (message) {
         logger.info(message);
