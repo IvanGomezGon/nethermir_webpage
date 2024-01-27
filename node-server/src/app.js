@@ -119,9 +119,12 @@ app.get("/backend/statusVM", async function (req, res) {
     try {
         const vmID = req.query["vmID"]
         groupName = await cookieManager.getUserCookie(req, res)
-        if (vmID != null) {
+
+	if (vmID != null) {
+	
             proxmoxManager.getStatusVM(vmID).then(status => feedbackFetch(JSON.stringify(status), res))
         } else {
+	  
             proxmoxManager.getStatusVM(groupName.split("-").pop()).then(status => feedbackFetch(JSON.stringify(status), res))
         }
     } catch (error) {

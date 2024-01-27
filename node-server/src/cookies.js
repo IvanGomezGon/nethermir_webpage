@@ -26,7 +26,7 @@ const getUserCookie = (req, res) => {
         try {
             jwt.verify(token, process.env.COOKIE_PASSWORD, function (err, payload) {
                 if (err) {
-                    logger.info("Error verifiying token");
+                    logger.info(`Error verifiying token ${payload.user}`);
                     reject();
                 }
                 resolve(payload.user);

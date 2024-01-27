@@ -74,13 +74,12 @@ const getEndpointPortGroup = (idGroup) => {
 
 const insertGroup = (idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID) => {
     return new Promise((resolve, reject) => {
-        logger.info("insertGroup started");
-        logger.info(`${idGroup}, ${groupName}, ${password_login_hash}, ${privateKeyRouter}, ${publicKeyUser}`)
+        logger.info(`insertGroup started! ${vlanID}`);
         if (vlanID > 99){reject()}
         sql = `INSERT INTO nethermir.groups (idgroup, name, password_login_hash, private_key_router, public_key_user, vlan_id) VALUES (?, ?, ?, ?, ?, ?)`;
         queryToDB(sql, [idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID])
-        .then(resolve())
-        .catch(insertGroup(idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID+1).then(resolve()).catch(reject()))
+        .then((x) => {logger.info("here")})
+        .catch((x) => {logger.info("not");insertGroup(idGroup, groupName, password_login_hash, privateKeyRouter, publicKeyUser, vlanID+1).then(resolve()).catch(reject())})
     });
 };
 
@@ -281,8 +280,11 @@ const registerGroup = (groupName, emails) => {
             [password, paswordHash] = await generatePassword();
             [keyPairUser, keyPairRouter] = await genKeyPairVLAN();
             await insertGroup(idGroup, groupName, paswordHash, keyPairRouter.prv, keyPairUser.pub, 1);
-            await insertEmails(emails, groupName);
+            logger.info(`finished inserting group`);
+	    await insertEmails(emails, groupName);
+	    logger.info(`finished inserting emails`);
             portUDP = await getEndpointPortGroup(idgroup);
+	    logger.info(`finished getting port`);
             resolve([groupName, emails, portUDP, password, keyPairUser, keyPairRouter]);
         } catch (error) {
             logger.error("Failed registring Group");

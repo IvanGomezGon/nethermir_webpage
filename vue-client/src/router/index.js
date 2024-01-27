@@ -28,7 +28,7 @@ const routes = [
       {
         name: "dashboardOnLogin",
         path: '',
-        component: Dashboard,
+        component: GetProxmoxVMs,
       },
       {
         name: "dashboard",

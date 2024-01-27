@@ -101,6 +101,7 @@ export default {
         };
     },
     mounted: function () {
+	console.log("Fetching Data")
         this.getData();
         this.interval = setInterval(() => {
             this.getData();
@@ -112,10 +113,12 @@ export default {
     },
     methods: {
         async getData() {
+	    console.log("Inside func")
             let response = await fetch(`${process.env.VUE_APP_FETCH_URL}statusVM`, {
                 credentials: process.env.VUE_APP_FETCH_CREDENTIALS
             })
             response.json().then((json) => {
+		console.log("json: ", json)
                 if (json == null) { this.idVM = -1; return }
                 if (Object.keys(json).length != 0) {
                     this.idVM = json.vmid

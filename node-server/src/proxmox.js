@@ -77,6 +77,7 @@ const getStatusVM = (vmID) => {
                     logger.error(`Failed to getStatusVM: ${err}`);
                 } else {
                     var data_json = JSON.parse(data).data;
+		 
                     resolve(data_json);
                 }
             });
@@ -88,6 +89,7 @@ const getStatusVM = (vmID) => {
 const cloneMachine = (group, groupName) => {
     return new Promise((resolve, reject) => {
         logger.info(group);
+	group = parseInt(group)
         var vmID = ((group % 3) + 1) * 10000 + group - (group % 100);
         var serverID = PROXMOX_SERVERS[group % process.env.PROXMOX_SERVERS_COUNT];
         var newID = { newid: group, name: groupName, full: 1 };

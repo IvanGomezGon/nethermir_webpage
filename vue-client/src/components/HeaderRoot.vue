@@ -118,13 +118,13 @@ export default {
             mobileDropdown: 0,
             mobileDrowdownFinished: 0,
             route: '',
-            paths: ["dashboard", "proxmox", "groups", "users", "courses"],
-            pathNames: [ this.$t("dashboard"), this.$t("proxmox"), this.$t("groups"), this.$t("users"), this.$t("courses")],
+            paths: ["proxmox", "groups", "users", "courses"],
+            pathNames: [this.$t("proxmox"), this.$t("groups"), this.$t("users"), this.$t("courses")],
         }
     },
     watch:{
         '$i18n.locale'(newVal){
-            this.pathNames = [ this.$t("dashboard"), this.$t("proxmox"), this.$t("groups"), this.$t("users"), this.$t("courses")];
+            this.pathNames = [this.$t("proxmox"), this.$t("groups"), this.$t("users"), this.$t("courses")];
         },
     },
     created: function () {
